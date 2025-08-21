@@ -1,59 +1,201 @@
-# Arabic Synthetic Dataset Pipeline
+# Arabic Synthetic Dataset Generation Pipeline - Real Implementation
 
-A comprehensive pipeline for generating high-quality Arabic synthetic datasets using persona-based LLM generation with seed constraints and quality validation.
+## 🎯 Project Overview
 
-## 🎯 Tasks
+This project implements a comprehensive pipeline for generating high-quality Arabic synthetic datasets using persona-based LLM generation with advanced seed constraints and quality validation.
 
-- **EXAMS**: Multi-subject MCQ questions (10,000 target)
-- **Alghafa Sentiment**: Sentiment classification (positive:negative:neutral = 4:4:2, 10,000 target)  
-- **Madinah QA Grammar**: Grammar error correction triplets (10,000 target)
+**Target Datasets:**
+- **EXAMS (10,000 items)** → Multi-subject MCQ questions with controlled answer distribution
+- **Alghafa Sentiment (10,000 items)** → Sentiment classification (positive:negative:neutral = 4:4:2)
+- **Madinah QA Grammar (10,000 items)** → Grammar error correction triplets
 
-## 🚀 Features
+---
 
-- **Persona-based Generation**: Role-playing prompts for authentic Arabic content
-- **Seed Constraint System**: Uses ≤10 test samples as style guidance only (prevents data leakage)
-- **Distribution Alignment**: Controlled answer distribution with quota scheduling
-- **Quality Validation**: Fidelity, utility (TSTR), and privacy metrics
-- **Data Augmentation**: Rule-based transformations and diversity filtering
-- **CLI Interface**: Full pipeline orchestration with Typer
+## 🔹 Overall Strategy
 
-## 🏗️ Architecture
+Use **LLMs + persona prompts + seed constraints** to create authentic, diverse Arabic datasets while preventing data leakage through sophisticated constraint systems.
 
+---
+
+## 1. Define Personas & Scenarios
+
+Each dataset uses specific role-playing for authenticity:
+
+- **EXAMS** → *"Arabic high school teacher writing exam questions"*
+- **Sentiment** → *"Arabic social media user expressing opinions"*
+- **Grammar QA** → *"Arabic language learner making mistakes, teacher correcting"*
+
+Persona prompts lock the **role** and **tone** for consistency across all generations.
+
+---
+
+## 2. Seed Constraint System (Core Innovation)
+
+**Critical Feature**: Uses ≤10 test samples as *style guidance only* to prevent data leakage:
+
+- **Max Seeds**: ≤10 samples per task
+- **Style Only**: Seeds provide style guidance, not content replication
+- **Diversity Check**: Ensures seed variety across subjects and difficulty levels
+- **Similarity Validation**: Prevents generated content from being too similar to seeds
+- **Audit Trail**: Full logging of seed usage and constraint application
+
+**Implementation**: `SeedManager` class with configurable constraints:
+```python
+SeedConstraint(
+    max_seeds=10,
+    min_seed_diversity=3,
+    max_generation_similarity=0.3
+)
+```
+
+---
+
+## 3. Prompt Templates (Actual Implementation)
+
+### EXAMS (Knowledge Q&A)
+
+```json
+[Role: Arabic high school teacher]
+Write a multiple-choice exam question in Arabic.
+Constraints:
+- Question length: 12-30 words
+- Use varied vocabulary and avoid repetitive phrasing
+- Options must be concise and plausible
+- The correct answer MUST be letter {target_answer_letter}
+Return ONLY a valid JSON object:
+{
+  "question": "...",
+  "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+  "answer": "{target_answer_letter}"
+}
+```
+
+**Role**: Teacher creates multiple-choice questions covering biology, history, geography, science, and literature.
+
+### Alghafa Sentiment (Sentiment Analysis)
+
+```json
+[Role: Arabic social media user]
+Generate a short text (20-40 words) expressing a clear sentiment.
+The text should be natural and authentic Arabic.
+Return ONLY a valid JSON object:
+{
+  "text": "...",
+  "sentiment": "positive|negative|neutral"
+}
+```
+
+**Role**: Social media user writes authentic posts with explicit sentiment labels.
+
+### Madinah Grammar QA (Error Correction)
+
+```json
+[Role: Arabic language teacher]
+Create a grammar correction example in Arabic.
+Return ONLY a valid JSON object:
+{
+  "input": "...(incorrect sentence)",
+  "correction": "...(corrected sentence)",
+  "explanation": "...(explanation of the correction)"
+}
+```
+
+**Role**: Teacher provides incorrect sentences, corrections, and explanations.
+
+---
+
+## 4. Advanced Generation Features
+
+### Answer Distribution Control
+- **Quota Scheduling**: Calculates target distribution for A, B, C, D answers
+- **Dynamic Assignment**: Assigns target answer letter for each generation
+- **Answer Remapping**: Ensures correct answer maps to target position if LLM doesn't comply
+
+### Sampling Parameters
+- **Temperature**: 0.7-0.9 (diversity control)
+- **Top-p**: 0.95 (nucleus sampling)
+- **Batch Processing**: Configurable batch sizes (default: 50)
+
+### Progress Monitoring
+- Real-time quota tracking
+- Progress updates every 10 samples
+- Comprehensive logging of generation parameters
+
+---
+
+## 5. Data Augmentation & Transformation
+
+### Rule-based Transformations
+- **Entity Replacement**: Names, locations, numbers, years
+- **Option Shuffling**: Reorder multiple-choice options while maintaining correctness
+- **Difficulty Scaling**: Simple → intermediate → advanced complexity
+
+### Quality Enhancement
+- **Length Filtering**: Enforce word count constraints per task
+- **TTR Filtering**: Remove low-diversity samples (Type-Token Ratio < 0.18)
+- **Schema Validation**: Strict Pydantic validation for all data types
+
+---
+
+## 6. Post-processing Pipeline
+
+### 1. Schema Validation
+- **Pydantic Models**: Enforce strict JSON structure for each task
+- **Field Validation**: Check required fields, data types, and content validity
+- **Error Logging**: Record and report validation failures
+
+### 2. Quality Filtering
+- **Length Validation**: Task-specific word count requirements
+- **TTR Calculation**: Vocabulary diversity assessment
+- **Content Quality**: Remove malformed or incomplete samples
+
+### 3. Deduplication
+- **Similarity Detection**: Use Levenshtein distance for text similarity
+- **Threshold Control**: Configurable similarity threshold (default: 0.8)
+- **Batch Processing**: Efficient comparison of large datasets
+
+---
+
+## 7. Quality Validation System
+
+### Fidelity Metrics
+- **Length Distribution**: Mean, standard deviation comparison with real data
+- **Answer Balance**: L1 distance from target distribution
+- **Vocabulary Analysis**: TTR comparison, vocabulary size, Jaccard similarity
+
+### Utility Metrics (TSTR)
+- **Train on Synthetic, Test on Real**: Use CountVectorizer + LogisticRegression
+- **Performance Comparison**: Accuracy on real test set
+- **Baseline Assessment**: Compare with random baseline
+
+### Privacy Metrics
+- **Re-identification Risk**: Token overlap analysis with real data
+- **Similarity Assessment**: Maximum and mean overlap scores
+- **Risk Thresholding**: Share of samples above risk threshold
+
+---
+
+## 8. Implementation Architecture
+
+### Core Components
 ```
 src/arabic_synth/
-├── cli.py              # Command-line interface
-├── generators/run.py   # Core generation logic
-├── postprocess/clean.py # Data cleaning & deduplication
-├── evaluate/evaluate.py # Quality evaluation
+├── cli.py              # Command-line interface (Typer)
+├── generators/run.py   # Core generation logic with quota scheduling
+├── postprocess/clean.py # Data cleaning, validation, deduplication
+├── evaluate/evaluate.py # Quality evaluation and metrics
 ├── schemas/            # Pydantic validation schemas
 ├── prompts/templates.py # LLM prompt templates
 └── utils/              # Core utilities
-    ├── llm.py         # LLM API integration
+    ├── llm.py         # OpenAI API integration
     ├── seed_manager.py # Seed constraint system
-    ├── quality_validator.py # Quality metrics
+    ├── quality_validator.py # Comprehensive quality metrics
     └── anonymizer.py  # Data anonymization
 ```
 
-## ⚙️ Setup
-
+### CLI Commands
 ```bash
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install package
-pip install -e .
-
-# Set OpenAI API key
-export OPENAI_API_KEY="your-api-key-here"
-```
-
-## 📖 Usage
-
-### Generate Data
-
-```bash
-# Generate EXAMS with seed constraints and distribution control
+# Generate with seed constraints and distribution control
 arabic-synth generate exams \
   --num-samples 200 \
   --model openai:gpt-4o \
@@ -61,120 +203,100 @@ arabic-synth generate exams \
   --temperature 0.9 \
   --top-p 0.95
 
-# Generate sentiment data
-arabic-synth generate sentiment --num-samples 100 --model openai:gpt-4o
-
-# Generate grammar data  
-arabic-synth generate grammar --num-samples 100 --model openai:gpt-4o
-```
-
-### Clean & Process
-
-```bash
-# Clean generated data (schema validation, deduplication, TTR filtering)
+# Clean and validate
 arabic-synth clean exams \
   --in-path outputs/exams_raw.jsonl \
   --out-path outputs/exams_clean.jsonl
 
-# Evaluate quality metrics
-arabic-synth evaluate exams --in-path outputs/exams_clean.jsonl
+# Evaluate quality
+arabic-synth evaluate exams \
+  --in-path outputs/exams_clean.jsonl
 ```
 
-### Export
+---
 
-```bash
-# Export to various formats with metadata
-arabic-synth export exams \
-  --in-path outputs/exams_clean.jsonl \
-  --out-format csv \
-  --meta-batch-id pilot-001
-```
+## 9. Stepwise Implementation
 
-## 🔒 Seed Constraint System
+### 1. Pilot Stage (100-200 samples)
+- Generate with seed constraints
+- Validate quality metrics
+- Refine prompts and parameters
+- Test distribution alignment
 
-The pipeline uses a sophisticated seed constraint system to prevent data leakage:
+### 2. Scaling Stage (1K → 5K → 10K)
+- Monitor quality metrics
+- Adjust generation parameters
+- Validate against real data distributions
+- Ensure diversity maintenance
 
-- **Max Seeds**: ≤10 test samples allowed
-- **Style Only**: Seeds provide style guidance, not content replication
-- **Diversity Check**: Ensures seed variety across subjects
-- **Similarity Validation**: Prevents generated content from being too similar to seeds
-- **Audit Trail**: Full logging of seed usage and constraints
+### 3. Integration & Validation
+- Run comprehensive quality checks
+- Compare with real data characteristics
+- Validate TSTR performance
+- Document final metrics
 
-## 📊 Quality Metrics
+---
 
-### Fidelity
-- Length distribution comparison (mean, std dev)
-- Answer balance (L1 distance from target)
-- Vocabulary diversity (Type-Token Ratio)
-- Content overlap analysis (Jaccard similarity)
+## 10. Dataset Targets & Quality Standards
 
-### Utility  
-- **TSTR (Train on Synthetic, Test on Real)**: Trains classifier on synthetic data, tests on real data
-- Performance comparison metrics
+### EXAMS Dataset
+- **Target**: 10,000 multi-subject MCQ questions
+- **Quality**: Balanced answer distribution (A:B:C:D ≈ 25% each)
+- **Diversity**: TTR > 0.18, length 12-30 words
+- **Subjects**: Biology, History, Geography, Science, Literature
 
-### Privacy
-- Re-identification risk assessment
-- Token overlap analysis
-- Differential privacy considerations
+### Sentiment Dataset
+- **Target**: 10,000 sentiment-labeled texts
+- **Distribution**: Positive:Negative:Neutral = 4:4:2
+- **Quality**: Natural Arabic expressions, clear sentiment
+- **Length**: 20-40 words per text
 
-## 🎛️ Advanced Controls
+### Grammar Dataset
+- **Target**: 10,000 error-correction triplets
+- **Quality**: Authentic grammar mistakes, clear explanations
+- **Coverage**: Various error types and difficulty levels
 
-- **Temperature & Top-p**: Control generation diversity
-- **Answer Distribution**: Target specific answer letter ratios
-- **TTR Filtering**: Remove low-diversity samples (default threshold: 0.18)
-- **Batch Processing**: Configurable batch sizes for large-scale generation
+---
 
-## 📁 Project Structure
+## 11. Quality Thresholds
 
-```
-Synthetic Data/
-├── src/arabic_synth/          # Core package
-├── data/seeds/                # Seed data (≤10 samples)
-├── outputs/                   # Generated datasets
-├── test-00000-of-00001.arabic.csv  # Original test set
-├── pyproject.toml            # Package configuration
-├── README.md                 # This file
-└── SEED_CONSTRAINTS.md       # Detailed constraint documentation
-```
+### Fidelity Targets
+- **Length Distribution**: Mean difference < 2 words from real data
+- **Answer Balance**: L1 distance < 0.1 from target distribution
+- **Vocabulary Diversity**: TTR > 0.3 for linguistic variety
+- **Content Overlap**: Jaccard similarity < 0.1 with real data
 
-## 🔄 Pipeline Flow
+### Utility Targets
+- **TSTR Accuracy**: > 0.6 (baseline performance)
+- **Performance Gap**: < 0.2 from real data performance
 
-1. **Seed Loading**: Extract style guidance from ≤10 test samples
-2. **Generation**: LLM generation with persona prompts and distribution control
-3. **Cleaning**: Schema validation, deduplication, quality filtering
-4. **Evaluation**: Comprehensive quality assessment
-5. **Export**: Format conversion with metadata
+### Privacy Targets
+- **Max Overlap**: < 0.7 with real data
+- **Mean Overlap**: < 0.4 average similarity
+- **High Risk Samples**: < 5% above threshold
 
-## 🚦 Scaling Strategy
+---
 
-- **Pilot**: 100-200 samples for validation
-- **Small Scale**: 1K samples for quality assessment  
-- **Full Scale**: 10K samples with monitoring
-- **Continuous**: Quality checks and retraining
+## 12. Technical Features
 
-## 🛠️ Development
+### Advanced Controls
+- **Temperature & Top-p**: Exposed as CLI options for fine-tuning
+- **Answer Distribution**: Target-specific answer letter ratios
+- **TTR Filtering**: Configurable diversity thresholds
+- **Batch Processing**: Scalable generation with monitoring
 
-```bash
-# Install development dependencies
-pip install -e ".[dev]"
+### Error Handling
+- **API Retries**: Exponential backoff for rate limits
+- **JSON Parsing**: Robust handling of markdown-formatted responses
+- **Validation Errors**: Comprehensive error reporting and logging
+- **Progress Tracking**: Real-time generation monitoring
 
-# Run tests
-pytest
+### Data Management
+- **Version Control**: Batch IDs and metadata tracking
+- **Audit Trails**: Complete seed usage logging
+- **Quality Reports**: Comprehensive evaluation summaries
+- **Export Formats**: JSONL, CSV with metadata
 
-# Format code
-black src/
-```
+---
 
-## 📝 Notes
-
-- **Model Selection**: Currently supports OpenAI models via `openai:MODEL_NAME`
-- **Mock Mode**: Use `--model mock` for testing without API calls
-- **Seed Diversity**: Ensure seeds cover different subjects and difficulty levels
-- **Quality Thresholds**: Adjust TTR and similarity thresholds as needed
-
-## 🤝 Contributing
-
-1. Follow the seed constraint system
-2. Maintain quality metrics
-3. Test with mock mode first
-4. Document any prompt or parameter changes 
+This pipeline represents a production-ready system for generating high-quality Arabic synthetic data with strict quality controls, advanced constraint systems, and comprehensive validation mechanisms. 
