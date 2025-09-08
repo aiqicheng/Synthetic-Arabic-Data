@@ -1,0 +1,62 @@
+{
+  "total": 8737,
+  "parse_errors": 0,
+  "bad_schema": 0,
+  "answer_not_in_options": 11,
+  "low_arabic_ratio(<=0.7)": 27,
+  "too_short(<=10)": 0,
+  "too_long(>=600)": 0,
+  "dup_clusters": 3,
+  "dup_cluster_examples": [
+    [
+      926,
+      937
+    ],
+    [
+      5307,
+      5318
+    ],
+    [
+      6765,
+      6776
+    ]
+  ],
+  "diversity": {
+    "distinct2": 0.5356,
+    "distinct3": 0.7787
+  },
+  "persona_stats": {
+    "unique_personas": 200,
+    "mean_per_persona": 43.69,
+    "std_per_persona": 6.5,
+    "top5_personas": [
+      [
+        "A local business owner who has witnessed the effects of economic sanctions on their community",
+        66
+      ],
+      [
+        "A hobbyist potter with a modern approach, constantly experimenting with new techniques",
+        62
+      ],
+      [
+        "A retired child actor who credits the coach for helping them achieve success",
+        59
+      ],
+      [
+        "A tiger mom who sets high expectations and pushes their child to achieve academic success",
+        57
+      ],
+      [
+        "A rebellious teenage relative interested in digital media art and modern music",
+        56
+      ]
+    ]
+  },
+  "config": {
+    "arabic_ratio": 0.7,
+    "min_len": 10,
+    "max_len": 600,
+    "dup_shingle": 5,
+    "dup_jaccard": 0.9
+  }
+}
