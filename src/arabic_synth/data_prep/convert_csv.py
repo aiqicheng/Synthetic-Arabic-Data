@@ -2,10 +2,7 @@
 # 用途：把你的 CSV 行（含 python 字典字符串 + numpy array 字样）转换为 JSONL
 # 输出字段：question, options, answer, explanation（如果没有解析则为空字符串）
 
-import csv, json, re, ast, sys, os
-
-IN_CSV  = "data/test-00000-of-00001.arabic.csv"      # 你的原始 CSV
-OUT_JSONL = "data/exams.jsonl"  # 转换后的 JSONL
+import csv, json, re, ast, sys, os, argparse
 
 # 将 "array([...], dtype=object)" → "[...]"；支持跨行/有换行空格
 ARRAY_RE = re.compile(r"array\(\s*(\[[\s\S]*?\])\s*(?:,\s*dtype=object)?\s*\)")
@@ -27,11 +24,15 @@ def safe_parse_py_literal(s: str):
     # ast.literal_eval 只能识别标准 Python 字面量（dict/list/str/num/...）
     return ast.literal_eval(s)
 
-def main():
-    os.makedirs(os.path.dirname(OUT_JSONL), exist_ok=True)
+def main(input_csv=None, output_jsonl=None):
+    # Use command line arguments or defaults
+    in_csv = input_csv or "data/test-00000-of-00001.arabic.csv"
+    out_jsonl = output_jsonl or "data/exams.jsonl"
+    
+    os.makedirs(os.path.dirname(out_jsonl), exist_ok=True)
     n_in, n_ok, n_skip = 0, 0, 0
-    with open(IN_CSV, newline="", encoding="utf-8") as fin, \
-         open(OUT_JSONL, "w", encoding="utf-8") as fout:
+    with open(in_csv, newline="", encoding="utf-8") as fin, \
+         open(out_jsonl, "w", encoding="utf-8") as fout:
         reader = csv.reader(fin)
         # 如果有表头可改用 DictReader；此处按你示例的 4 列处理：
         # 0:id, 1:question_blob, 2:answer_label, 3:meta_blob
@@ -105,7 +106,14 @@ def main():
             fout.write(json.dumps(rec, ensure_ascii=False) + "\n")
             n_ok += 1
 
-    print(f"[DONE] 输入行: {n_in} | 成功: {n_ok} | 跳过: {n_skip} → {OUT_JSONL}")
+    print(f"[DONE] 输入行: {n_in} | 成功: {n_ok} | 跳过: {n_skip} → {out_jsonl}")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Convert CSV exam data to JSONL format")
+    parser.add_argument("--input-csv", default="data/test-00000-of-00001.arabic.csv", 
+                       help="Input CSV file path")
+    parser.add_argument("--output-jsonl", default="data/exams.jsonl", 
+                       help="Output JSONL file path")
+    args = parser.parse_args()
+    
+    main(input_csv=args.input_csv, output_jsonl=args.output_jsonl)

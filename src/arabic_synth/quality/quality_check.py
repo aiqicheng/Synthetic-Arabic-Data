@@ -79,18 +79,45 @@ def distinct_n(texts: List[str], n: int = 2) -> float:
             all_ngrams.add(tuple(toks[i:i+n]))
     return (len(all_ngrams) / total) if total else 0.0
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--input", default="outputs/exams_raw.jsonl")
-    ap.add_argument("--report_json", default="outputs/quality_report.json")
-    ap.add_argument("--flag_csv", default="outputs/flagged_samples.csv")
-    ap.add_argument("--arabic_ratio", type=float, default=0.90)
-    ap.add_argument("--min_len", type=int, default=10)
-    ap.add_argument("--max_len", type=int, default=600)
-    ap.add_argument("--dup_shingle", type=int, default=5)
-    ap.add_argument("--dup_jaccard", type=float, default=0.90)
-    ap.add_argument("--sample_flags", type=int, default=200)
-    args = ap.parse_args()
+def main(input_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, min_len=10, max_len=600, dup_shingle=5, dup_jaccard=0.90, sample_flags=200):
+    if input_file:
+        # Called programmatically
+        class Args:
+            def __init__(self):
+                self.input = input_file or "outputs/exams_raw.jsonl"
+                self.report_json = report_json or "outputs/quality_report.json"
+                self.flag_csv = flag_csv or "outputs/flagged_samples.csv"
+                self.arabic_ratio = arabic_ratio
+                self.min_len = min_len
+                self.max_len = max_len
+                self.dup_shingle = dup_shingle
+                self.dup_jaccard = dup_jaccard
+                self.sample_flags = sample_flags
+        args = Args()
+    else:
+        # Called from command line
+        ap = argparse.ArgumentParser(description="Run comprehensive quality checks on generated data")
+        ap.add_argument("--input-file", default="outputs/exams_raw.jsonl", help="Input generated data file")
+        ap.add_argument("--report-json", default="outputs/quality_report.json", help="Quality report output")
+        ap.add_argument("--flag-csv", default="outputs/flagged_samples.csv", help="Flagged samples output")
+        ap.add_argument("--arabic-ratio", type=float, default=0.90, help="Minimum Arabic character ratio")
+        ap.add_argument("--min-len", type=int, default=10, help="Minimum question length")
+        ap.add_argument("--max-len", type=int, default=600, help="Maximum question length")
+        ap.add_argument("--dup-shingle", type=int, default=5, help="N-gram size for duplicate detection")
+        ap.add_argument("--dup-jaccard", type=float, default=0.90, help="Jaccard similarity threshold")
+        ap.add_argument("--sample-flags", type=int, default=200, help="Maximum flagged samples to export")
+        args = ap.parse_args()
+        
+        # Convert hyphens to underscores for compatibility
+        args.input = args.input_file
+        args.report_json = args.report_json
+        args.flag_csv = args.flag_csv
+        args.arabic_ratio = args.arabic_ratio
+        args.min_len = args.min_len
+        args.max_len = args.max_len
+        args.dup_shingle = args.dup_shingle
+        args.dup_jaccard = args.dup_jaccard
+        args.sample_flags = args.sample_flags
 
     if not os.path.exists(args.input):
         print(f"[ERROR] 输入文件不存在：{args.input}")

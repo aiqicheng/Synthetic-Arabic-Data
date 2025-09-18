@@ -5,10 +5,10 @@ from pathlib import Path
 from typing import Dict, Any, List, Iterable
 
 try:
-    from ...prompts import templates_persona as TPL
+    from ..persona import templates_persona as TPL
 except Exception:
     import importlib
-    TPL = importlib.import_module('src.prompts.templates_persona')
+    TPL = importlib.import_module('arabic_synth.persona.templates_persona')
 
 def _read_jsonl(path: str) -> List[dict]:
     data = []
