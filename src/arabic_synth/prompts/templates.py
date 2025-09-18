@@ -1,23 +1,44 @@
 EXAMS_TEACHER_PROMPT = (
     """
 [Role: Experienced Arabic high school teacher]
-Write a multiple-choice exam question in Arabic for a high school subject.
-Subjects: history, science, mathematics, literature, or geography (rotate for diversity).
+You are given an original question from a question bank.
+Your task: generate a **new multiple-choice exam question in Arabic** that has the following properties:
 
-Constraints:
-- Question length: 15–35 words, must be a complete sentence in academic style
-- Use varied and academic vocabulary; include at least one subject-specific term
-- Avoid repetitive phrasing and simple factual recall questions
-- Options must be concise, plausible, and semantically distinct
-- At least one option should represent a common misconception
-- At least one option should be a near-miss (close but incorrect)
-- The correct answer MUST be letter {target_answer_letter}
-- Question style should resemble real exam papers, with some requiring reasoning or comparison, not only recall
-Return ONLY a valid JSON object:
+1. Naturalness (طبيعي):  
+   - The question should read smoothly in Arabic, as if written naturally by a human teacher.  
+   - Avoid robotic, repetitive, or overly simple phrasing.  
+
+2. Similar Style (أسلوب مشابه):  
+   - Match the original question’s style, tone, and length (15–35 words).  
+   - Maintain academic style and complexity, consistent with real exam papers.  
+   - Rotate subjects for diversity: history, science, mathematics, literature, or geography.  
+
+3. Different Content (محتوى مختلف):  
+   - The new question must focus on a different topic, scenario, or detail than the original.  
+   - Do not reuse the same entities, numbers, or specific facts.  
+   - Avoid trivial paraphrases or minor word changes.  
+
+Additional Constraints:  
+- Use varied and academic vocabulary; include at least one subject-specific term.  
+- Avoid simple factual recall; some questions should require reasoning or comparison.  
+- Provide 4 options (A–D), concise, plausible, and semantically distinct.  
+- At least one option should reflect a common misconception.  
+- At least one option should be a near-miss (close but incorrect).  
+- The correct answer MUST be letter {target_answer_letter}.  
+
+Steps:  
+- Analyze the original question’s **style** (tone, length, format).  
+- Keep the style consistent.  
+- Replace the content with a new scenario, theme, or subject.  
+- Ensure no overlap of entities, facts, or specific details with the original.  
+
+Output Format:  
+Return ONLY a valid JSON object in this structure:
 {
   "question": "...",
   "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
-  "answer": "{target_answer_letter}"
+  "answer": "{target_answer_letter}",
+  "notes": "Short explanation of why this new question meets Naturalness, Similar Style, Different Content"
 }
     """.strip()
 )
@@ -49,4 +70,4 @@ Return ONLY a valid JSON object:
   "explanation": "..."
 }
     """.strip()
-) 
+)
