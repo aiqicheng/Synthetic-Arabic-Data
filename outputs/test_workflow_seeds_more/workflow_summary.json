@@ -1,0 +1,19 @@
+{
+  "workflow": "style-persona-combined",
+  "input_csv": "data/test-00000-of-00001.arabic.csv",
+  "sampling_mode": "stratified",
+  "n_seeds": 5,
+  "n_styled": 20,
+  "per_item_personas": 4,
+  "model": "mock",
+  "seed": 42,
+  "results": {
+    "seeds_file": "outputs/test_workflow_seeds_more/seeds.jsonl",
+    "seeds_count": 5,
+    "styled_seeds_file": "outputs/test_workflow_seeds_more/styled_seeds.jsonl",
+    "styled_count": 20,
+    "personas_file": "data/personas/selected_200.jsonl",
+    "combined_requests_file": "outputs/test_workflow_seeds_more/combined_requests.jsonl",
+    "total_requests": 80
+  }
+}
