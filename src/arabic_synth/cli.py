@@ -10,6 +10,7 @@ load_dotenv()
 
 from arabic_synth.generators.run import run_generation
 from arabic_synth.postprocess.clean import run_cleaning
+from arabic_synth.evaluate.evaluate_style import run_evaluation, run_evaluate_style
 from arabic_synth.utils.io import export_dataset
 from arabic_synth.augment.augment import run_augmentation
 
@@ -66,8 +67,23 @@ def clean(
     typer.echo(f"Wrote cleaned data to {out_path}")
 
 
-# Note: evaluate functionality has been merged into quality_check command
-# Use: arabic-synth quality-check --real-data-file path/to/real/data.jsonl --include-comparison
+@app.command()
+def evaluate(
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar"),
+    in_path: Path = typer.Option(Path("outputs/clean.jsonl"), help="Input JSONL path"),
+):
+    report = run_evaluation(task=task, in_path=in_path)
+    typer.echo(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+@app.command()
+def evaluate_style(
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar"),
+    in_path: Path = typer.Option(Path("outputs/clean.jsonl"), help="Input JSONL path"),
+):
+    """Style Guide Pipeline evaluation with enhanced reporting for style consistency."""
+    report = run_evaluate_style(task=task, in_path=in_path)
+    typer.echo(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 @app.command()
@@ -138,7 +154,7 @@ def send_persona_requests(
 
 
 @app.command()
-def quality_check(
+def evaluate_persona(
     input_file: Path = typer.Option(Path("outputs/exams_raw.jsonl"), help="Input generated data file"),
     real_data_file: Optional[Path] = typer.Option(None, help="Real data file for comparison (optional)"),
     report_json: Path = typer.Option(Path("outputs/quality_report.json"), help="Quality report output"),
@@ -148,8 +164,8 @@ def quality_check(
     max_len: int = typer.Option(600, help="Maximum question length"),
     include_comparison: bool = typer.Option(False, help="Include comparison with real data"),
 ):
-    """Run comprehensive quality checks with optional real data comparison"""
-    from arabic_synth.quality.quality_check import main as quality_main
+    """Persona-augmented evaluation with comprehensive quality assessment and real data comparison"""
+    from arabic_synth.evaluate.evaluate_persona import main as quality_main
     
     quality_main(
         input_file=str(input_file),

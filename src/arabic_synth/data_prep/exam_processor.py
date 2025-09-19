@@ -181,39 +181,41 @@ class ExamProcessor:
                 options = [str(x).strip() for x in texts if str(x).strip() != ""]
                 labels = [str(x).strip() for x in labels]
 
-                # Map answer letter to option text
-                answer_text = None
+                # Create clean formatted options with letter prefixes
+                clean_options = []
+                option_letters = ['A', 'B', 'C', 'D', 'E', 'F']  # Support up to 6 options
+                
+                for i, option_text in enumerate(options[:6]):  # Limit to 6 options max
+                    if i < len(option_letters):
+                        clean_options.append(f"{option_letters[i]}. {option_text}")
+                
+                # Find the answer letter (not the text)
+                answer_letter = None
                 if ans_label in labels and labels.index(ans_label) < len(options):
-                    answer_text = options[labels.index(ans_label)]
+                    answer_idx = labels.index(ans_label)
+                    if answer_idx < len(option_letters):
+                        answer_letter = option_letters[answer_idx]
                 else:
                     # Handle case differences
                     low = [l.lower() for l in labels]
                     if ans_label.lower() in low:
-                        idx = low.index(ans_label.lower())
-                        if idx < len(options):
-                            answer_text = options[idx]
+                        answer_idx = low.index(ans_label.lower())
+                        if answer_idx < len(option_letters) and answer_idx < len(options):
+                            answer_letter = option_letters[answer_idx]
 
-                # Parse meta for explanation
-                explanation = ""
-                if meta_blob:
-                    try:
-                        meta = safe_parse_py_literal(meta_blob)
-                        explanation = str(meta.get("explanation") or meta.get("rationale") or "").strip()
-                    except Exception:
-                        pass
-
-                if not stem or not options or not answer_text:
+                if not stem or not clean_options or not answer_letter:
                     n_skip += 1
                     continue
 
+                # Create clean, minimal record
                 rec = {
-                    "id": _id,
                     "question": stem,
-                    "options": options,
-                    "answer": answer_text,
-                    "explanation": explanation,
+                    "options": clean_options,
+                    "answer": answer_letter
                 }
-                fout.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                
+                # Write compact JSON (no extra spaces)
+                fout.write(json.dumps(rec, ensure_ascii=False, separators=(',', ':')) + "\n")
                 n_ok += 1
 
         return {"input_rows": n_in, "success": n_ok, "skipped": n_skip}

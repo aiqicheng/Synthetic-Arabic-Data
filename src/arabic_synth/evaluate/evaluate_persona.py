@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-quality_check.py
+evaluate_persona.py
 对 outputs/exams_raw.jsonl 做质量体检并输出报告：
 - JSON 结构 & 选项一致性
 - 阿语纯度
@@ -9,8 +9,8 @@ quality_check.py
 - 多样性指标：distinct-2 / distinct-3
 - persona 覆盖分布（均衡度）
 
-用法（PowerShell 单行）：
-python quality_check.py --input outputs/exams_raw.jsonl --report_json outputs/quality_report.json --flag_csv outputs/flagged_samples.csv
+Usage:
+arabic-synth evaluate-persona --input-file outputs/exams_raw.jsonl --report-json outputs/quality_report.json
 
 参数（可选）：
 --arabic_ratio 0.9         # 阿语占比阈值

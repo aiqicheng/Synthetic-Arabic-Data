@@ -17,17 +17,15 @@ src/arabic_synth/
 │   ├── __init__.py
 │   ├── build_requests.py      # Build persona-augmented requests (was: build_persona_requests.py)
 │   ├── send_requests.py       # Send requests to OpenAI API (was: send_persona_requests.py)
-│   └── templates_persona.py   # Persona prompt templates (was: src/prompts/templates_persona.py)
-├── quality/                   # 📊 QUALITY VALIDATION PHASE
-│   ├── __init__.py
-│   └── quality_check.py       # Quality validation and reporting (was: quality_check.py)
+│   └── templates_persona.py   # Persona prompt templates
 ├── generators/                # Core generation logic
 │   ├── persona_augment.py     # ✅ Updated imports to new persona location
 │   └── run.py
 ├── postprocess/               # 🧹 POST-PROCESSING PHASE
 │   └── clean.py
 ├── evaluate/                  # 📊 EVALUATION PHASE
-│   └── evaluate.py
+│   ├── evaluate_style.py      # Style Guide Pipeline 
+│   └── evaluate_persona.py    # Persona-augmented quality validation and reporting
 ├── utils/                     # Core utilities
 │   ├── llm.py
 │   ├── seed_manager.py
@@ -47,7 +45,7 @@ src/arabic_synth/
 ## 🔄 Pipeline Phases For Persona incorporation
 
 ### Phase 1: Data Preparation (`data_prep/`)
-- **`convert_csv.py`** - Convert CSV exam data to JSONL format
+- **`exam_processor.py`** - Combined CSV processing: sampling (uniform/stratified) + conversion to JSONL
 - **`personas_select.py`** - Select and filter personas from larger collections
 
 ### Phase 2: Persona Generation (`persona/`)
@@ -56,7 +54,7 @@ src/arabic_synth/
 - **`templates_persona.py`** - Persona prompt templates and formatting
 
 ### Phase 3: Quality Validation (`quality/`)
-- **`quality_check.py`** - Comprehensive quality assessment and reporting
+- **`evaluate_persona.py`** - Persona-augmented comprehensive quality assessment and reporting
 
 ## 🎯 New CLI Commands
 
@@ -64,44 +62,60 @@ All persona scripts are now available as CLI commands:
 
 ### Data Preparation Commands
 ```bash
-# Convert CSV to JSONL
-arabic-synth convert-csv \
+# Combined sampling and conversion (RECOMMENDED - one-step process)
+arabic-synth sample-and-convert \
   --input-file data/test-00000-of-00001.arabic.csv \
-  --output-file data/exams.jsonl
+  --output-file outputs/balanced_seeds.jsonl \
+  --n 10 \
+  --mode stratified \
+  --stratify-col subject \
+  --seed 123
+
+# Alternative: Individual steps (legacy support)
+# Step 1: Sample data
+arabic-synth sample-stratified \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file outputs/balanced_seed.csv \
+  --n 10 --stratify-col subject --seed 123
+
+# Step 2: Convert CSV to JSONL
+arabic-synth convert-csv \
+  --input-file outputs/balanced_seed_exams.csv \
+  --output-file outputs/balanced_seeds.jsonl
 
 # Select personas from collection
 arabic-synth select-personas \
   --input-file data/personas/personas_all.jsonl \
-  --output-file outputs/personas/selected_200.jsonl \
+  --output-file outputs/personas_selected.jsonl \
   --n 200 --seed 42
 ```
 
 ### Persona Generation Commands
 ```bash
-# Build persona-augmented requests
+# Build persona-augmented requests (using balanced seed data)
 arabic-synth build-persona-requests \
-  --exams-path data/exams.jsonl \
-  --personas-path data/personas/selected_200.jsonl \
+  --exams-path data/seeds/balanced_seeds.jsonl \
+  --personas-path outputs/personas_selected.jsonl \
   --output-path outputs/requests_persona_exams.jsonl \
   --per-item-personas 20 \
-  --target-total 11000
+  --target-total 5000
 
 # Send requests to OpenAI
 arabic-synth send-persona-requests \
   --input-file outputs/requests_persona_exams.jsonl \
-  --output-file outputs/exams_raw.jsonl \
-  --error-file outputs/exams_errors.jsonl \
+  --output-file outputs/exams_pers_raw.jsonl \
+  --error-file outputs/exams__pers_err.jsonl \
   --model gpt-4o
 ```
 
 ### Quality Validation Commands
 ```bash
 # Run quality checks
-arabic-synth quality-check \
-  --input-file outputs/exams_raw.jsonl \
+arabic-synth evaluate-persona \
+  --input-file outputs/exams_pers_raw.jsonl \
   --report-json outputs/quality_report.json \
   --flag-csv outputs/flagged_samples.csv \
-  --arabic-ratio 0.90
+  --arabic-ratio 0.7
 ```
 
 ## 🔗 Updated Import Structure
@@ -124,7 +138,7 @@ from arabic_synth.persona.build_requests import main as build_main
 from arabic_synth.persona.send_requests import main as send_main
 
 # Quality validation
-from arabic_synth.quality.quality_check import main as quality_main
+from arabic_synth.evaluate.evaluate_persona import main as evaluate_persona
 ```
 
 ## ✅ Verification Status
@@ -133,7 +147,7 @@ All imports and CLI commands have been tested and verified:
 
 - ✅ **Persona templates import**: `arabic_synth.persona.templates_persona`
 - ✅ **Data prep imports**: `arabic_synth.data_prep.convert_csv`
-- ✅ **Quality check imports**: `arabic_synth.quality.quality_check`
+- ✅ **Persona evaluation imports**: `arabic_synth.evaluate.evaluate_persona`
 - ✅ **CLI commands**: All 5 new persona commands available
 - ✅ **Package installation**: Working in virtual environment
 
@@ -141,8 +155,16 @@ All imports and CLI commands have been tested and verified:
 
 ### Phase 1: Data Preparation
 ```bash
-# 1. Convert CSV data
-arabic-synth convert-csv
+# 1. Sample and convert CSV data in one step (RECOMMENDED)
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file data/exams.jsonl \
+  --n 100 \
+  --mode stratified \
+  --stratify-col subject
+
+# Alternative: Convert entire CSV (legacy approach)
+# arabic-synth convert-csv
 
 # 2. Select personas (if needed)
 arabic-synth select-personas --n 200
@@ -161,7 +183,7 @@ arabic-synth send-persona-requests --model gpt-4o
 ### Phase 3: Quality Validation
 ```bash
 # 5. Run quality checks
-arabic-synth quality-check --arabic-ratio 0.90
+arabic-synth evaluate-persona --arabic-ratio 0.80
 ```
 
 ### Phase 4: Standard Pipeline (Optional)
@@ -176,7 +198,63 @@ arabic-synth evaluate exams --in-path outputs/exams_clean.jsonl
 arabic-synth export exams --out-format csv
 ```
 
-## 🎯 Benefits of Reorganization
+## 🔬 Enhanced Persona Pipeline with Scientific Sampling
+
+The integration of `exam_processor.py` brings scientific rigor to the persona pipeline, enabling combined sampling and conversion operations:
+
+### **1. Balanced Seed Data Creation**
+```bash
+# Create stratified seed data and convert in one step (RECOMMENDED)
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file data/seeds/scientific_seeds.jsonl \
+  --n 10 \
+  --mode stratified \
+  --stratify-col subject \
+  --seed 123
+```
+
+### **2. Quality Test Set Generation**
+```bash
+# Create representative test sets for validation
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file outputs/validation_set.jsonl \
+  --n 100 \
+  --mode stratified \
+  --stratify-col grade \
+  --seed 456
+```
+
+### **3. Domain-Specific Persona Generation**
+```bash
+# Sample specific subjects for targeted generation and convert in one step
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file data/science_seeds.jsonl \
+  --n 20 \
+  --mode stratified \
+  --stratify-col subject \
+  --seed 789
+
+# Generate persona requests for science domain
+arabic-synth build-persona-requests --exams-path data/science_seeds.jsonl --target-total 2000
+```
+
+### **4. Reproducible Experimental Workflows**
+```bash
+# Create multiple test conditions with different seeds
+for experiment in exp1 exp2 exp3; do
+  arabic-synth sample-and-convert \
+    --input-file data/test-00000-of-00001.arabic.csv \
+    --output-file "outputs/${experiment}_test.jsonl" \
+    --n 25 \
+    --mode uniform \
+    --seed $((RANDOM))
+done
+```
+
+## 🎯 Benefits of Enhanced Pipeline
 
 ### 1. **Clear Phase Separation**
 - Data preparation scripts in `data_prep/`

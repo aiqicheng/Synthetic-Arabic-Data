@@ -34,7 +34,7 @@ This document provides a comprehensive, step-by-step breakdown of the Arabic syn
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                                5. EVALUATION PHASE                                 │
+│                           5. QUALITY CHECK & EVALUATION PHASE                      │
 └─────────────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -74,20 +74,45 @@ Synthetic Data/
 ### 2.1 Seed Data Extraction
 **Purpose**: Extract ≤10 diverse samples from test set for style guidance only
 
+#### **Option A: Manual Seed Preparation (Original)**
 **Process**:
 1. **Load Original Test Set**: `test-00000-of-00001.arabic.csv`
 2. **Parse Complex Format**: Handle nested dictionary strings, numpy arrays
 3. **Subject Diversity Check**: Ensure seeds cover multiple subjects
 4. **Quality Filtering**: Remove malformed or incomplete samples
-5. **Export Seeds**: Save as `data/seeds/exams_seeds_from_testset.jsonl`
+5. **Export Seeds**: Save as `outputs/exams_seeds_from_testset.jsonl`
 
-**Seed Constraint Rules**:
+**Output**: `outputs/exams_seeds_from_testset.jsonl` (≤10 samples)
+
+#### **Option B: Automated Seed Generation (RECOMMENDED)**
+**Purpose**: Use `exam_processor.py` for scientific sampling and clean conversion
+
+**Process**:
+```bash
+# Generate stratified seeds with clean JSONL format
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file outputs/style_guide_seeds.jsonl \
+  --n 10 \
+  --mode stratified \
+  --stratify-col subject \
+  --seed 42
+```
+
+**Benefits**:
+- ✅ **Scientific sampling**: Ensures subject diversity automatically
+- ✅ **Clean format**: Produces standardized JSONL output
+- ✅ **Reproducible**: Consistent results with seed parameter
+- ✅ **Quality filtering**: Built-in validation and error handling
+- ✅ **One command**: No manual parsing or conversion needed
+
+**Output**: `outputs/style_guide_seeds.jsonl` (10 samples, stratified by subject)
+
+#### **Seed Constraint Rules (Both Options)**:
 - Maximum 10 seeds allowed
 - Must cover ≥3 different subjects
 - No content replication, only style guidance
 - Diversity in question length and complexity
-
-**Output**: `data/seeds/exams_seeds_from_testset.jsonl` (≤10 samples)
 
 ### 2.2 Seed Manager Initialization
 **Components**:
@@ -241,32 +266,48 @@ class ExamItem(BaseModel):
 
 **Output**: `outputs/exams_clean.jsonl` (cleaned, validated data)
 
-## 📊 5. EVALUATION PHASE
+## 📊 5. QUALITY CHECK & EVALUATION PHASE
 
-### 5.1 Fidelity Check
-**Purpose**: Compare synthetic data characteristics with real data
+### 5.1 Comprehensive Quality Validation
+**Purpose**: Unified quality assessment combining validation and evaluation
 
-**Metrics**:
-1. **Length Distribution**: Mean, standard deviation comparison
-2. **Answer Balance**: Answer letter distribution, L1 distance
-3. **Vocabulary Analysis**: TTR, vocabulary size, Jaccard similarity
+**Enhanced Quality Check Features**:
+1. **Schema Validation**: JSON structure and field consistency
+2. **Arabic Language Purity**: Character ratio validation (configurable threshold)
+3. **Length Boundaries**: Question length validation (10-600 characters)
+4. **Answer Consistency**: Verify answers match available options
+5. **Duplicate Detection**: Advanced shingle-based similarity detection
+6. **Diversity Metrics**: distinct-2, distinct-3 calculations
+7. **Persona Distribution**: Coverage and balance analysis
 
-### 5.2 Utility Check (TSTR)
-**Purpose**: Train on synthetic, test on real data
+### 5.2 Real Data Comparison (Enhanced)
+**Purpose**: Statistical comparison with reference datasets
 
-**Process**:
-1. **Feature Extraction**: CountVectorizer for text representation
-2. **Model Training**: LogisticRegression on synthetic data
-3. **Real Data Testing**: Evaluate on real test set
-4. **Performance Comparison**: Accuracy and other metrics
+**Comparison Metrics**:
+1. **Length Distribution**: Mean, standard deviation comparison between synthetic and real
+2. **Answer Balance**: L1 distance calculation for distribution fidelity
+3. **Vocabulary Analysis**: Jaccard similarity, vocabulary size comparison
+4. **Quality Scoring**: Automatic assessment with "good/needs_improvement" ratings
 
-### 5.3 Privacy Check
-**Purpose**: Assess re-identification risk
+**Usage**:
+```bash
+arabic-synth evaluate-style exams \
+  --in-path outputs/exams_clean.jsonl
+```
 
-**Metrics**:
-1. **Token Overlap Analysis**: Similarity to nearest real item
-2. **Risk Assessment**: Maximum and mean overlap scores
-3. **Threshold Analysis**: Share of samples above risk threshold
+### 5.3 Quality Report Output
+**Purpose**: Comprehensive reporting with actionable insights
+
+**Report Contents**:
+1. **Validation Results**: Parse errors, schema issues, language purity
+2. **Statistical Analysis**: Length distributions, answer balance, diversity
+3. **Comparison Results**: Fidelity metrics vs reference data
+4. **Flagged Samples**: Problematic samples exported to CSV for review
+5. **Persona Analytics**: Coverage distribution and balance statistics
+
+**Output Files**:
+- `quality_report.json`: Comprehensive quality metrics
+- `flagged_samples.csv`: Problematic samples for manual review
 
 ## 📤 6. EXPORT PHASE
 
@@ -289,12 +330,14 @@ outputs/
 ## 🔄 PIPELINE EXECUTION EXAMPLES
 
 ### Complete Pipeline Run
+
+#### **Option A: With Manual Seeds (Original)**
 ```bash
 # 1. Setup
 source .venv/bin/activate
 export OPENAI_API_KEY="your-key"
 
-# 2. Generate
+# 2. Generate (using pre-prepared seeds)
 arabic-synth generate exams \
   --num-samples 200 \
   --model openai:gpt-4o \
@@ -307,8 +350,8 @@ arabic-synth clean exams \
   --in-path outputs/exams_raw.jsonl \
   --out-path outputs/exams_clean.jsonl
 
-# 4. Evaluate
-arabic-synth evaluate exams \
+# 4. Quality Check & Evaluation
+arabic-synth evaluate-style exams \
   --in-path outputs/exams_clean.jsonl
 
 # 5. Export
@@ -318,22 +361,84 @@ arabic-synth export exams \
   --meta-batch-id pilot-001
 ```
 
-## 📈 QUALITY METRICS INTERPRETATION
+#### **Option B: With Automated Seed Generation (RECOMMENDED)**
+```bash
+# 1. Setup
+source .venv/bin/activate
+export OPENAI_API_KEY="your-key"
 
-### Fidelity Targets
-- **Length Distribution**: Mean difference < 2 words
-- **Answer Balance**: L1 distance < 0.1
-- **Vocabulary Diversity**: TTR > 0.3
-- **Content Overlap**: Jaccard < 0.1
+# 2. Generate stratified seeds automatically
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file outputs/style_guide_seeds.jsonl \
+  --n 10 \
+  --mode stratified \
+  --stratify-col subject \
+  --seed 42
 
-### Utility Targets
-- **TSTR Accuracy**: > 0.6 (baseline performance)
-- **Performance Gap**: < 0.2 from real data
+# 3. Generate with automated seeds
+arabic-synth generate exams \
+  --num-samples 200 \
+  --model openai:gpt-4o \
+  --seed-file outputs/style_guide_seeds.jsonl \
+  --temperature 0.9 \
+  --top-p 0.95
 
-### Privacy Targets
-- **Max Overlap**: < 0.7
-- **Mean Overlap**: < 0.4
-- **High Risk Samples**: < 5%
+# 4. Clean
+arabic-synth clean exams \
+  --in-path outputs/exams_raw.jsonl \
+  --out-path outputs/exams_clean.jsonl
+
+# 5. Quality Check & Evaluation
+arabic-synth evaluate-style exams \
+  --in-path outputs/exams_clean.jsonl
+
+# 6. Export
+arabic-synth export exams \
+  --in-path outputs/exams_clean.jsonl \
+  --out-format csv \
+  --meta-batch-id pilot-001
+```
+
+### 🤔 **Which Option Should You Choose?**
+
+| Criteria | Option A (Manual) | Option B (Automated) |
+|----------|------------------|---------------------|
+| **Setup Time** | Requires manual seed preparation | One command |
+| **Reproducibility** | Depends on manual process | Fully reproducible with seed |
+| **Subject Diversity** | Manual verification needed | Automatic stratification |
+| **Data Quality** | Manual quality filtering | Built-in validation |
+| **Format Consistency** | May vary | Standardized clean format |
+| **Scientific Rigor** | Manual sampling bias | Statistical sampling |
+| **Maintenance** | Requires updates if test set changes | Automatically adapts |
+
+**Recommendation**: Use **Option B (Automated)** for production workflows and **Option A (Manual)** only when you need specific seed examples or custom filtering.
+
+## 📈 ENHANCED QUALITY METRICS INTERPRETATION
+
+### Validation Targets (Built-in Quality Check)
+- **Parse Success Rate**: > 95% (JSON structure validity)
+- **Arabic Purity**: > 90% Arabic characters (configurable)
+- **Schema Compliance**: 100% valid exam structure
+- **Answer Consistency**: > 95% answers match options
+- **Duplicate Rate**: < 5% near-duplicate clusters
+
+### Fidelity Targets (Real Data Comparison)
+- **Length Distribution**: Mean difference < 2 words from real data
+- **Answer Balance**: L1 distance < 0.1 from target distribution
+- **Vocabulary Diversity**: TTR > 0.3, distinct-2 > 0.8
+- **Content Overlap**: Jaccard similarity < 0.1 with real data
+
+### Quality Scoring (Automatic Assessment)
+- **"good"**: L1 distance < 0.1, mean difference < 2 words
+- **"needs_improvement"**: L1 distance > 0.1 or significant statistical differences
+- **Flagged Samples**: Automatic identification of problematic items
+
+### Enhanced Reporting
+- **Comprehensive JSON**: All metrics in structured format
+- **Flagged Samples CSV**: Problematic items for manual review
+- **Persona Analytics**: Distribution balance and coverage statistics
+- **Comparison Analysis**: Statistical comparison with reference datasets
 
 ## 🚨 TROUBLESHOOTING
 
@@ -344,15 +449,46 @@ arabic-synth export exams \
 4. **Distribution Imbalance**: Check quota scheduling logic
 
 ### Debug Commands
+
+#### **For Manual Seeds (Option A)**
 ```bash
 # Check seed loading
 python -c "from src.arabic_synth.utils.seed_manager import SeedManager; sm = SeedManager(); print(sm.load_seeds_from_testset('data/seeds/exams_seeds_from_testset.jsonl'))"
+```
 
+#### **For Automated Seeds (Option B)**
+```bash
+# Test automated seed generation
+arabic-synth sample-and-convert \
+  --input-file data/test-00000-of-00001.arabic.csv \
+  --output-file data/seeds/debug_seeds.jsonl \
+  --n 5 \
+  --mode stratified \
+  --stratify-col subject
+
+# Check generated seeds
+python -c "
+import json
+with open('data/seeds/debug_seeds.jsonl') as f:
+    seeds = [json.loads(line) for line in f if line.strip()]
+    print(f'Generated {len(seeds)} seeds')
+    for i, seed in enumerate(seeds):
+        print(f'{i+1}. {seed[\"question\"][:50]}...')
+        print(f'   Options: {len(seed[\"options\"])}, Answer: {seed[\"answer\"]}')
+"
+
+# Load automated seeds with SeedManager
+python -c "from src.arabic_synth.utils.seed_manager import SeedManager; sm = SeedManager(); print(sm.load_seeds_from_testset('data/seeds/style_guide_seeds.jsonl'))"
+```
+
+#### **Common Debug Commands (Both Options)**
+```bash
 # Validate schema
 python -c "from src.arabic_synth.schemas.exams import ExamItem; import json; data = json.loads(open('outputs/exams_raw.jsonl').readline()); ExamItem(**data)"
 
-# Check quality metrics
-arabic-synth evaluate exams --in-path outputs/exams_clean.jsonl
+# Check quality metrics with comprehensive analysis
+arabic-synth evaluate-style exams \
+  --in-path outputs/exams_clean.jsonl
 ```
 
 ## 📚 ADDITIONAL RESOURCES

@@ -386,7 +386,7 @@ arabic-synth style-persona-workflow \
 # But you can still run additional quality checks:
 
 # 3. Quality check final results
-arabic-synth quality-check \
+arabic-synth evaluate-persona \
   --input-file outputs/style_persona/final_responses.jsonl \
   --output-dir outputs/style_persona/quality_reports
 
@@ -422,7 +422,7 @@ arabic-synth clean exams \
 ### Related Commands
 - `arabic-synth sample-and-convert --help` - Individual sampling and conversion
 - `arabic-synth build-persona-requests --help` - Persona request generation
-- `arabic-synth quality-check --help` - Quality validation
+- `arabic-synth evaluate-persona --help` - Persona-augmented quality validation
 - `arabic-synth select-personas --help` - Persona curation
 
 ### Configuration Files
