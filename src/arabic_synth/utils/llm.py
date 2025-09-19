@@ -49,13 +49,52 @@ def call_llm(model: str, prompt: str, temperature: float = 0.7, top_p: float = 0
         except Exception as e:
             raise RuntimeError(f"OpenAI API call failed: {e}")
     
-    # Fallback mock remains deterministic
+    # Fallback mock with some variety
     if "options" in prompt and "answer" in prompt:
-        return json.dumps({
-            "question": "ما عاصمة دولة عربية تطل على الخليج وتتميز بمعمار حديث؟",
-            "options": ["A. الدوحة", "B. الرياض", "C. جدة", "D. المنامة"],
-            "answer": "A"
-        }, ensure_ascii=False)
+        import random
+        import hashlib
+        
+        # Use prompt hash to generate consistent but varied responses
+        prompt_hash = int(hashlib.md5(prompt.encode()).hexdigest()[:8], 16)
+        random.seed(prompt_hash)
+        
+        # Mock question templates with variety
+        questions = [
+            {
+                "question": "ما عاصمة دولة عربية تطل على الخليج وتتميز بمعمار حديث؟",
+                "options": ["A. الدوحة", "B. الرياض", "C. جدة", "D. المنامة"],
+                "answer": "A"
+            },
+            {
+                "question": "أي من الكواكب التالية الأقرب إلى الشمس؟",
+                "options": ["A. الأرض", "B. المريخ", "C. عطارد", "D. الزهرة"],
+                "answer": "C"
+            },
+            {
+                "question": "من هو مؤلف رواية 'مدن الملح'؟",
+                "options": ["A. عبد الرحمن منيف", "B. نجيب محفوظ", "C. غسان كنفاني", "D. إميل حبيبي"],
+                "answer": "A"
+            },
+            {
+                "question": "ما هي أكبر قارة في العالم من حيث المساحة؟",
+                "options": ["A. أفريقيا", "B. آسيا", "C. أوروبا", "D. أمريكا الشمالية"],
+                "answer": "B"
+            },
+            {
+                "question": "في أي عام تأسست جامعة الأزهر؟",
+                "options": ["A. 970م", "B. 988م", "C. 1010م", "D. 1050م"],
+                "answer": "A"
+            },
+            {
+                "question": "ما هو العنصر الكيميائي الأكثر وفرة في الكون؟",
+                "options": ["A. الأكسجين", "B. الكربون", "C. الهيدروجين", "D. الهيليوم"],
+                "answer": "C"
+            }
+        ]
+        
+        # Select a question based on hash
+        selected = questions[prompt_hash % len(questions)]
+        return json.dumps(selected, ensure_ascii=False)
     if "sentiment" in prompt and "text" in prompt:
         return json.dumps({
             "text": "تجربة رائعة في المطعم اليوم؛ خدمة سريعة وطعام لذيذ وأسعار مناسبة.",

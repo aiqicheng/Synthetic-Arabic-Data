@@ -21,7 +21,8 @@ python quality_check.py --input outputs/exams_raw.jsonl --report_json outputs/qu
 """
 import argparse, json, os, re, math, csv, hashlib
 from collections import Counter, defaultdict
-from typing import List, Dict, Any, Tuple, Iterable
+from typing import List, Dict, Any, Tuple, Iterable, Optional
+from statistics import mean, stdev
 
 ARABIC_RE = re.compile(
     r"[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0660-\u0669\u06F0-\u06F9]"
@@ -79,12 +80,100 @@ def distinct_n(texts: List[str], n: int = 2) -> float:
             all_ngrams.add(tuple(toks[i:i+n]))
     return (len(all_ngrams) / total) if total else 0.0
 
-def main(input_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, min_len=10, max_len=600, dup_shingle=5, dup_jaccard=0.90, sample_flags=200):
+def compare_with_real_data(synthetic_data: List[Dict[str, Any]], real_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Compare synthetic data with real data distributions"""
+    if not real_data:
+        return {"error": "No real data provided for comparison"}
+    
+    return {
+        "length_comparison": compare_length_distributions(synthetic_data, real_data),
+        "answer_balance_comparison": compare_answer_balance(synthetic_data, real_data),
+        "vocabulary_analysis": calculate_vocabulary_overlap(synthetic_data, real_data)
+    }
+
+def compare_length_distributions(synthetic: List[Dict], real: List[Dict]) -> Dict:
+    """Compare question length distributions between synthetic and real data"""
+    syn_lengths = [len(item.get("question", "").split()) for item in synthetic if item.get("question")]
+    real_lengths = [len(item.get("question", "").split()) for item in real if item.get("question")]
+    
+    if not syn_lengths or not real_lengths:
+        return {"error": "Insufficient data for length comparison"}
+    
+    syn_mean = mean(syn_lengths)
+    real_mean = mean(real_lengths)
+    syn_std = stdev(syn_lengths) if len(syn_lengths) > 1 else 0
+    real_std = stdev(real_lengths) if len(real_lengths) > 1 else 0
+    
+    return {
+        "synthetic_mean": round(syn_mean, 2),
+        "real_mean": round(real_mean, 2),
+        "mean_difference": round(abs(syn_mean - real_mean), 2),
+        "synthetic_std": round(syn_std, 2),
+        "real_std": round(real_std, 2),
+        "std_difference": round(abs(syn_std - real_std), 2)
+    }
+
+def compare_answer_balance(synthetic: List[Dict], real: List[Dict]) -> Dict:
+    """Compare answer distribution balance between synthetic and real data"""
+    syn_answers = Counter(item.get("answer", "").strip() for item in synthetic if item.get("answer"))
+    real_answers = Counter(item.get("answer", "").strip() for item in real if item.get("answer"))
+    
+    # Calculate distributions
+    syn_total = sum(syn_answers.values())
+    real_total = sum(real_answers.values())
+    
+    if syn_total == 0 or real_total == 0:
+        return {"error": "Insufficient answer data for comparison"}
+    
+    syn_dist = {k: v/syn_total for k, v in syn_answers.items()}
+    real_dist = {k: v/real_total for k, v in real_answers.items()}
+    
+    # Calculate L1 distance
+    all_letters = set(list(syn_dist.keys()) + list(real_dist.keys()))
+    l1_distance = sum(abs(syn_dist.get(letter, 0) - real_dist.get(letter, 0)) for letter in all_letters)
+    
+    return {
+        "synthetic_distribution": dict(syn_dist),
+        "real_distribution": dict(real_dist),
+        "l1_distance": round(l1_distance, 4),
+        "balance_quality": "good" if l1_distance < 0.1 else "needs_improvement"
+    }
+
+def calculate_vocabulary_overlap(synthetic: List[Dict], real: List[Dict]) -> Dict:
+    """Calculate vocabulary overlap between synthetic and real data"""
+    syn_words = set()
+    real_words = set()
+    
+    for item in synthetic:
+        if item.get("question"):
+            syn_words.update(item["question"].split())
+    
+    for item in real:
+        if item.get("question"):
+            real_words.update(item["question"].split())
+    
+    if not syn_words or not real_words:
+        return {"error": "Insufficient vocabulary data"}
+    
+    overlap = len(syn_words.intersection(real_words))
+    union = len(syn_words.union(real_words))
+    jaccard = overlap / union if union > 0 else 0
+    
+    return {
+        "synthetic_vocab_size": len(syn_words),
+        "real_vocab_size": len(real_words),
+        "overlap_words": overlap,
+        "jaccard_similarity": round(jaccard, 4),
+        "vocabulary_diversity": round(len(syn_words) / len(real_words), 4) if real_words else 0
+    }
+
+def main(input_file=None, real_data_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, min_len=10, max_len=600, dup_shingle=5, dup_jaccard=0.90, sample_flags=200, include_comparison=False):
     if input_file:
         # Called programmatically
         class Args:
             def __init__(self):
                 self.input = input_file or "outputs/exams_raw.jsonl"
+                self.real_data_file = real_data_file
                 self.report_json = report_json or "outputs/quality_report.json"
                 self.flag_csv = flag_csv or "outputs/flagged_samples.csv"
                 self.arabic_ratio = arabic_ratio
@@ -93,11 +182,13 @@ def main(input_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, mi
                 self.dup_shingle = dup_shingle
                 self.dup_jaccard = dup_jaccard
                 self.sample_flags = sample_flags
+                self.include_comparison = include_comparison
         args = Args()
     else:
         # Called from command line
         ap = argparse.ArgumentParser(description="Run comprehensive quality checks on generated data")
         ap.add_argument("--input-file", default="outputs/exams_raw.jsonl", help="Input generated data file")
+        ap.add_argument("--real-data-file", help="Real data file for comparison (optional)")
         ap.add_argument("--report-json", default="outputs/quality_report.json", help="Quality report output")
         ap.add_argument("--flag-csv", default="outputs/flagged_samples.csv", help="Flagged samples output")
         ap.add_argument("--arabic-ratio", type=float, default=0.90, help="Minimum Arabic character ratio")
@@ -106,6 +197,7 @@ def main(input_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, mi
         ap.add_argument("--dup-shingle", type=int, default=5, help="N-gram size for duplicate detection")
         ap.add_argument("--dup-jaccard", type=float, default=0.90, help="Jaccard similarity threshold")
         ap.add_argument("--sample-flags", type=int, default=200, help="Maximum flagged samples to export")
+        ap.add_argument("--include-comparison", action="store_true", help="Include comparison with real data")
         args = ap.parse_args()
         
         # Convert hyphens to underscores for compatibility
@@ -262,6 +354,32 @@ def main(input_file=None, report_json=None, flag_csv=None, arabic_ratio=0.90, mi
             "dup_jaccard": args.dup_jaccard,
         }
     }
+
+    # Add comparison with real data if provided
+    if hasattr(args, 'real_data_file') and args.real_data_file and os.path.exists(args.real_data_file):
+        try:
+            # Load real data
+            real_data = []
+            with open(args.real_data_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        real_data.append(json.loads(line))
+            
+            # Load synthetic data (extract from personas structure)
+            synthetic_data = []
+            for rec in read_jsonl(args.input):
+                if rec.get("synthetic"):
+                    synthetic_data.append(rec["synthetic"])
+                elif rec.get("question"):  # Direct exam format
+                    synthetic_data.append(rec)
+            
+            comparison_results = compare_with_real_data(synthetic_data, real_data)
+            report["comparison_with_real"] = comparison_results
+            print(f"[INFO] Added comparison with real data from {args.real_data_file}")
+        except Exception as e:
+            report["comparison_error"] = str(e)
+            print(f"[WARN] Failed to compare with real data: {e}")
 
     os.makedirs(os.path.dirname(args.report_json), exist_ok=True)
     with open(args.report_json, "w", encoding="utf-8") as w:

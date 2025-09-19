@@ -40,8 +40,11 @@ class SeedManager:
         for seed in selected_seeds:
             try:
                 if task == "exams":
-                    ExamItem(**seed)  # 验证格式
-                    validated_seeds.append(seed)
+                    # Check for required fields without strict schema validation
+                    # since seeds might have different format than generated items
+                    if ("question" in seed and seed["question"] and 
+                        "options" in seed and isinstance(seed["options"], list) and len(seed["options"]) >= 3):
+                        validated_seeds.append(seed)
             except Exception:
                 continue
                 

@@ -1,11 +1,12 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import List
+from typing import List, Optional
 
 
 class ExamItem(BaseModel):
     question: str
     options: List[str] = Field(min_length=4, max_length=4)
     answer: str
+    notes: Optional[str] = None
 
     @field_validator("answer")
     @classmethod
