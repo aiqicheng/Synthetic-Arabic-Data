@@ -21,17 +21,36 @@ A comprehensive pipeline for generating high-quality Arabic synthetic datasets u
 
 ```
 src/arabic_synth/
-├── cli.py              # Command-line interface
-├── generators/run.py   # Core generation logic
-├── postprocess/clean.py # Data cleaning & deduplication
-├── evaluate/evaluate.py # Quality evaluation
-├── schemas/            # Pydantic validation schemas
-├── prompts/templates.py # LLM prompt templates
-└── utils/              # Core utilities
-    ├── llm.py         # LLM API integration
-    ├── seed_manager.py # Seed constraint system
-    ├── quality_validator.py # Quality metrics
-    └── anonymizer.py  # Data anonymization
+├── cli.py                     # 🎯 Main CLI interface (Typer-based)
+├── data_prep/                 # 📊 DATA PREPARATION PHASE
+│   ├── exam_processor.py      # Combined sampling & CSV-to-JSONL conversion
+│   └── personas_select.py     # Persona selection and filtering
+├── generators/                # 🚀 GENERATION PHASE
+│   ├── run.py                 # Core generation logic with seed constraints
+│   └── persona_augment.py     # Persona-augmented generation utilities
+├── persona/                   # 👤 PERSONA PIPELINE
+│   ├── build_requests.py      # Build persona-augmented requests
+│   ├── send_requests.py       # Send requests to LLM APIs
+│   └── templates_persona.py   # Persona-specific prompt templates
+├── postprocess/               # 🧹 POST-PROCESSING PHASE
+│   └── clean.py               # Data cleaning, validation & deduplication
+├── evaluate/                  # 📊 EVALUATION PHASE
+│   ├── evaluate_style.py      # Style Guide Pipeline evaluation
+│   └── evaluate_persona.py    # Persona-augmented quality assessment
+├── augment/                   # 🔄 AUGMENTATION PHASE
+│   └── augment.py             # Data augmentation and variant generation
+├── prompts/                   # 📝 PROMPT TEMPLATES
+│   └── templates.py           # LLM prompt templates (Style Guide)
+├── schemas/                   # 🔍 VALIDATION SCHEMAS
+│   ├── exams.py               # Exam data structure validation
+│   ├── sentiment.py           # Sentiment analysis schemas
+│   └── grammar.py             # Grammar correction schemas
+└── utils/                     # 🛠️ CORE UTILITIES
+    ├── llm.py                 # LLM API integration (OpenAI, etc.)
+    ├── seed_manager.py        # Seed constraint system
+    ├── quality_validator.py   # Quality metrics and validation
+    ├── io.py                  # File I/O operations
+    └── anonymizer.py          # Data anonymization utilities
 ```
 
 ## ⚙️ Setup
@@ -48,46 +67,103 @@ pip install -e .
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
-## 📖 Usage
+## 📖 Workflows
 
-### Generate Data
+The pipeline supports three main workflows for Arabic synthetic data generation:
+
+### 🎨 Style Guide Workflow
+**Purpose**: Generate data following consistent style patterns from seed examples
+1. **Seed Selection**: Extract/sample representative examples
+2. **🎯 Style-Based Generation** ⚠️ **CURRENT FOCUS**: Use `generators/run.py` with style templates (`prompts/templates.py`)
+   - **Iterative Prompt Tuning**: Manual output checks and template refinement required
+   - **Template Location**: `./src/arabic_synth/prompts/templates.py`
+   - **Process**: Generate → Review → Tune → Repeat until quality targets met
+3. **Post-Processing**: Clean, validate, and evaluate quality
 
 ```bash
-# Generate EXAMS with seed constraints and distribution control
-arabic-synth generate exams \
-  --num-samples 200 \
-  --model openai:gpt-4o \
-  --seed-file data/seeds/exams_seeds_from_testset.jsonl \
-  --temperature 0.9 \
-  --top-p 0.95
+# Quick start - Style Guide Pipeline
+arabic-synth sample-and-convert --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 10 --mode stratified
 
-# Generate sentiment data
-arabic-synth generate sentiment --num-samples 100 --model openai:gpt-4o
+# ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine prompts/templates.py
+arabic-synth generate exams --seed-file outputs/seeds.jsonl --model openai:gpt-4o --num-samples 200
 
-# Generate grammar data  
-arabic-synth generate grammar --num-samples 100 --model openai:gpt-4o
+arabic-synth clean exams --in-path outputs/exams_raw.jsonl --out-path outputs/exams_clean.jsonl
+arabic-synth evaluate-style exams --in-path outputs/exams_clean.jsonl
 ```
 
-### Clean & Process
+### 👤 Persona Enhanced Workflow  
+**Purpose**: Generate diverse data using persona-based perspectives
+1. **Seed Selection**: Prepare base examples for persona augmentation
+2. **🎯 Persona Requests** ⚠️ **CURRENT FOCUS**: Build requests with persona templates (`persona/templates_persona.py`)
+   - **Iterative Prompt Tuning**: Manual output checks and template refinement required
+   - **Template Location**: `./src/arabic_synth/persona/templates_persona.py`
+   - **Process**: Generate → Review → Tune → Repeat until persona consistency achieved
+3. **Post-Processing**: Quality assessment and evaluation
 
 ```bash
-# Clean generated data (schema validation, deduplication, TTR filtering)
-arabic-synth clean exams \
-  --in-path outputs/exams_raw.jsonl \
-  --out-path outputs/exams_clean.jsonl
+# Quick start - Persona Pipeline
+arabic-synth sample-and-convert --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 20
+arabic-synth select-personas --input-file data/personas/personas_all.jsonl --output-file outputs/personas.jsonl --n 200
 
-# Evaluate quality metrics
-arabic-synth evaluate exams --in-path outputs/exams_clean.jsonl
+# ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine persona/templates_persona.py
+arabic-synth build-persona-requests --exams-path outputs/seeds.jsonl --personas-path outputs/personas.jsonl
+arabic-synth send-persona-requests --model openai:gpt-4o
+
+arabic-synth evaluate-persona --input-file outputs/exams_pers_raw.jsonl
 ```
 
-### Export
+### 🔄 Combined Style-Persona Workflow
+**Purpose**: Best of both worlds - style consistency with persona diversity
+1. **Stratified Sampling**: Extract balanced seeds from original test data
+2. **Style Guide Generation**: Create styled examples using seed constraints  
+3. **Persona Selection**: Choose diverse personas for augmentation
+4. **Combined Generation**: Apply personas to styled seeds for maximum diversity
 
 ```bash
-# Export to various formats with metadata
-arabic-synth export exams \
-  --in-path outputs/exams_clean.jsonl \
-  --out-format csv \
-  --meta-batch-id pilot-001
+# Quick start - Combined Workflow (RECOMMENDED)
+arabic-synth style-persona-workflow \
+  --input-csv data/test-00000-of-00001.arabic.csv \
+  --personas-path data/personas/selected_200.jsonl \
+  --n-seeds 20 \
+  --n-styled 100 \
+  --per-item-personas 5 \
+  --model openai:gpt-4o
+```
+
+**📋 Detailed Guides**: 
+- Style Guide: `StyleGuide_PIPELINE_DETAILED.md`
+- Persona Pipeline: `Persona_PIPELINE_DETAILED.md`  
+- Combined Workflow: `STYLE_PERSONA_WORKFLOW_GUIDE.md`
+
+---
+
+## ⚠️ **CURRENT DEVELOPMENT FOCUS**
+
+The following components require **active iterative prompt tuning** through manual output review:
+
+### 🎯 **Priority Tasks:**
+1. **Style Guide Templates** (`src/arabic_synth/prompts/templates.py`)
+   - Fine-tune `EXAMS_TEACHER_PROMPT` for better Arabic naturalness
+   - Optimize style consistency and content diversity balance
+   - Target: 95%+ quality scores in style evaluation
+
+2. **Persona Templates** (`src/arabic_synth/persona/templates_persona.py`) 
+   - Refine `ARABIC_EXAM_REWRITE_V1` for authentic persona perspectives
+   - Ensure persona consistency while maintaining content accuracy
+   - Target: Diverse yet coherent persona-based variations
+
+### 🔄 **Iterative Process:**
+```
+Generate Sample → Manual Review → Identify Issues → Tune Prompts → Repeat
+```
+
+**Evaluation Commands for Tuning:**
+```bash
+# Test style guide outputs
+arabic-synth evaluate-style exams --in-path outputs/exams_clean.jsonl
+
+# Test persona outputs  
+arabic-synth evaluate-persona --input-file outputs/exams_pers_raw.jsonl
 ```
 
 ## 🔒 Seed Constraint System
