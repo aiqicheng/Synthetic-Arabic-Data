@@ -330,30 +330,48 @@ def style_persona_workflow(
             raise typer.Exit(1)
         typer.echo(f"✅ Personas file found: {personas_path}")
         
-        # Step 4: Combine personas with styled seeds
-        typer.echo(f"\n🔄 Step 4: Combining personas with styled seeds")
-        combined_requests_path = output_dir / "combined_requests.jsonl"
+        # Step 4: Build persona-augmented requests using persona pipeline
+        typer.echo(f"\n🔄 Step 4: Building persona-augmented requests")
+        persona_requests_path = output_dir / "persona_requests.jsonl"
         
         n_requests = build_persona_requests(
             exams_path=str(styled_seeds_path),
             personas_path=str(personas_path),
-            output_path=str(combined_requests_path),
+            output_path=str(persona_requests_path),
             per_item_personas=per_item_personas,
             target_total=len(styled_results) * per_item_personas,
             seed=seed
         )
-        typer.echo(f"✅ Combined requests created: {n_requests} requests → {combined_requests_path}")
+        typer.echo(f"✅ Persona requests created: {n_requests} requests → {persona_requests_path}")
+        
+        # Step 5: Send persona requests to generate final responses
+        typer.echo(f"\n🚀 Step 5: Sending persona requests to LLM for final generation")
+        final_responses_path = output_dir / "final_responses.jsonl"
+        error_responses_path = output_dir / "error_responses.jsonl"
+        
+        from arabic_synth.persona.send_requests import main as send_persona_requests
+        
+        responses_count = send_persona_requests(
+            input_file=str(persona_requests_path),
+            output_file=str(final_responses_path),
+            error_file=str(error_responses_path),
+            model=model.replace("openai:", "") if model.startswith("openai:") else model
+        )
+        typer.echo(f"✅ Final responses generated: {responses_count} responses → {final_responses_path}")
         
         # Summary
         typer.echo(f"\n🎉 Workflow Complete! Results in {output_dir}:")
         typer.echo(f"  📊 Seeds: {seeds_path} ({stats['success']} samples)")
         typer.echo(f"  🎨 Styled Seeds: {styled_seeds_path} ({len(styled_results)} samples)")
         typer.echo(f"  👥 Personas: {personas_path}")
-        typer.echo(f"  🔄 Combined Requests: {combined_requests_path} ({n_requests} requests)")
+        typer.echo(f"  🔄 Persona Requests: {persona_requests_path} ({n_requests} requests)")
+        typer.echo(f"  🚀 Final Responses: {final_responses_path} ({responses_count} responses)")
+        if error_responses_path.exists():
+            typer.echo(f"  ⚠️  Error Responses: {error_responses_path}")
         
         # Create summary file
         summary = {
-            "workflow": "style-persona-combined",
+            "workflow": "style-persona-combined-full",
             "input_csv": str(input_csv),
             "sampling_mode": sampling_mode,
             "n_seeds": n_seeds,
@@ -367,8 +385,11 @@ def style_persona_workflow(
                 "styled_seeds_file": str(styled_seeds_path),
                 "styled_count": len(styled_results),
                 "personas_file": str(personas_path),
-                "combined_requests_file": str(combined_requests_path),
-                "total_requests": n_requests
+                "persona_requests_file": str(persona_requests_path),
+                "total_requests": n_requests,
+                "final_responses_file": str(final_responses_path),
+                "total_responses": responses_count,
+                "error_responses_file": str(error_responses_path) if error_responses_path.exists() else None
             }
         }
         
