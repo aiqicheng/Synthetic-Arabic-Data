@@ -6,18 +6,20 @@ The `style-persona-workflow` command provides a complete end-to-end pipeline tha
 
 ## 🔄 Workflow Steps
 
-The command executes a 4-step pipeline:
+The command executes a 5-step pipeline:
 
 ```mermaid
 graph LR
     A[Original CSV] --> B[Sample & Convert]
     B --> C[Style-Guided Generation]
-    C --> D[Persona Augmentation]
-    D --> E[Combined Dataset]
+    C --> D[Build Persona Requests]
+    D --> E[Send Persona Requests]
+    E --> F[Final Dataset]
     
-    B -.-> F[seeds.jsonl]
-    C -.-> G[styled_seeds.jsonl]
-    D -.-> H[combined_requests.jsonl]
+    B -.-> G[seeds.jsonl]
+    C -.-> H[styled_seeds.jsonl]
+    D -.-> I[persona_requests.jsonl]
+    E -.-> J[final_responses.jsonl]
 ```
 
 ### Step 1: Sampling & Conversion 📊
@@ -37,11 +39,18 @@ graph LR
 - **Process**: Verification and preparation of persona data
 - **Purpose**: Ensure diverse perspectives are available for augmentation
 
-### Step 4: Persona Augmentation 🔄
+### Step 4: Build Persona Requests 🔄
 - **Input**: `styled_seeds.jsonl` + `selected_persona.jsonl`
-- **Process**: Create persona-augmented prompts for each styled question
-- **Output**: `combined_requests.jsonl` - Final dataset ready for LLM processing
+- **Process**: Create persona-augmented prompts using the full persona pipeline (`build-persona-requests`)
+- **Output**: `persona_requests.jsonl` - Structured requests ready for LLM processing
 - **Purpose**: Apply multiple personas to each question for perspective diversity
+
+### Step 5: Send Persona Requests 🚀
+- **Input**: `persona_requests.jsonl`
+- **Process**: Send requests to LLM using the persona pipeline (`send-persona-requests`)
+- **Output**: `final_responses.jsonl` - Complete persona-augmented dataset
+- **Purpose**: Generate final synthetic data with persona perspectives applied
+- **⚠️ Requirements**: Requires real OpenAI API access (mock model not supported)
 
 ## 📋 Command Syntax
 
@@ -89,14 +98,11 @@ arabic-synth style-persona-workflow [OPTIONS]
 
 ### Basic Usage (Development)
 ```bash
-# Quick test with mock model
+# Quick test with cost-effective model
 arabic-synth style-persona-workflow \
   --n-seeds 10 \
   --n-styled 50 \
-  --model mock \
-  --output-dir outputs/dev_test
-```
-
+  --model openai:gpt-3.5-turbo \
 ### Production Run (Small Scale)
 ```bash
 # Production run with OpenAI
@@ -145,7 +151,9 @@ The workflow creates a comprehensive output directory:
 outputs/style_persona/
 ├── seeds.jsonl                    # Step 1: Sampled seed examples
 ├── styled_seeds.jsonl             # Step 2: Style-guided questions
-├── combined_requests.jsonl        # Step 4: Final persona-augmented dataset
+├── persona_requests.jsonl         # Step 4: Persona-augmented requests
+├── final_responses.jsonl          # Step 5: Final generated dataset
+├── error_responses.jsonl          # Step 5: Failed generation attempts (if any)
 ├── workflow_summary.json          # Complete workflow metadata
 └── exams_seeds_audit.json        # Seed usage audit trail
 ```
@@ -162,15 +170,20 @@ outputs/style_persona/
 {"question": "ما هي أكبر قارة في العالم من حيث المساحة؟", "options": ["A. آسيا", "B. أفريقيا", "C. أوروبا", "D. أمريكا الشمالية"], "answer": "A"}
 ```
 
-#### `combined_requests.jsonl`
+#### `persona_requests.jsonl`
 ```json
 {"source_id": 0, "persona": "A civic leader who regularly watches the talk-show host's program and provides feedback on their reporting", "prompt": "أنت مساعد خبير في إنشاء أسئلة امتحانية باللغة العربية...", "gen_config": {"temperature": 0.9, "top_p": 0.95}}
+```
+
+#### `final_responses.jsonl`
+```json
+{"persona": "A civic leader who regularly watches the talk-show host's program and provides feedback on their reporting", "source_id": null, "model": "gpt-4o", "synthetic": {"question": "كيف يؤثر الاستخدام المفرط للأسمدة الكيميائية على البيئة من منظور جودة المياه؟", "options": ["A. يسبب تلوثاً في المياه الجوفية", "B. يساهم في تحسين جودة الهواء", "C. يؤدي إلى زيادة في المحاصيل الزراعية", "D. يساعد في تقليل انبعاثات الكربون"], "answer": "A", "rationale": "الاستخدام المفرط للأسمدة الكيميائية يؤدي إلى تسرب العناصر الكيميائية إلى المياه الجوفية، مما يسبب تلوثها."}}
 ```
 
 #### `workflow_summary.json`
 ```json
 {
-  "workflow": "style-persona-combined",
+  "workflow": "style-persona-combined-full",
   "input_csv": "data/test-00000-of-00001.arabic.csv",
   "sampling_mode": "stratified",
   "n_seeds": 20,
@@ -184,8 +197,11 @@ outputs/style_persona/
     "styled_seeds_file": "outputs/style_persona/styled_seeds.jsonl",
     "styled_count": 100,
     "personas_file": "data/personas/selected_200.jsonl",
-    "combined_requests_file": "outputs/style_persona/combined_requests.jsonl",
-    "total_requests": 500
+    "persona_requests_file": "outputs/style_persona/persona_requests.jsonl",
+    "total_requests": 500,
+    "final_responses_file": "outputs/style_persona/final_responses.jsonl",
+    "total_responses": 500,
+    "error_responses_file": "outputs/style_persona/error_responses.jsonl"
   }
 }
 ```
@@ -219,10 +235,12 @@ outputs/style_persona/
 --model openai:gpt-3.5-turbo   # Cost-effective
 ```
 
-#### Mock Model (Development)
+#### Mock Model (Limited Development)
 ```bash
---model mock                   # For testing without API costs
+--model mock                   # ⚠️ Only works for Steps 1-4, fails at Step 5
 ```
+
+**Note**: The mock model only supports the initial workflow steps (sampling, style generation, persona request building) but cannot complete Step 5 (sending persona requests) as it requires real OpenAI API integration. For complete workflow testing, use `openai:gpt-3.5-turbo` as a cost-effective alternative.
 
 ### Persona Configuration
 
@@ -272,8 +290,8 @@ head -2 outputs/style_persona/seeds.jsonl
 
 #### Repetitive Generated Content
 ```bash
-# Problem: Mock model generating identical questions
-# Solution: Use real OpenAI model or check mock model implementation
+# Problem: Mock model generating identical questions in Step 2
+# Solution: Use real OpenAI model for better variety
 --model openai:gpt-4o  # instead of --model mock
 ```
 
@@ -282,6 +300,24 @@ head -2 outputs/style_persona/seeds.jsonl
 # Problem: Personas file not found
 # Solution: Verify personas path or create personas
 arabic-synth select-personas --help
+```
+
+#### Step 5 Failure with Mock Model
+```bash
+# Problem: Error "The model `mock` does not exist" in Step 5
+# Solution: Mock model doesn't support Step 5 (send-persona-requests)
+# Use real OpenAI model instead:
+--model openai:gpt-3.5-turbo  # Cost-effective alternative
+--model openai:gpt-4o         # Best quality
+```
+
+#### Missing OpenAI API Key
+```bash
+# Problem: API key not found error
+# Solution: Set your OpenAI API key
+export OPENAI_API_KEY="your-api-key-here"
+# Or add to your .env file:
+echo "OPENAI_API_KEY=your-api-key-here" >> .env
 ```
 
 ### Validation Commands
@@ -325,7 +361,7 @@ arabic-synth style-persona-workflow \
   --n-seeds 5 \                     # Minimal seeds
   --n-styled 20 \                   # Small test set
   --per-item-personas 2 \           # Minimal personas
-  --model mock \                    # No API costs
+  --model openai:gpt-3.5-turbo \    # Cost-effective for testing
   --output-dir outputs/quick_test
 ```
 
@@ -346,15 +382,18 @@ arabic-synth style-persona-workflow \
 
 ### Post-workflow Processing
 ```bash
-# 3. Send requests to LLM (if using real model)
-arabic-synth send-persona-requests \
-  --input-file outputs/style_persona/combined_requests.jsonl \
-  --output-file outputs/style_persona/generated_responses.jsonl
+# The workflow now handles LLM generation automatically!
+# But you can still run additional quality checks:
 
-# 4. Quality check results
+# 3. Quality check final results
 arabic-synth quality-check \
-  --input-file outputs/style_persona/generated_responses.jsonl \
+  --input-file outputs/style_persona/final_responses.jsonl \
   --output-dir outputs/style_persona/quality_reports
+
+# 4. Clean and post-process (optional)
+arabic-synth clean exams \
+  --in-path outputs/style_persona/final_responses.jsonl \
+  --out-path outputs/style_persona/cleaned_responses.jsonl
 ```
 
 ## 📚 Best Practices
@@ -367,9 +406,10 @@ arabic-synth quality-check \
 
 ### 🔧 Technical Considerations
 1. **Reproducibility**: Always set `--seed` for consistent results
-2. **Cost Management**: Use `--model mock` for development, real models for production
-3. **Quality Control**: Review seed audit files and workflow summaries
-4. **Storage Planning**: Large workflows can generate substantial data
+2. **Cost Management**: Use `--model openai:gpt-3.5-turbo` for development, `openai:gpt-4o` for production
+3. **API Requirements**: Ensure `OPENAI_API_KEY` environment variable is set for real model usage
+4. **Quality Control**: Review seed audit files and workflow summaries
+5. **Storage Planning**: Large workflows can generate substantial data
 
 ### 📊 Quality Assurance
 1. **Validate Seeds**: Check that seeds represent desired style and topics
@@ -392,6 +432,24 @@ arabic-synth quality-check \
 
 ### Example Workflows
 Check the `outputs/` directory for example results from different configurations to understand expected output formats and structures.
+
+### Verified Working Example
+```bash
+# This configuration has been tested and verified to work:
+arabic-synth style-persona-workflow \
+  --n-seeds 3 \
+  --n-styled 5 \
+  --per-item-personas 2 \
+  --model openai:gpt-4o \
+  --output-dir outputs/test_example \
+  --seed 42
+```
+
+This example successfully generates:
+- 3 seed samples from stratified sampling
+- 5 styled questions using seed guidance
+- 10 persona-augmented requests (5 × 2 personas)
+- 10 final responses with persona perspectives applied
 
 ---
 

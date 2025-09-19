@@ -1,0 +1,22 @@
+{
+  "workflow": "style-persona-combined-full",
+  "input_csv": "data/test-00000-of-00001.arabic.csv",
+  "sampling_mode": "stratified",
+  "n_seeds": 3,
+  "n_styled": 5,
+  "per_item_personas": 2,
+  "model": "openai:gpt-4o",
+  "seed": 42,
+  "results": {
+    "seeds_file": "outputs/test_real_workflow/seeds.jsonl",
+    "seeds_count": 3,
+    "styled_seeds_file": "outputs/test_real_workflow/styled_seeds.jsonl",
+    "styled_count": 5,
+    "personas_file": "data/personas/selected_200.jsonl",
+    "persona_requests_file": "outputs/test_real_workflow/persona_requests.jsonl",
+    "total_requests": 10,
+    "final_responses_file": "outputs/test_real_workflow/final_responses.jsonl",
+    "total_responses": null,
+    "error_responses_file": "outputs/test_real_workflow/error_responses.jsonl"
+  }
+}
