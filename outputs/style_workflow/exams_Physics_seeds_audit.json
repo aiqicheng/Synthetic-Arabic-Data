@@ -1,0 +1,40 @@
+{
+  "seed_count": 6,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "أي مما لٌ هو من ع وٌب الترمومتر الكحول ؟...",
+      "subject_hint": "general",
+      "hash": 1325212394567037189
+    },
+    {
+      "question_preview": "إذا ترك بندول بس طٌ ل هٌتز فأنه ف النها ةٌ تٌباطأ ...",
+      "subject_hint": "general",
+      "hash": 5757136610484364296
+    },
+    {
+      "question_preview": "بماذا تختلف الأنو ةٌ الناتجة عن الأنو ةٌ الاصل ةٌ ...",
+      "subject_hint": "general",
+      "hash": -6796086484238543432
+    },
+    {
+      "question_preview": "أي مما لٌ تُعد طر قٌة للحصول على مغناط سٌ؟...",
+      "subject_hint": "general",
+      "hash": 1644661212665739711
+    },
+    {
+      "question_preview": "أي مما هٌ عٌتبر من انكم اٍت انمتجهة ؟...",
+      "subject_hint": "general",
+      "hash": -5259390973499641670
+    },
+    {
+      "question_preview": "ماذا حٌدث لشعاع الإلكترونات ف جهاز الأشعة المهبط ة...",
+      "subject_hint": "general",
+      "hash": 4431275066584289002
+    }
+  ]
+}

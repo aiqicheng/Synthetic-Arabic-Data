@@ -1,0 +1,38 @@
+{
+  "subjects": {
+    "Social": {
+      "n_seeds": 10,
+      "num_samples": 100
+    },
+    "Physics": {
+      "n_seeds": 5,
+      "num_samples": 100
+    },
+    "Biology": {
+      "n_seeds": 0,
+      "num_samples": 0
+    },
+    "Science": {
+      "n_seeds": 0,
+      "num_samples": 0
+    },
+    "Islamic Studies": {
+      "n_seeds": 0,
+      "num_samples": 0
+    }
+  },
+  "generation": {
+    "use_batch_processing": true,
+    "batch_size": 20,
+    "max_retries": 5,
+    "delay_between_batches": 2.0,
+    "timeout": 45.0,
+    "temperature": 0.8,
+    "top_p": 0.9
+  },
+  "filtering": {
+    "grades": "9,10,11,12",
+    "mode": "stratified",
+    "stratify_col": "grade"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "seed_count": 6,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "طبقة شمعية غير منفذة للماء وتوجد في طبقة البشرة ال...",
+      "subject_hint": "biology",
+      "hash": -2717071759482466527
+    },
+    {
+      "question_preview": "ماهو الترك بٌ الذي تزداد عمل ةٌ إعادة امتصاصه لأ و...",
+      "subject_hint": "general",
+      "hash": 2103256538429086285
+    },
+    {
+      "question_preview": "ما فصيلة دم ابن ورث أليل (A) من الأب واليل) O ( من...",
+      "subject_hint": "general",
+      "hash": 2415931031837285651
+    },
+    {
+      "question_preview": "توصف علاقة صراع ب نٌ الغزلان مع بعضها على الغذاء و...",
+      "subject_hint": "general",
+      "hash": 4115833591582095837
+    },
+    {
+      "question_preview": "ما هو الأثر المباشر للنيكوتين على جسم الإنسان؟...",
+      "subject_hint": "general",
+      "hash": -2315566634763783674
+    },
+    {
+      "question_preview": "أي من الهرمونات التال ةٌ فٌرز من الغدة النخام ةٌ ا...",
+      "subject_hint": "general",
+      "hash": 386597541477865391
+    }
+  ]
+}

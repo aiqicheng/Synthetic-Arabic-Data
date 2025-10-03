@@ -1,0 +1,60 @@
+{
+  "seed_count": 10,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "يرجع ارتفاع الكثافة السكانية في المناطق الساحلية م...",
+      "subject_hint": "general",
+      "hash": 6173879659095568702
+    },
+    {
+      "question_preview": "يشكل مشروع مشيرب العقاري في وسط مدينة الدوحة نقطة ...",
+      "subject_hint": "islamic",
+      "hash": -6476436528566211155
+    },
+    {
+      "question_preview": "يعتبر المؤسس الحقيقي للدولة العثمانية...",
+      "subject_hint": "general",
+      "hash": -3072487315830795077
+    },
+    {
+      "question_preview": "يسمى صانع السفن في قطر قديماً ب :...",
+      "subject_hint": "general",
+      "hash": -4187665120096092251
+    },
+    {
+      "question_preview": "تبذل دول شبه الجزيرة العربية جهوداً كبيرة للنهوض ب...",
+      "subject_hint": "general",
+      "hash": -3606068561776363139
+    },
+    {
+      "question_preview": "بدأت عملية التنقيب عن البترول في منطقة دخان عام :...",
+      "subject_hint": "general",
+      "hash": 4968079556069047466
+    },
+    {
+      "question_preview": "تقع معظم أراضي قارة أمريكا الجنوبية في نصف الكرة ا...",
+      "subject_hint": "general",
+      "hash": 9104856608341692189
+    },
+    {
+      "question_preview": "تتعرض الأرض إلى حركات باطنية سريعة ومفاجئة تتمثل ف...",
+      "subject_hint": "general",
+      "hash": -6750533238809373623
+    },
+    {
+      "question_preview": "على الرغم من إن مدينة الدوحة تأخذ الشكل الحلقي في ...",
+      "subject_hint": "biology",
+      "hash": 8279216885355949310
+    },
+    {
+      "question_preview": "حدد العبارة التي تدل على الترتيب الصحيح للإحداث ال...",
+      "subject_hint": "general",
+      "hash": 8593616931431718711
+    }
+  ]
+}

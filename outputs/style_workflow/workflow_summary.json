@@ -1,0 +1,58 @@
+{
+  "workflow": "style-subject-synthetic-generation",
+  "timestamp": "2025-09-29T01:55:37.614562",
+  "input_csv": "data/test-00000-of-00001.arabic.csv",
+  "output_dir": "outputs/style_workflow",
+  "model": "openai:gpt-4o",
+  "seed": 101,
+  "subjects_config": {
+    "Social": 10,
+    "Physics": 6,
+    "Biology": 6,
+    "Science": 5,
+    "Islamic Studies": 4
+  },
+  "results": {
+    "seed_files": {
+      "Social": "outputs/style_workflow/social_seeds.jsonl",
+      "Physics": "outputs/style_workflow/physics_seeds.jsonl",
+      "Biology": "outputs/style_workflow/biology_seeds.jsonl",
+      "Science": "outputs/style_workflow/science_seeds.jsonl",
+      "Islamic Studies": "outputs/style_workflow/islamic_studies_seeds.jsonl"
+    },
+    "generated_files": {
+      "Social": "outputs/style_workflow/generate_style_social_500.jsonl",
+      "Physics": "outputs/style_workflow/generate_style_physics_500.jsonl",
+      "Biology": "outputs/style_workflow/generate_style_biology_500.jsonl",
+      "Science": "outputs/style_workflow/generate_style_science_500.jsonl",
+      "Islamic Studies": "outputs/style_workflow/generate_style_islamic_studies_500.jsonl"
+    },
+    "processed_results": {
+      "Social": {
+        "generated": "outputs/style_workflow/generate_style_social_500.jsonl",
+        "cleaned": "outputs/style_workflow/social_clean.jsonl",
+        "evaluation_success": true
+      },
+      "Physics": {
+        "generated": "outputs/style_workflow/generate_style_physics_500.jsonl",
+        "cleaned": "outputs/style_workflow/physics_clean.jsonl",
+        "evaluation_success": true
+      },
+      "Biology": {
+        "generated": "outputs/style_workflow/generate_style_biology_500.jsonl",
+        "cleaned": "outputs/style_workflow/biology_clean.jsonl",
+        "evaluation_success": true
+      },
+      "Science": {
+        "generated": "outputs/style_workflow/generate_style_science_500.jsonl",
+        "cleaned": "outputs/style_workflow/science_clean.jsonl",
+        "evaluation_success": true
+      },
+      "Islamic Studies": {
+        "generated": "outputs/style_workflow/generate_style_islamic_studies_500.jsonl",
+        "cleaned": "outputs/style_workflow/islamic_studies_clean.jsonl",
+        "evaluation_success": true
+      }
+    }
+  }
+}

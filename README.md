@@ -73,6 +73,8 @@ The pipeline supports three main workflows for Arabic synthetic data generation:
 
 ### 🎨 Style Guide Workflow
 **Purpose**: Generate data following consistent style patterns from seed examples
+
+#### Manual Style Guide Pipeline
 1. **Seed Selection**: Extract/sample representative examples
 2. **🎯 Style-Based Generation** ⚠️ **CURRENT FOCUS**: Use `generators/run.py` with style templates (`prompts/templates.py`)
    - **Iterative Prompt Tuning**: Manual output checks and template refinement required
@@ -81,14 +83,34 @@ The pipeline supports three main workflows for Arabic synthetic data generation:
 3. **Post-Processing**: Clean, validate, and evaluate quality
 
 ```bash
-# Quick start - Style Guide Pipeline
+# Quick start - Manual Style Guide Pipeline
 arabic-synth sample-and-convert --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 10 --mode stratified
 
 # ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine prompts/templates.py
-arabic-synth generate exams --seed-file outputs/seeds.jsonl --model openai:gpt-4o --num-samples 200
+arabic-synth generate exams --output-dir outputs/style_guide_test --seed-file outputs/seeds.jsonl --model openai:gpt-4o --num-samples 200
 
-arabic-synth clean exams --in-path outputs/exams_raw.jsonl --out-path outputs/exams_clean.jsonl
+arabic-synth clean exams --in-path outputs/style_guide_test/generate_style_200.jsonl --out-path outputs/exams_clean.jsonl
 arabic-synth evaluate-style exams --in-path outputs/exams_clean.jsonl
+```
+
+#### Automated Style-Subject Workflow (Sep.28 Update)
+**Purpose**: Automated subject-specific generation with style guides
+1. **Sample seeds** from test dataset for each subject (configurable via JSON config)
+2. **Generate synthetic data** using style guides for each subject (configurable samples per subject)
+3. **Clean** generated data to remove invalid/duplicate samples
+4. **Evaluate** cleaned data for quality assessment
+
+```bash
+# Complete automated workflow with default config
+arabic-synth style-subject-workflow --output-dir outputs/style_subject
+
+# With custom configuration file
+arabic-synth style-subject-workflow --config-file configs/my_config.json --output-dir outputs/custom
+
+# Programmatic usage
+from arabic_synth.style_subject_workflow import StyleSubjectWorkflow
+workflow = StyleSubjectWorkflow(output_dir=Path("outputs/style_subject"))
+result = workflow.run_complete_workflow()
 ```
 
 ### 👤 Persona Enhanced Workflow  
@@ -134,6 +156,7 @@ arabic-synth style-persona-workflow \
 - Style Guide: `StyleGuide_PIPELINE_DETAILED.md`
 - Persona Pipeline: `Persona_PIPELINE_DETAILED.md`  
 - Combined Workflow: `STYLE_PERSONA_WORKFLOW_GUIDE.md`
+- Style-Subject Workflow: `src/arabic_synth/STYLE_SUBJECT_WORKFLOW.md`
 
 ---
 

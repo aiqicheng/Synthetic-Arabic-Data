@@ -51,6 +51,34 @@ class SeedManager:
         self.seeds = validated_seeds
         return validated_seeds
     
+    def load_seeds_from_jsonl(self, jsonl_path: Path, task: str) -> List[Dict[str, Any]]:
+        """从JSONL文件加载种子数据"""
+        if not jsonl_path.exists():
+            return []
+            
+        # 读取JSONL文件
+        with jsonl_path.open('r', encoding='utf-8') as f:
+            seeds_data = [json.loads(line) for line in f if line.strip()]
+        
+        # 限制种子数量
+        max_seeds = min(self.constraint.max_seeds, len(seeds_data))
+        selected_seeds = seeds_data[:max_seeds]  # 使用前N个种子
+        
+        # 验证种子数据格式
+        validated_seeds = []
+        for seed in selected_seeds:
+            try:
+                if task == "exams":
+                    # Check for required fields
+                    if ("question" in seed and seed["question"] and 
+                        "options" in seed and isinstance(seed["options"], list) and len(seed["options"]) >= 3):
+                        validated_seeds.append(seed)
+            except Exception:
+                continue
+                
+        self.seeds = validated_seeds
+        return validated_seeds
+    
     def get_style_guidance(self, task: str) -> str:
         """获取风格指导，不包含具体内容"""
         if not self.seeds:

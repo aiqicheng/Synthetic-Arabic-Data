@@ -6,7 +6,7 @@ from typing import List, Dict, Any, Optional
 
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
+from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, EXAMS_APPLIED_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
 from arabic_synth.schemas.exams import ExamItem
 from arabic_synth.schemas.sentiment import SentimentItem
 from arabic_synth.schemas.grammar import GrammarItem
@@ -24,10 +24,25 @@ logging.basicConfig(
 )
 
 
-def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, target_answer_letter: Optional[str] = None) -> str:
+def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, target_answer_letter: Optional[str] = None, subject: Optional[str] = None) -> str:
     base_prompt = ""
     if task == "exams":
         tmpl = persona_override or EXAMS_TEACHER_PROMPT
+        # Safely substitute placeholders to avoid JSON brace formatting issues
+        base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
+        
+        # Handle subject placeholder
+        if subject:
+            # Replace the subject placeholder line
+            original_line = "   {subject}**Subject Focus**: Generate questions specifically in the subject area: {subject}{/subject}"
+            new_line = f"   **Subject Focus**: Generate questions specifically in the subject area: {subject}"
+            base_prompt = base_prompt.replace(original_line, new_line)
+        else:
+            # Remove the subject line if no subject specified
+            original_line = "   {subject}**Subject Focus**: Generate questions specifically in the subject area: {subject}{/subject}\n"
+            base_prompt = base_prompt.replace(original_line, "")
+    elif task == "exam-applied":
+        tmpl = persona_override or EXAMS_APPLIED_PROMPT
         # Safely substitute only the target placeholder to avoid JSON brace formatting issues
         base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
     elif task == "sentiment":
@@ -88,7 +103,7 @@ def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[See
     if seed_manager and not seed_manager.validate_generation(obj, task):
         raise ValueError("Generated content too similar to seed data")
     
-    if task == "exams":
+    if task == "exams" or task == "exam-applied":
         return ExamItem(**obj).model_dump()
     elif task == "sentiment":
         return SentimentItem(**obj).model_dump()
@@ -105,10 +120,12 @@ def run_generation(
     batch_size: int, 
     persona_override: Optional[str], 
     seed_path: Optional[Path],
+    output_dir: Path,
     seed_constraint: Optional[SeedConstraint] = None,
     temperature: float = 0.7,
     top_p: float = 0.95,
     target_answer_distribution: Optional[Dict[str, float]] = None,
+    subject: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     # 初始化种子管理器
     seed_manager = None
@@ -118,7 +135,7 @@ def run_generation(
         seeds_loaded = seed_manager.load_seeds_from_testset(seed_path, task)
         print(f"Loaded {len(seeds_loaded)} seed examples from {seed_path}")
         if seeds_loaded:
-            audit_path = Path("outputs") / f"{task}_seeds_audit.json"
+            audit_path = output_dir / f"{task}_{subject}_seeds_audit.json"
             audit_path.parent.mkdir(parents=True, exist_ok=True)
             seed_manager.export_seed_info(audit_path)
             print(f"Seed audit info exported to {audit_path}")
@@ -149,7 +166,7 @@ def run_generation(
         if produced[target_letter] >= quotas[target_letter]:
             idx += 1
             continue
-        prompt = _build_prompt(task, persona_override, seed_manager, target_answer_letter=target_letter)
+        prompt = _build_prompt(task, persona_override, seed_manager, target_answer_letter=target_letter, subject=subject)
         try:
             item = _generate_one(task, prompt, model, seed_manager, temperature=temperature, top_p=top_p)
             if task == "exams" and item.get("answer") != target_letter:
@@ -163,6 +180,81 @@ def run_generation(
         idx += 1
     
     print(f"Successfully generated {len(results)}/{num_samples} samples")
+    return results
+
+
+def run_applied_generation(
+    input_file: Path,
+    output_dir: Path,
+    model: str = "mock",
+    temperature: float = 0.7,
+    top_p: float = 0.95,
+    batch_size: int = 50,
+    subject: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Generate applied versions of existing exam questions.
+    Takes cleaned exam questions and creates harder, applied versions.
+    """
+    # Load input questions
+    input_questions = []
+    with input_file.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                input_questions.append(json.loads(line.strip()))
+    
+    print(f"Loaded {len(input_questions)} input questions from {input_file}")
+    
+    # Answer distribution for applied questions
+    letters = ["A", "B", "C", "D"]
+    quotas = {l: len(input_questions) // 4 for l in letters}
+    # Distribute remainder
+    remainder = len(input_questions) % 4
+    for i, letter in enumerate(letters):
+        if i < remainder:
+            quotas[letter] += 1
+    
+    produced = {l: 0 for l in letters}
+    results = []
+    
+    # Process each input question
+    for i, input_question in enumerate(input_questions):
+        # Determine target answer letter
+        target_letter = None
+        for letter in letters:
+            if produced[letter] < quotas[letter]:
+                target_letter = letter
+                break
+        
+        if target_letter is None:
+            target_letter = "A"  # Fallback
+        
+        # Build prompt with the input question as context
+        prompt = f"""
+[Original Question to Transform]
+{json.dumps(input_question, ensure_ascii=False)}
+
+{_build_prompt("exam-applied", None, None, target_letter, subject)}
+"""
+        
+        try:
+            item = _generate_one("exam-applied", prompt, model, None, temperature=temperature, top_p=top_p)
+            
+            # Ensure correct answer letter
+            if item.get("answer") != target_letter:
+                item = _remap_answer_to_target(item, target_letter)
+            
+            results.append(item)
+            produced[target_letter] += 1
+            
+            if (i + 1) % 10 == 0:
+                print(f"Processed {i + 1}/{len(input_questions)} questions")
+                
+        except Exception as e:
+            print(f"Failed to process question {i + 1}: {e}")
+            continue
+    
+    print(f"Successfully generated {len(results)}/{len(input_questions)} applied questions")
     return results 
 
 

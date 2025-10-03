@@ -1,0 +1,30 @@
+{
+  "seed_count": 4,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "حدود الضوابط الشرع ةٌ للتز نٌ للرجال والنساء...",
+      "subject_hint": "general",
+      "hash": -1045536855866859357
+    },
+    {
+      "question_preview": "أي من العبارات الآتية يدل على تعريف النشور ؟...",
+      "subject_hint": "general",
+      "hash": -5732901660506318487
+    },
+    {
+      "question_preview": "من مظاهر توق رٌ الرسول صلى الله عل هٌ وسلم بعد مما...",
+      "subject_hint": "general",
+      "hash": -825410808514435148
+    },
+    {
+      "question_preview": "هزم المسلمون ف بدا ةٌ معركة حن نٌ بسبب...",
+      "subject_hint": "general",
+      "hash": -2286898332294882783
+    }
+  ]
+}

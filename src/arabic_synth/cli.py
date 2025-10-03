@@ -27,15 +27,61 @@ def generate(
     seed_file: Optional[Path] = typer.Option(None, help="Optional seed examples JSONL"),
     temperature: float = typer.Option(0.7, help="Sampling temperature"),
     top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
+    output_dir: Path = typer.Option(..., help="Output directory for generated data and intermediate files"),
+    subject: Optional[str] = typer.Option(None, help="Optional subject for exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
 ):
-    dataset = run_generation(task=task, num_samples=num_samples, model=model, batch_size=batch_size, persona_override=persona, seed_path=seed_file, temperature=temperature, top_p=top_p)
-    out_dir = Path("outputs")
-    out_path = out_dir / f"{task}_raw.jsonl"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    with out_path.open("w", encoding="utf-8") as f:
+    dataset = run_generation(task=task, num_samples=num_samples, model=model, batch_size=batch_size, persona_override=persona, seed_path=seed_file, output_dir=output_dir, temperature=temperature, top_p=top_p, subject=subject)
+    
+    # Create output file with naming convention: generate_style_{num_samples}.jsonl
+    output_file = output_dir / f"generate_style_{subject}_{num_samples}.jsonl"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    with output_file.open("w", encoding="utf-8") as f:
         for item in dataset:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
-    typer.echo(f"Wrote raw data to {out_path}")
+    typer.echo(f"Wrote raw data to {output_file}")
+
+
+@app.command()
+def exam_applied(
+    input_file: Path = typer.Option(..., help="Input JSONL file with cleaned exam questions"),
+    output_dir: Path = typer.Option(..., help="Output directory for applied exam questions"),
+    model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' to call OpenAI"),
+    temperature: float = typer.Option(0.7, help="Sampling temperature"),
+    top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
+    batch_size: int = typer.Option(50, help="Batch size for generation"),
+    subject: Optional[str] = typer.Option(None, help="Optional subject for applied exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
+):
+    """Generate applied versions of existing exam questions (harder, more complex)"""
+    from arabic_synth.generators.run import run_applied_generation
+    
+    if not input_file.exists():
+        typer.echo(f"Error: Input file {input_file} does not exist", err=True)
+        raise typer.Exit(1)
+    
+    # Generate applied questions
+    dataset = run_applied_generation(
+        input_file=input_file,
+        output_dir=output_dir,
+        model=model,
+        temperature=temperature,
+        top_p=top_p,
+        batch_size=batch_size,
+        subject=subject
+    )
+    
+    # Create output file
+    output_file = output_dir / f"applied_exams_{subject}_{len(dataset)}.jsonl"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    with output_file.open("w", encoding="utf-8") as f:
+        for item in dataset:
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+    
+    typer.echo(f"✅ Applied exam generation complete:")
+    typer.echo(f"  Input: {input_file}")
+    typer.echo(f"  Generated: {len(dataset)} applied questions")
+    typer.echo(f"  Output: {output_file}")
 
 
 @app.command()
@@ -248,6 +294,9 @@ def sample_and_convert(
     n: int = typer.Option(10, help="Number of samples to extract"),
     mode: str = typer.Option("uniform", help="Sampling mode: uniform or stratified"),
     stratify_col: str = typer.Option("subject", help="Column to stratify by (subject, grade, language) - only for stratified mode"),
+    filter_grade: Optional[str] = typer.Option(None, help="Filter by specific grade(s) - single grade (e.g., '4') or comma-separated list (e.g., '9,10,11,12')"),
+    filter_subject: Optional[str] = typer.Option(None, help="Filter by specific subject(s) - single subject or comma-separated list (e.g., 'Islamic Studies,Mathematics')"),
+    filter_language: Optional[str] = typer.Option(None, help="Filter by specific language(s) - single language or comma-separated list (e.g., 'Arabic,English')"),
     seed: Optional[int] = typer.Option(None, help="Random seed for reproducibility"),
 ):
     """Sample exam data and convert to JSONL format in one step"""
@@ -264,7 +313,10 @@ def sample_and_convert(
             mode=mode,
             stratify_col=stratify_col,
             output_jsonl=str(output_file),
-            seed=seed
+            seed=seed,
+            filter_grade=filter_grade,
+            filter_subject=filter_subject,
+            filter_language=filter_language
         )
         
         typer.echo(f"✅ Sample and convert complete:")
@@ -275,6 +327,43 @@ def sample_and_convert(
         
     except Exception as e:
         typer.echo(f"Error: {e}", err=True)
+        raise typer.Exit(1)
+
+
+@app.command()
+def style_subject_workflow(
+    output_dir: Path = typer.Option(Path("outputs/style_subject"), help="Output directory for all workflow results"),
+    input_csv: Path = typer.Option(Path("data/test-00000-of-00001.arabic.csv"), help="Input CSV file (test dataset)"),
+    model: str = typer.Option("openai:gpt-4o", help="LLM model to use for generation"),
+    seed: int = typer.Option(101, help="Random seed for reproducibility"),
+    use_batch_processing: bool = typer.Option(True, help="Use llm_batch_helper for efficient batch processing"),
+    batch_size: int = typer.Option(10, help="Batch size for processing (when using batch processing)"),
+):
+    """Complete style-subject workflow: sample seeds per subject → generate synthetic data → clean & evaluate"""
+    from arabic_synth.style_subject_workflow import StyleSubjectWorkflow
+    
+    # Validate input file exists
+    if not input_csv.exists():
+        typer.echo(f"❌ Error: Input CSV file not found: {input_csv}", err=True)
+        raise typer.Exit(1)
+    
+    # Create and run workflow
+    workflow = StyleSubjectWorkflow(
+        output_dir=output_dir,
+        input_csv=input_csv,
+        model=model,
+        seed=seed,
+        use_batch_processing=use_batch_processing,
+        batch_size=batch_size
+    )
+    
+    result = workflow.run_complete_workflow()
+    
+    if result["success"]:
+        typer.echo("🎉 Style-Subject Workflow completed successfully!")
+        typer.echo(f"📋 Summary: {result['summary_file']}")
+    else:
+        typer.echo(f"❌ Workflow failed: {result['error']}", err=True)
         raise typer.Exit(1)
 
 

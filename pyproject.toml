@@ -24,6 +24,7 @@ dependencies = [
     "sentence-transformers>=3.0",
     "jsonschema>=4.23",
     "python-dotenv>=1.0",
+    "llm_batch_helper",
 ]
 
 [project.scripts]

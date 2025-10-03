@@ -90,26 +90,41 @@ class ExamProcessor:
         meta_df = pd.json_normalize(df["meta"])
         self.data = pd.concat([df.drop(columns=["meta"]), meta_df], axis=1)
 
-    def sample_uniform(self, n: int, seed: Optional[int] = None) -> pd.DataFrame:
+    def sample_uniform(self, n: int, seed: Optional[int] = None, data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Uniform random sampling"""
         if seed is not None:
             random.seed(seed)
-        return self.data.sample(n=n, random_state=random.randint(0, 10000))
+        data_to_use = data if data is not None else self.data
+        return data_to_use.sample(n=n, random_state=random.randint(0, 10000))
 
-    def sample_stratified(self, n: int, stratify_col: str = "subject", seed: Optional[int] = None) -> pd.DataFrame:
+    def sample_stratified(self, n: int, stratify_col: str = "subject", seed: Optional[int] = None, data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Stratified sampling (default by subject)"""
         if seed is not None:
             random.seed(seed)
         
-        if stratify_col not in self.data.columns:
-            raise ValueError(f"Column {stratify_col} not in dataset. Available: {list(self.data.columns)}")
+        data_to_use = data if data is not None else self.data
         
-        groups = self.data.groupby(stratify_col)
+        if stratify_col not in data_to_use.columns:
+            raise ValueError(f"Column {stratify_col} not in dataset. Available: {list(data_to_use.columns)}")
+        
+        groups = data_to_use.groupby(stratify_col)
         result = []
         for _, g in groups:
-            k = max(1, round(len(g) / len(self.data) * n))
-            result.append(g.sample(n=min(k, len(g)), random_state=random.randint(0, 10000)))
-        return pd.concat(result).sample(n=n)
+            k = max(1, round(len(g) / len(data_to_use) * n))
+            # Ensure we don't try to sample more than available
+            sample_size = min(k, len(g))
+            if sample_size > 0:
+                result.append(g.sample(n=sample_size, random_state=random.randint(0, 10000)))
+        
+        if not result:
+            return pd.DataFrame()
+        
+        # If we have fewer samples than requested, return what we have
+        combined = pd.concat(result)
+        if len(combined) <= n:
+            return combined
+        else:
+            return combined.sample(n=n)
 
     def save_csv(self, df: pd.DataFrame, out_file: str):
         """Save sampled subset in the same CSV format as original dataset"""
@@ -221,16 +236,47 @@ class ExamProcessor:
         return {"input_rows": n_in, "success": n_ok, "skipped": n_skip}
 
     def sample_and_convert(self, n: int, mode: str = "uniform", stratify_col: str = "subject", 
-                          output_jsonl: Optional[str] = None, seed: Optional[int] = None) -> Dict[str, Any]:
+                          output_jsonl: Optional[str] = None, seed: Optional[int] = None,
+                          filter_grade: Optional[str] = None, filter_subject: Optional[str] = None, 
+                          filter_language: Optional[str] = None) -> Dict[str, Any]:
         """
         Combined operation: sample data and convert to JSONL format.
         Returns conversion statistics.
         """
+        # Apply filters first
+        filtered_data = self.data.copy()
+        if filter_grade:
+            # Handle multiple grades (comma-separated)
+            if ',' in filter_grade:
+                grades = [int(g.strip()) for g in filter_grade.split(',')]
+                filtered_data = filtered_data[filtered_data['grade'].isin(grades)]
+            else:
+                filtered_data = filtered_data[filtered_data['grade'] == int(filter_grade)]
+        if filter_subject:
+            # Handle multiple subjects (comma-separated)
+            if ',' in filter_subject:
+                subjects = [s.strip() for s in filter_subject.split(',')]
+                filtered_data = filtered_data[filtered_data['subject'].isin(subjects)]
+            else:
+                filtered_data = filtered_data[filtered_data['subject'] == filter_subject]
+        if filter_language:
+            # Handle multiple languages (comma-separated)
+            if ',' in filter_language:
+                languages = [l.strip() for l in filter_language.split(',')]
+                filtered_data = filtered_data[filtered_data['language'].isin(languages)]
+            else:
+                filtered_data = filtered_data[filtered_data['language'] == filter_language]
+        
+        # Check if we have enough data after filtering
+        if len(filtered_data) < n:
+            print(f"Warning: Only {len(filtered_data)} samples available after filtering, requested {n}")
+            n = min(n, len(filtered_data))
+        
         # Sample data
         if mode == "uniform":
-            sampled_df = self.sample_uniform(n, seed=seed)
+            sampled_df = self.sample_uniform(n, seed=seed, data=filtered_data)
         elif mode == "stratified":
-            sampled_df = self.sample_stratified(n, stratify_col=stratify_col, seed=seed)
+            sampled_df = self.sample_stratified(n, stratify_col=stratify_col, seed=seed, data=filtered_data)
         else:
             raise ValueError(f"Unknown sampling mode: {mode}")
 

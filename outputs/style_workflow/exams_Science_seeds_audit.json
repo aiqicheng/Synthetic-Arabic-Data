@@ -1,0 +1,35 @@
+{
+  "seed_count": 5,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "ماذا يُسمى انتقال جزيئات الماء عبر الغشاء البلازمي...",
+      "subject_hint": "general",
+      "hash": 5003201290670931235
+    },
+    {
+      "question_preview": "انتاج الهيمو جلوبين يعد مثالا على :...",
+      "subject_hint": "general",
+      "hash": 4672140183381547306
+    },
+    {
+      "question_preview": "أي مما يلي يعتبر شكل من أشكال تلوث الهواء تسببت في...",
+      "subject_hint": "general",
+      "hash": 3191316709673766451
+    },
+    {
+      "question_preview": "من العوامل التي يؤثر بها الإنسان على البيئة وعلى ا...",
+      "subject_hint": "general",
+      "hash": -8407686284717430337
+    },
+    {
+      "question_preview": "اي من الروابط التالية تحاافظ على تركيب البروتين ال...",
+      "subject_hint": "general",
+      "hash": 882322307157751659
+    }
+  ]
+}
