@@ -19,7 +19,7 @@ app = typer.Typer(add_completion=False)
 
 @app.command()
 def generate(
-    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar"),
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu"),
     num_samples: int = typer.Option(100, help="Number of samples to generate"),
     model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' to call OpenAI"),
     batch_size: int = typer.Option(50, help="Batch size for generation"),
@@ -29,8 +29,26 @@ def generate(
     top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
     output_dir: Path = typer.Option(..., help="Output directory for generated data and intermediate files"),
     subject: Optional[str] = typer.Option(None, help="Optional subject for exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
+    balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution for multiple choice tasks"),
 ):
-    dataset = run_generation(task=task, num_samples=num_samples, model=model, batch_size=batch_size, persona_override=persona, seed_path=seed_file, output_dir=output_dir, temperature=temperature, top_p=top_p, subject=subject)
+    # Set up balanced answer distribution for multiple choice tasks
+    target_answer_distribution = None
+    if balanced_answers and task in ["exams", "mmlu"]:
+        target_answer_distribution = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
+    
+    dataset = run_generation(
+        task=task, 
+        num_samples=num_samples, 
+        model=model, 
+        batch_size=batch_size, 
+        persona_override=persona, 
+        seed_path=seed_file, 
+        output_dir=output_dir, 
+        temperature=temperature, 
+        top_p=top_p, 
+        target_answer_distribution=target_answer_distribution,
+        subject=subject
+    )
     
     # Create output file with naming convention: generate_style_{num_samples}.jsonl
     output_file = output_dir / f"generate_style_{subject}_{num_samples}.jsonl"
@@ -42,46 +60,6 @@ def generate(
     typer.echo(f"Wrote raw data to {output_file}")
 
 
-@app.command()
-def exam_applied(
-    input_file: Path = typer.Option(..., help="Input JSONL file with cleaned exam questions"),
-    output_dir: Path = typer.Option(..., help="Output directory for applied exam questions"),
-    model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' to call OpenAI"),
-    temperature: float = typer.Option(0.7, help="Sampling temperature"),
-    top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
-    batch_size: int = typer.Option(50, help="Batch size for generation"),
-    subject: Optional[str] = typer.Option(None, help="Optional subject for applied exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
-):
-    """Generate applied versions of existing exam questions (harder, more complex)"""
-    from arabic_synth.generators.run import run_applied_generation
-    
-    if not input_file.exists():
-        typer.echo(f"Error: Input file {input_file} does not exist", err=True)
-        raise typer.Exit(1)
-    
-    # Generate applied questions
-    dataset = run_applied_generation(
-        input_file=input_file,
-        output_dir=output_dir,
-        model=model,
-        temperature=temperature,
-        top_p=top_p,
-        batch_size=batch_size,
-        subject=subject
-    )
-    
-    # Create output file
-    output_file = output_dir / f"applied_exams_{subject}_{len(dataset)}.jsonl"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    with output_file.open("w", encoding="utf-8") as f:
-        for item in dataset:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
-    
-    typer.echo(f"✅ Applied exam generation complete:")
-    typer.echo(f"  Input: {input_file}")
-    typer.echo(f"  Generated: {len(dataset)} applied questions")
-    typer.echo(f"  Output: {output_file}")
 
 
 @app.command()
@@ -101,7 +79,7 @@ def augment(
 
 @app.command()
 def clean(
-    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar"),
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu"),
     in_path: Path = typer.Option(Path("outputs/raw.jsonl"), help="Input JSONL path"),
     out_path: Path = typer.Option(Path("outputs/clean.jsonl"), help="Output cleaned JSONL path"),
 ):
@@ -124,7 +102,7 @@ def evaluate(
 
 @app.command()
 def evaluate_style(
-    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar"),
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu"),
     in_path: Path = typer.Option(Path("outputs/clean.jsonl"), help="Input JSONL path"),
 ):
     """Style Guide Pipeline evaluation with enhanced reporting for style consistency."""
@@ -289,37 +267,72 @@ def sample_stratified(
 
 @app.command()
 def sample_and_convert(
-    input_file: Path = typer.Option(Path("data/test-00000-of-00001.arabic.csv"), help="Input CSV exam file"),
-    output_file: Path = typer.Option(Path("outputs/exams_sampled.jsonl"), help="Output JSONL file"),
+    task: str = typer.Argument(..., help="Task: exams|mmlu"),
+    input_file: Path = typer.Option(Path("data/test-00000-of-00001.arabic.csv"), help="Input CSV file"),
+    output_file: Path = typer.Option(Path("outputs/data_sampled.jsonl"), help="Output JSONL file"),
     n: int = typer.Option(10, help="Number of samples to extract"),
     mode: str = typer.Option("uniform", help="Sampling mode: uniform or stratified"),
-    stratify_col: str = typer.Option("subject", help="Column to stratify by (subject, grade, language) - only for stratified mode"),
-    filter_grade: Optional[str] = typer.Option(None, help="Filter by specific grade(s) - single grade (e.g., '4') or comma-separated list (e.g., '9,10,11,12')"),
+    stratify_col: Optional[str] = typer.Option(None, help="Column to stratify by - defaults: 'subject' for exams, 'Subject' for mmlu"),
+    filter_grade: Optional[str] = typer.Option(None, help="Filter by specific grade(s) - single grade (e.g., '4') or comma-separated list (e.g., '9,10,11,12') - exams only"),
     filter_subject: Optional[str] = typer.Option(None, help="Filter by specific subject(s) - single subject or comma-separated list (e.g., 'Islamic Studies,Mathematics')"),
-    filter_language: Optional[str] = typer.Option(None, help="Filter by specific language(s) - single language or comma-separated list (e.g., 'Arabic,English')"),
+    filter_language: Optional[str] = typer.Option(None, help="Filter by specific language(s) - single language or comma-separated list (e.g., 'Arabic,English') - exams only"),
+    filter_level: Optional[str] = typer.Option(None, help="Filter by specific level(s) - single level or comma-separated list (e.g., 'High School,University') - mmlu only"),
+    filter_country: Optional[str] = typer.Option(None, help="Filter by specific country(s) - single country or comma-separated list - mmlu only"),
     seed: Optional[int] = typer.Option(None, help="Random seed for reproducibility"),
 ):
-    """Sample exam data and convert to JSONL format in one step"""
+    """Sample data and convert to JSONL format in one step. Supports both exams and MMLU datasets."""
     from arabic_synth.data_prep.exam_processor import ExamProcessor
-    
+    from arabic_synth.data_prep.mmlu_processor import MMLUProcessor
+
     if mode not in ["uniform", "stratified"]:
         typer.echo("Error: mode must be 'uniform' or 'stratified'", err=True)
         raise typer.Exit(1)
     
+    if task not in ["exams", "mmlu"]:
+        typer.echo("Error: task must be 'exams' or 'mmlu'", err=True)
+        raise typer.Exit(1)
+    
     try:
-        processor = ExamProcessor(str(input_file))
-        stats = processor.sample_and_convert(
-            n=n,
-            mode=mode,
-            stratify_col=stratify_col,
-            output_jsonl=str(output_file),
-            seed=seed,
-            filter_grade=filter_grade,
-            filter_subject=filter_subject,
-            filter_language=filter_language
-        )
+        if task == "exams":
+            # Use ExamProcessor for exams dataset
+            processor = ExamProcessor(str(input_file))
+            
+            # Set default stratify column for exams
+            if stratify_col is None:
+                stratify_col = "subject"
+            
+            stats = processor.sample_and_convert(
+                n=n,
+                mode=mode,
+                stratify_col=stratify_col,
+                output_jsonl=str(output_file),
+                seed=seed,
+                filter_grade=filter_grade,
+                filter_subject=filter_subject,
+                filter_language=filter_language
+            )
+            
+        elif task == "mmlu":
+            # Use MMLUProcessor for MMLU dataset
+            processor = MMLUProcessor(str(input_file))
+            
+            # Set default stratify column for MMLU
+            if stratify_col is None:
+                stratify_col = "Subject"
+            
+            stats = processor.sample_and_convert(
+                n=n,
+                mode=mode,
+                stratify_col=stratify_col,
+                output_jsonl=str(output_file),
+                seed=seed,
+                filter_subject=filter_subject,
+                filter_level=filter_level,
+                filter_country=filter_country
+            )
         
         typer.echo(f"✅ Sample and convert complete:")
+        typer.echo(f"  Task: {task}")
         typer.echo(f"  Mode: {stats['sampling_mode']}")
         typer.echo(f"  Requested: {stats['samples_requested']} samples")
         typer.echo(f"  Success: {stats['success']} | Skipped: {stats['skipped']}")

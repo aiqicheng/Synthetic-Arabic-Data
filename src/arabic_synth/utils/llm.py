@@ -58,6 +58,9 @@ def call_llm(model: str, prompt: str, temperature: float = 0.7, top_p: float = 0
         prompt_hash = int(hashlib.md5(prompt.encode()).hexdigest()[:8], 16)
         random.seed(prompt_hash)
         
+        # Check if this is MMLU generation (has MMLU-specific keywords)
+        is_mmlu = "MMLU" in prompt or "Computer Science" in prompt
+        
         # Mock question templates with variety
         questions = [
             {
@@ -94,6 +97,17 @@ def call_llm(model: str, prompt: str, temperature: float = 0.7, top_p: float = 0
         
         # Select a question based on hash
         selected = questions[prompt_hash % len(questions)]
+        
+        # Add MMLU-specific fields if this is MMLU generation
+        if is_mmlu:
+            selected["subject"] = "Computer Science"
+            selected["level"] = "High"
+            selected["context"] = None
+            selected["source"] = None
+            selected["country"] = None
+            selected["group"] = "STEM"
+            selected["is_few_shot"] = False
+        
         return json.dumps(selected, ensure_ascii=False)
     if "sentiment" in prompt and "text" in prompt:
         return json.dumps({

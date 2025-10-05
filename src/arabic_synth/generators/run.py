@@ -6,10 +6,15 @@ from typing import List, Dict, Any, Optional
 
 from tenacity import retry, stop_after_attempt, wait_exponential
 
-from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, EXAMS_APPLIED_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
+from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT, MMLU_TEACHER_PROMPT
 from arabic_synth.schemas.exams import ExamItem
 from arabic_synth.schemas.sentiment import SentimentItem
 from arabic_synth.schemas.grammar import GrammarItem
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from schemas.mmlu import MMLUItem
 from arabic_synth.utils.llm import call_llm
 from arabic_synth.utils.seed_manager import SeedManager, SeedConstraint
 
@@ -24,7 +29,7 @@ logging.basicConfig(
 )
 
 
-def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, target_answer_letter: Optional[str] = None, subject: Optional[str] = None) -> str:
+def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, target_answer_letter: Optional[str] = None, subject: Optional[str] = None, seed_subject: Optional[str] = None) -> str:
     base_prompt = ""
     if task == "exams":
         tmpl = persona_override or EXAMS_TEACHER_PROMPT
@@ -41,21 +46,46 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
             # Remove the subject line if no subject specified
             original_line = "   {subject}**Subject Focus**: Generate questions specifically in the subject area: {subject}{/subject}\n"
             base_prompt = base_prompt.replace(original_line, "")
-    elif task == "exam-applied":
-        tmpl = persona_override or EXAMS_APPLIED_PROMPT
-        # Safely substitute only the target placeholder to avoid JSON brace formatting issues
-        base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
     elif task == "sentiment":
         base_prompt = SENTIMENT_PROMPT if not persona_override else persona_override
     elif task == "grammar":
         base_prompt = GRAMMAR_QA_PROMPT if not persona_override else persona_override
+    elif task == "mmlu":
+        tmpl = persona_override or MMLU_TEACHER_PROMPT
+        # Safely substitute placeholders to avoid JSON brace formatting issues
+        base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
+        
+        # Handle subject placeholder - replace all {subject} occurrences
+        effective_subject = subject or seed_subject or "Computer Science"
+        base_prompt = base_prompt.replace("{subject}", effective_subject)
     else:
-        raise ValueError("Unknown task")
+        raise ValueError(f"Unknown task: {task}")
     
     if seed_manager:
         style_guidance = seed_manager.get_style_guidance(task)
         if style_guidance:
             base_prompt = style_guidance + "\n\n" + base_prompt
+        
+        # Add seed examples for MMLU
+        if task == "mmlu" and seed_manager.seeds:
+            # Filter seeds by subject if specified
+            effective_subject = subject or seed_subject
+            relevant_seeds = seed_manager.seeds
+            if effective_subject:
+                relevant_seeds = [s for s in seed_manager.seeds if s.get("subject") == effective_subject]
+                # If no seeds match the subject, use all seeds but warn
+                if not relevant_seeds:
+                    relevant_seeds = seed_manager.seeds
+            
+            seed_examples = []
+            for seed in relevant_seeds[:2]:  # Use first 2 relevant seeds as examples
+                seed_examples.append(f'Example: {json.dumps({"question": seed.get("question", ""), "options": seed.get("options", []), "answer": seed.get("answer", "")}, ensure_ascii=False)}')
+            
+            if seed_examples:
+                base_prompt += "\n\n**Seed Examples for Reference:**\n" + "\n".join(seed_examples)
+                base_prompt += f"\n\n**Important**: Generate a NEW question in the same style and subject domain ({effective_subject or 'as shown in examples'}) as the examples above, but with completely different content."
+    
+    
     return base_prompt
 
 
@@ -95,7 +125,6 @@ def _remap_answer_to_target(exam_item: Dict[str, Any], target_letter: str) -> Di
         return exam_item
 
 
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8))
 def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[SeedManager] = None, temperature: float = 0.7, top_p: float = 0.95) -> Dict[str, Any]:
     raw = call_llm(model, prompt, temperature=temperature, top_p=top_p)
     obj = json.loads(raw)
@@ -103,14 +132,28 @@ def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[See
     if seed_manager and not seed_manager.validate_generation(obj, task):
         raise ValueError("Generated content too similar to seed data")
     
-    if task == "exams" or task == "exam-applied":
+    if task == "exams":
         return ExamItem(**obj).model_dump()
     elif task == "sentiment":
         return SentimentItem(**obj).model_dump()
     elif task == "grammar":
         return GrammarItem(**obj).model_dump()
+    elif task == "mmlu":
+        try:
+            # Validate with MMLUItem schema but only return required fields
+            mmlu_item = MMLUItem(**obj)
+            # Return only the three required fields
+            return {
+                "question": mmlu_item.question,
+                "options": mmlu_item.options,
+                "answer": mmlu_item.answer
+            }
+        except Exception as e:
+            print(f"MMLU validation error: {e}")
+            print(f"Generated object: {obj}")
+            raise ValueError(f"MMLU validation failed: {e}")
     else:
-        raise ValueError("Unknown task")
+        raise ValueError(f"Unknown task: {task}")
 
 
 def run_generation(
@@ -166,10 +209,19 @@ def run_generation(
         if produced[target_letter] >= quotas[target_letter]:
             idx += 1
             continue
-        prompt = _build_prompt(task, persona_override, seed_manager, target_answer_letter=target_letter, subject=subject)
+        
+        # For MMLU, extract subject from seed if available
+        seed_subject = None
+        if task == "mmlu" and seed_manager and seed_manager.seeds:
+            # Use a random seed to get its subject
+            import random
+            random_seed = random.choice(seed_manager.seeds)
+            seed_subject = random_seed.get("subject")
+        
+        prompt = _build_prompt(task, persona_override, seed_manager, target_answer_letter=target_letter, subject=subject, seed_subject=seed_subject)
         try:
             item = _generate_one(task, prompt, model, seed_manager, temperature=temperature, top_p=top_p)
-            if task == "exams" and item.get("answer") != target_letter:
+            if task in ["exams", "mmlu"] and item.get("answer") != target_letter:
                 item = _remap_answer_to_target(item, target_letter)
             results.append(item)
             produced[target_letter] += 1
@@ -183,79 +235,6 @@ def run_generation(
     return results
 
 
-def run_applied_generation(
-    input_file: Path,
-    output_dir: Path,
-    model: str = "mock",
-    temperature: float = 0.7,
-    top_p: float = 0.95,
-    batch_size: int = 50,
-    subject: Optional[str] = None
-) -> List[Dict[str, Any]]:
-    """
-    Generate applied versions of existing exam questions.
-    Takes cleaned exam questions and creates harder, applied versions.
-    """
-    # Load input questions
-    input_questions = []
-    with input_file.open("r", encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                input_questions.append(json.loads(line.strip()))
-    
-    print(f"Loaded {len(input_questions)} input questions from {input_file}")
-    
-    # Answer distribution for applied questions
-    letters = ["A", "B", "C", "D"]
-    quotas = {l: len(input_questions) // 4 for l in letters}
-    # Distribute remainder
-    remainder = len(input_questions) % 4
-    for i, letter in enumerate(letters):
-        if i < remainder:
-            quotas[letter] += 1
-    
-    produced = {l: 0 for l in letters}
-    results = []
-    
-    # Process each input question
-    for i, input_question in enumerate(input_questions):
-        # Determine target answer letter
-        target_letter = None
-        for letter in letters:
-            if produced[letter] < quotas[letter]:
-                target_letter = letter
-                break
-        
-        if target_letter is None:
-            target_letter = "A"  # Fallback
-        
-        # Build prompt with the input question as context
-        prompt = f"""
-[Original Question to Transform]
-{json.dumps(input_question, ensure_ascii=False)}
-
-{_build_prompt("exam-applied", None, None, target_letter, subject)}
-"""
-        
-        try:
-            item = _generate_one("exam-applied", prompt, model, None, temperature=temperature, top_p=top_p)
-            
-            # Ensure correct answer letter
-            if item.get("answer") != target_letter:
-                item = _remap_answer_to_target(item, target_letter)
-            
-            results.append(item)
-            produced[target_letter] += 1
-            
-            if (i + 1) % 10 == 0:
-                print(f"Processed {i + 1}/{len(input_questions)} questions")
-                
-        except Exception as e:
-            print(f"Failed to process question {i + 1}: {e}")
-            continue
-    
-    print(f"Successfully generated {len(results)}/{len(input_questions)} applied questions")
-    return results 
 
 
 def log_generation_session(

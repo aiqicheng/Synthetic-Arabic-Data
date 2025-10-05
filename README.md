@@ -5,6 +5,7 @@ A comprehensive pipeline for generating high-quality Arabic synthetic datasets u
 ## 🎯 Tasks
 
 - **EXAMS**: Multi-subject MCQ questions (10,000 target)
+- **MMLU**: Massive Multitask Language Understanding questions with subject generalization
 - **Alghafa Sentiment**: Sentiment classification (positive:negative:neutral = 4:4:2, 10,000 target)  
 - **Madinah QA Grammar**: Grammar error correction triplets (10,000 target)
 
@@ -12,6 +13,7 @@ A comprehensive pipeline for generating high-quality Arabic synthetic datasets u
 
 - **Persona-based Generation**: Role-playing prompts for authentic Arabic content
 - **Seed Constraint System**: Uses ≤10 test samples as style guidance only (prevents data leakage)
+- **Subject Generalization**: Dynamic MMLU support for any subject domain
 - **Distribution Alignment**: Controlled answer distribution with quota scheduling
 - **Quality Validation**: Fidelity, utility (TSTR), and privacy metrics
 - **Data Augmentation**: Rule-based transformations and diversity filtering
@@ -21,36 +23,42 @@ A comprehensive pipeline for generating high-quality Arabic synthetic datasets u
 
 ```
 src/arabic_synth/
-├── cli.py                     # 🎯 Main CLI interface (Typer-based)
+├── cli.py                     # 🎯 Main CLI interface (Typer-based) with MMLU support
 ├── data_prep/                 # 📊 DATA PREPARATION PHASE
-│   ├── exam_processor.py      # Combined sampling & CSV-to-JSONL conversion
+│   ├── exam_processor.py      # Exam CSV processing and conversion
+│   ├── mmlu_processor.py      # MMLU CSV processing with subject generalization
 │   └── personas_select.py     # Persona selection and filtering
 ├── generators/                # 🚀 GENERATION PHASE
-│   ├── run.py                 # Core generation logic with seed constraints
+│   ├── run.py                 # Core generation logic with seed constraints & MMLU support
 │   └── persona_augment.py     # Persona-augmented generation utilities
 ├── persona/                   # 👤 PERSONA PIPELINE
 │   ├── build_requests.py      # Build persona-augmented requests
 │   ├── send_requests.py       # Send requests to LLM APIs
 │   └── templates_persona.py   # Persona-specific prompt templates
 ├── postprocess/               # 🧹 POST-PROCESSING PHASE
-│   └── clean.py               # Data cleaning, validation & deduplication
+│   └── clean.py               # Data cleaning with MMLU support & deduplication
 ├── evaluate/                  # 📊 EVALUATION PHASE
-│   ├── evaluate_style.py      # Style Guide Pipeline evaluation
+│   ├── evaluate_style.py      # Style evaluation with MMLU support
 │   └── evaluate_persona.py    # Persona-augmented quality assessment
 ├── augment/                   # 🔄 AUGMENTATION PHASE
 │   └── augment.py             # Data augmentation and variant generation
 ├── prompts/                   # 📝 PROMPT TEMPLATES
-│   └── templates.py           # LLM prompt templates (Style Guide)
-├── schemas/                   # 🔍 VALIDATION SCHEMAS
-│   ├── exams.py               # Exam data structure validation
-│   ├── sentiment.py           # Sentiment analysis schemas
-│   └── grammar.py             # Grammar correction schemas
+│   └── templates.py           # LLM templates with MMLU subject generalization
+├── configs/                   # ⚙️ CONFIGURATION FILES
+│   ├── style_subject_config.json  # Default style-subject workflow config
+│   └── small_batch.json       # Small batch configuration template
 └── utils/                     # 🛠️ CORE UTILITIES
     ├── llm.py                 # LLM API integration (OpenAI, etc.)
-    ├── seed_manager.py        # Seed constraint system
+    ├── seed_manager.py        # Seed constraint system with MMLU support
     ├── quality_validator.py   # Quality metrics and validation
     ├── io.py                  # File I/O operations
     └── anonymizer.py          # Data anonymization utilities
+
+src/schemas/                   # 🔍 VALIDATION SCHEMAS
+├── exams.py                   # Exam data structure validation
+├── sentiment.py               # Sentiment analysis schemas
+├── grammar.py                 # Grammar correction schemas
+└── mmlu.py                    # MMLU data validation with unified schema
 ```
 
 ## ⚙️ Setup
@@ -84,7 +92,7 @@ The pipeline supports three main workflows for Arabic synthetic data generation:
 
 ```bash
 # Quick start - Manual Style Guide Pipeline
-arabic-synth sample-and-convert --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 10 --mode stratified
+arabic-synth sample-and-convert exams --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 10 --mode stratified
 
 # ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine prompts/templates.py
 arabic-synth generate exams --output-dir outputs/style_guide_test --seed-file outputs/seeds.jsonl --model openai:gpt-4o --num-samples 200
@@ -124,7 +132,7 @@ result = workflow.run_complete_workflow()
 
 ```bash
 # Quick start - Persona Pipeline
-arabic-synth sample-and-convert --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 20
+arabic-synth sample-and-convert exams --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 20
 arabic-synth select-personas --input-file data/personas/personas_all.jsonl --output-file outputs/personas.jsonl --n 200
 
 # ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine persona/templates_persona.py
@@ -157,6 +165,7 @@ arabic-synth style-persona-workflow \
 - Persona Pipeline: `Persona_PIPELINE_DETAILED.md`  
 - Combined Workflow: `STYLE_PERSONA_WORKFLOW_GUIDE.md`
 - Style-Subject Workflow: `src/arabic_synth/STYLE_SUBJECT_WORKFLOW.md`
+- MMLU Workflow: `Style_ArbMMLU_Workflow.md`
 
 ---
 

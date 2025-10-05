@@ -43,7 +43,7 @@ def _eval_style_grammar(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def run_evaluation(task: str, in_path: Path) -> Dict[str, Any]:
     rows = read_jsonl(in_path)
-    if task == "exams":
+    if task == "exams" or task == "mmlu":
         return _eval_style_exams(rows)
     if task == "sentiment":
         return _eval_style_sentiment(rows)

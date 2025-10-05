@@ -1,0 +1,145 @@
+Arabic MMLU Dataset Distribution Analysis
+==========================================
+
+Dataset Overview
+----------------
+Total Questions: 14,575
+Subjects: 21 different subjects
+Levels: 5 educational levels
+Countries: 8 Arabic-speaking countries
+
+Subject Distribution (Top 10)
+-----------------------------
+1. Islamic Studies: 2,222 (15.2%) - Dominant subject
+2. Biology: 1,412 (9.7%)
+3. Geography: 1,376 (9.4%)
+4. Driving Test: 1,214 (8.3%)
+5. General Knowledge: 1,207 (8.3%)
+6. History: 1,074 (7.4%)
+7. Social Science: 952 (6.5%)
+8. Arabic Language: 678 (4.7%)
+9. Arabic Language (General): 615 (4.2%)
+10. Economics: 593 (4.1%)
+
+Complete Subject Distribution
+-----------------------------
+Islamic Studies: 2,222 (15.2%)
+Biology: 1,412 (9.7%)
+Geography: 1,376 (9.4%)
+Driving Test: 1,214 (8.3%)
+General Knowledge: 1,207 (8.3%)
+History: 1,074 (7.4%)
+Social Science: 952 (6.5%)
+Arabic Language: 678 (4.7%)
+Arabic Language (General): 615 (4.2%)
+Economics: 593 (4.1%)
+Natural Science: 584 (4.0%)
+Computer Science: 554 (3.8%)
+Math: 412 (2.8%)
+Arabic Language (Grammar): 368 (2.5%)
+Civics: 329 (2.3%)
+Law: 317 (2.2%)
+Physics: 258 (1.8%)
+Political Science: 213 (1.5%)
+Management: 78 (0.5%)
+Accounting: 77 (0.5%)
+Philosophy: 42 (0.3%)
+
+Educational Level Distribution
+-----------------------------
+High School: 4,963 (45.7%) - Most represented
+Primary: 3,239 (29.8%)
+Middle School: 1,775 (16.3%)
+University: 575 (5.3%)
+Professional: 317 (2.9%)
+
+Level-Specific Subject Distribution
+----------------------------------
+HIGH SCHOOL (High level):
+  Biology: 1,412 (28.5%)
+  Geography: 1,041 (21.0%)
+  History: 763 (15.4%)
+  Arabic Language: 393 (7.9%)
+  Economics: 363 (7.3%)
+  Islamic Studies: 337 (6.8%)
+  Computer Science: 264 (5.3%)
+  Physics: 258 (5.2%)
+  Civics: 90 (1.8%)
+  Philosophy: 42 (0.8%)
+
+PRIMARY SCHOOL:
+  Islamic Studies: 1,002 (30.9%)
+  Social Science: 708 (21.9%)
+  Math: 412 (12.7%)
+  Natural Science: 339 (10.5%)
+  Arabic Language: 255 (7.9%)
+  Computer Science: 193 (6.0%)
+  General Knowledge: 165 (5.1%)
+  History: 105 (3.2%)
+  Geography: 60 (1.9%)
+
+UNIVERSITY LEVEL:
+  Political Science: 213 (37.0%)
+  Economics: 140 (24.3%)
+  Management: 78 (13.6%)
+  Accounting: 77 (13.4%)
+  Computer Science: 67 (11.7%)
+
+Answer Key Distribution (SIGNIFICANT IMBALANCE)
+-----------------------------------------------
+Option A: 4,544 (31.2%) - OVERREPRESENTED
+Option B: 3,880 (26.6%)
+Option D: 3,061 (21.0%)
+Option C: 2,949 (20.2%)
+Option E: 141 (1.0%) - SEVERELY UNDERREPRESENTED
+
+Geographic Distribution
+----------------------
+Jordan: 6,053 (52.4%) - Dominant contributor
+Egypt: 2,506 (21.7%)
+Palestine: 2,047 (17.7%)
+Morocco: 317 (2.7%)
+Lebanon: 239 (2.1%)
+UAE: 184 (1.6%)
+Kuwait: 111 (1.0%)
+KSA: 104 (0.9%)
+
+Subject Group Distribution
+-------------------------
+Humanities: 3,655 (25.1%)
+Social Science: 3,540 (24.3%)
+STEM: 3,220 (22.1%)
+Other: 2,499 (17.1%)
+Language: 1,661 (11.4%)
+
+Country-Subject Interaction
+---------------------------
+Jordan (largest contributor):
+  Geography: 1,064 (17.6%)
+  Islamic Studies: 920 (15.2%)
+  History: 659 (10.9%)
+  Driving Test: 523 (8.6%)
+  Natural Science: 484 (8.0%)
+
+Egypt (second largest):
+  Biology: 1,012 (40.4%)
+  Arabic Language: 314 (12.5%)
+  History: 293 (11.7%)
+  Political Science: 213 (8.5%)
+  Driving Test: 176 (7.0%)
+
+Data Quality Analysis
+--------------------
+Missing values per column:
+  Country: 3,014 (20.7%)
+  Level: 3,706 (25.4%)
+  Context: 13,865 (95.1%)
+  Option 3: 1,895 (13.0%)
+  Option 4: 4,024 (27.6%)
+  Option 5: 14,230 (97.6%)
+
+Option Structure Analysis
+------------------------
+Questions with 4 options: 14,230 (97.6%)
+Questions with 5 options: 345 (2.4%)
+

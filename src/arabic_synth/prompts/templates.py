@@ -58,54 +58,6 @@ Return ONLY a valid JSON object in this structure:
 
 
 
-EXAMS_APPLIED_PROMPT = (
-    """
-[Role: Experienced Arabic high school teacher]
-
-You are given an original question that may be too simple or recall-based.  
-Your task: rewrite it into a **harder, applied multiple-choice exam question in Arabic** with these properties:
-
-1. Applied Complexity (تعقيد تطبيقي):
-   - The question must require reasoning, application, or interpretation — not just recalling a single fact.
-   - Introduce a real-world scenario, short case study, or experimental setup.
-   - Encourage students to connect knowledge across concepts (e.g., cause-and-effect, data interpretation, comparing outcomes).
-
-2. Naturalness (طبيعي):
-   - The question should read smoothly in Arabic, like a teacher writing a challenging test.
-   - Use natural exam phrasing: "ما الذي يحدث إذا...", "في أي حالة يمكن أن...", "كيف يمكن تفسير..."
-   - Avoid robotic or overly simplistic phrasing.
-
-3. Similar Style (أسلوب مشابه):
-   - Keep the tone academic and the length between 20–40 words.
-   - Match the structure of real exam papers (context + question).
-   - Cover diverse subjects: science, geography, literature, history, or math.
-
-4. Different but Connected Content (محتوى مختلف لكنه مرتبط):
-   - Do not reuse the same entity or fact from the original.
-   - Build on the same **subject domain** (e.g., if original was about photosynthesis, keep within biology but raise complexity).
-   - Add contextual richness (e.g., link to climate, human impact, lab experiments).
-
-Constraints:
-- Provide exactly 4 options (A–D).
-- Options should be plausible, distinct, and include:
-  * one common misconception,
-  * one near-miss (partially correct but wrong),
-  * one clearly wrong,
-  * and one correct answer.
-- Correct answer must be {target_answer_letter}.
-- Use academic vocabulary and at least one subject-specific term.
-- The scenario should increase difficulty without becoming university-level.
-
-Output Format:
-Return ONLY a valid JSON object in this structure:
-{
-  "question": "...",
-  "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
-  "answer": "{target_answer_letter}",
-  "notes": "Short explanation of how the new question increases difficulty by requiring applied reasoning instead of simple recall"
-}
-    """.strip()
-)
 
 SENTIMENT_PROMPT = (
     """
@@ -133,5 +85,79 @@ Return ONLY a valid JSON object:
   "correction": "...(corrected sentence)",
   "explanation": "..."
 }
+    """.strip()
+)
+
+MMLU_TEACHER_PROMPT = (
+    """
+[Role: Expert Arabic Subject Instructor and Technical Verifier]
+You are given an original MMLU (Massive Multitask Language Understanding) question from {subject}.
+Your task: generate a **new multiple-choice MMLU-style question in Arabic** that meets the following criteria:
+
+---
+
+### 1. Technical Accuracy (دقة تقنية)
+- The question and correct answer MUST be factually and scientifically accurate within the {subject} domain.
+- Use **precise Arabic technical terminology**.
+- Double-check that **only one option is correct** and that the other three are unambiguously incorrect.
+- Before finalizing, **mentally verify** the correctness of the chosen answer based on established scientific or academic consensus.
+
+---
+
+### 2. MMLU Style Consistency (اتساق أسلوب MMLU)
+- Match the **complexity, precision, and tone** of real MMLU questions.
+- Maintain an **academic, formal Arabic register**.
+- Keep question length between **15–40 words**.
+- Avoid ambiguity or trick phrasing.
+
+---
+
+### 3. Subject Domain Focus (تركيز مجال الموضوع)
+**Subject Focus:** Generate questions specifically within **{subject}**.
+- Stay strictly within the key subtopics and principles of this domain.
+- Include at least one **domain-specific term or concept** (e.g., algorithm, law, principle, theory, equation, or philosophical stance).
+- Questions should test **conceptual understanding**, not mere recall.
+
+---
+
+### 4. Different Technical Content (محتوى تقني مختلف)
+- Use a **different concept, scenario, or example** than the original question.
+- Keep within the same domain but vary the tested skill or concept.
+- Avoid reusing identical facts, examples, or entities.
+
+---
+
+### 5. Quality Distractors (مشتتات عالية الجودة)
+- Include **plausible wrong options** representing **common misconceptions** or **near-misses**.
+- Ensure **only one correct answer** is fully valid under domain knowledge.
+- Wrong options should sound reasonable but contain subtle factual or conceptual errors.
+
+---
+
+### 6. Self-Consistency Verification (التحقق من الصحة الذاتية)
+Before output, **perform an internal verification** step:
+- Confirm that the correct answer is consistent with accepted {subject} theory or definitions.
+- Confirm that no other option could be arguably correct.
+- Confirm that technical terminology is used accurately and unambiguously.
+
+---
+
+### 7. Labeling & Answer Key Constraints (قيود ترميز الخيارات والإجابة)
+- **Option labels must be EXACTLY these ASCII forms:** `A. `, `B. `, `C. `, `D. ` (capital Latin letter, a period, then a space).
+- **Do NOT localize labels** to Arabic letters (أ، ب، ج، د) or use parentheses/numbers.
+- The `"answer"` field must be **exactly one of** `"A"`, `"B"`, `"C"`, or `"D"` (single uppercase Latin letter, no punctuation or spaces).
+
+---
+
+### Output Format
+Return ONLY a valid JSON object structured exactly as follows:
+{
+  "question": "...",
+  "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+  "answer": "{target_answer_letter}"
+}
+
+---
+**Important:** Do NOT output explanations, reasoning, or any additional text outside the JSON object.
     """.strip()
 )

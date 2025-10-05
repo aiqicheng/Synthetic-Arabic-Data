@@ -90,7 +90,7 @@ Synthetic Data/
 **Process**:
 ```bash
 # Generate stratified seeds with clean JSONL format
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file outputs/style_guide_seeds.jsonl \
   --n 10 \
@@ -339,6 +339,7 @@ export OPENAI_API_KEY="your-key"
 
 # 2. Generate (using pre-prepared seeds)
 arabic-synth generate exams \
+  --output-dir outputs/style_guide_test \
   --num-samples 200 \
   --model openai:gpt-4o \
   --seed-file data/seeds/exams_seeds_from_testset.jsonl \
@@ -347,7 +348,7 @@ arabic-synth generate exams \
 
 # 3. Clean
 arabic-synth clean exams \
-  --in-path outputs/exams_raw.jsonl \
+  --in-path outputs/style_guide_test/generate_style_200.jsonl \
   --out-path outputs/exams_clean.jsonl
 
 # 4. Quality Check & Evaluation
@@ -368,7 +369,7 @@ source .venv/bin/activate
 export OPENAI_API_KEY="your-key"
 
 # 2. Generate stratified seeds automatically
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file outputs/style_guide_seeds.jsonl \
   --n 10 \
@@ -378,6 +379,7 @@ arabic-synth sample-and-convert \
 
 # 3. Generate with automated seeds
 arabic-synth generate exams \
+  --output-dir outputs/style_guide_automated \
   --num-samples 200 \
   --model openai:gpt-4o \
   --seed-file outputs/style_guide_seeds.jsonl \
@@ -386,7 +388,7 @@ arabic-synth generate exams \
 
 # 4. Clean
 arabic-synth clean exams \
-  --in-path outputs/exams_raw.jsonl \
+  --in-path outputs/style_guide_automated/generate_style_200.jsonl \
   --out-path outputs/exams_clean.jsonl
 
 # 5. Quality Check & Evaluation
@@ -459,7 +461,7 @@ python -c "from src.arabic_synth.utils.seed_manager import SeedManager; sm = See
 #### **For Automated Seeds (Option B)**
 ```bash
 # Test automated seed generation
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file data/seeds/debug_seeds.jsonl \
   --n 5 \

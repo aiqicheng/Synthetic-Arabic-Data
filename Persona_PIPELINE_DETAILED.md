@@ -63,7 +63,7 @@ All persona scripts are now available as CLI commands:
 ### Data Preparation Commands
 ```bash
 # Combined sampling and conversion (RECOMMENDED - one-step process)
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file outputs/balanced_seeds.jsonl \
   --n 10 \
@@ -156,7 +156,7 @@ All imports and CLI commands have been tested and verified:
 ### Phase 1: Data Preparation
 ```bash
 # 1. Sample and convert CSV data in one step (RECOMMENDED)
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file data/exams.jsonl \
   --n 100 \
@@ -205,7 +205,7 @@ The integration of `exam_processor.py` brings scientific rigor to the persona pi
 ### **1. Balanced Seed Data Creation**
 ```bash
 # Create stratified seed data and convert in one step (RECOMMENDED)
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file data/seeds/scientific_seeds.jsonl \
   --n 10 \
@@ -217,7 +217,7 @@ arabic-synth sample-and-convert \
 ### **2. Quality Test Set Generation**
 ```bash
 # Create representative test sets for validation
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file outputs/validation_set.jsonl \
   --n 100 \
@@ -229,7 +229,7 @@ arabic-synth sample-and-convert \
 ### **3. Domain-Specific Persona Generation**
 ```bash
 # Sample specific subjects for targeted generation and convert in one step
-arabic-synth sample-and-convert \
+arabic-synth sample-and-convert exams \
   --input-file data/test-00000-of-00001.arabic.csv \
   --output-file data/science_seeds.jsonl \
   --n 20 \
@@ -245,7 +245,7 @@ arabic-synth build-persona-requests --exams-path data/science_seeds.jsonl --targ
 ```bash
 # Create multiple test conditions with different seeds
 for experiment in exp1 exp2 exp3; do
-  arabic-synth sample-and-convert \
+  arabic-synth sample-and-convert exams \
     --input-file data/test-00000-of-00001.arabic.csv \
     --output-file "outputs/${experiment}_test.jsonl" \
     --n 25 \

@@ -26,7 +26,7 @@ except ImportError:
     process_prompts_batch = None
     LLMConfig = None
 
-from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, EXAMS_APPLIED_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
+from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
 from arabic_synth.schemas.exams import ExamItem
 from arabic_synth.schemas.sentiment import SentimentItem
 from arabic_synth.schemas.grammar import GrammarItem
@@ -107,9 +107,6 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
             # Remove the subject line if no subject specified
             original_line = "   {subject}**Subject Focus**: Generate questions specifically in the subject area: {subject}{/subject}\n"
             base_prompt = base_prompt.replace(original_line, "")
-    elif task == "exam-applied":
-        tmpl = persona_override or EXAMS_APPLIED_PROMPT
-        base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
     elif task == "sentiment":
         base_prompt = SENTIMENT_PROMPT if not persona_override else persona_override
     elif task == "grammar":
@@ -187,7 +184,7 @@ def _parse_generation_response(raw_response: str, task: str) -> Dict[str, Any]:
         
         obj = json.loads(cleaned_response)
         
-        if task == "exams" or task == "exam-applied":
+        if task == "exams":
             return ExamItem(**obj).model_dump()
         elif task == "sentiment":
             return SentimentItem(**obj).model_dump()
@@ -358,131 +355,6 @@ def run_batch_generation(
     return results
 
 
-def run_batch_applied_generation(
-    input_file: Path,
-    output_dir: Path,
-    model: str = "mock",
-    batch_config: Optional[BatchGenerationConfig] = None,
-    subject: Optional[str] = None
-) -> List[Dict[str, Any]]:
-    """
-    Generate applied versions using batch processing.
-    
-    Args:
-        input_file: Path to input questions
-        output_dir: Output directory
-        model: Model name
-        batch_config: Batch configuration
-        subject: Optional subject
-        
-    Returns:
-        List of applied questions
-    """
-    if process_prompts_batch is None:
-        raise ImportError("llm_batch_helper not installed")
-    
-    # Verify API key is accessible
-    if not verify_api_key():
-        raise ValueError("OpenAI API key not found. Please set OPENAI_API_KEY in your .env file")
-    
-    if batch_config is None:
-        batch_config = BatchGenerationConfig()
-    
-    # Load input questions
-    input_questions = []
-    with input_file.open("r", encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                input_questions.append(json.loads(line.strip()))
-    
-    logger.info(f"Loaded {len(input_questions)} input questions from {input_file}")
-    
-    # Prepare prompts for applied generation
-    prompts = []
-    target_letters = []
-    letters = ["A", "B", "C", "D"]
-    
-    for i, input_question in enumerate(input_questions):
-        # Determine target answer letter
-        target_letter = letters[i % len(letters)]
-        
-        # Build prompt with input question context
-        prompt = f"""
-[Original Question to Transform]
-{json.dumps(input_question, ensure_ascii=False)}
-
-{_build_prompt("exam-applied", None, None, target_letter, subject)}
-"""
-        prompts.append(prompt)
-        target_letters.append(target_letter)
-    
-    # Configure LLM for batch processing
-    llm_config = batch_config.to_llm_config(model)
-    
-    # Run batch generation
-    try:
-        logger.info(f"Starting batch applied generation with {batch_config.batch_size} batch size")
-        responses_dict = process_prompts_batch(
-            prompts=prompts,
-            config=llm_config,
-            provider="openai"  # Default to OpenAI
-        )
-        logger.info(f"Batch applied generation completed: {len(responses_dict)} responses")
-        
-    except Exception as e:
-        logger.error(f"Batch applied generation failed: {e}")
-        raise
-    
-    # Process responses
-    results = []
-    failed_count = 0
-    
-    # Convert responses_dict to ordered list
-    responses = []
-    response_values = list(responses_dict.values())
-    for i, prompt in enumerate(prompts):
-        # Get response by index since keys are hashed
-        if i < len(response_values):
-            response_data = response_values[i]
-            if isinstance(response_data, dict):
-                # Check for error responses first
-                if 'error' in response_data:
-                    logger.warning(f"Response {i} has error: {response_data['error']}")
-                    response = ""
-                else:
-                    # Extract the actual response text from the response data
-                    response = response_data.get('response_text', '')
-            else:
-                response = str(response_data) if response_data else ""
-        else:
-            response = ""
-        responses.append(response)
-    
-    for i, (response, target_letter) in enumerate(zip(responses, target_letters)):
-        try:
-            item = _parse_generation_response(response, "exam-applied")
-            
-            # Ensure correct answer letter
-            if item.get("answer") != target_letter:
-                item = _remap_answer_to_target(item, target_letter)
-            
-            results.append(item)
-            
-            if (i + 1) % 50 == 0:
-                logger.info(f"Processed {i + 1}/{len(input_questions)} questions")
-                
-        except Exception as e:
-            logger.error(f"Failed to process applied question {i + 1}: {e}")
-            failed_count += 1
-            continue
-    
-    success_rate = (len(results) / len(input_questions)) * 100 if input_questions else 0
-    logger.info(f"Batch applied generation complete: {len(results)}/{len(input_questions)} questions (Success rate: {success_rate:.1f}%)")
-    
-    if failed_count > 0:
-        logger.warning(f"Failed to process {failed_count} applied questions")
-    
-    return results
 
 
 def log_batch_generation_session(

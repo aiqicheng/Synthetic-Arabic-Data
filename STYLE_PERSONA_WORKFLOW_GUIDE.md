@@ -420,7 +420,7 @@ arabic-synth clean exams \
 ## 🆘 Support and Documentation
 
 ### Related Commands
-- `arabic-synth sample-and-convert --help` - Individual sampling and conversion
+- `arabic-synth sample-and-convert --help` - Individual sampling and conversion (supports exams and mmlu tasks)
 - `arabic-synth build-persona-requests --help` - Persona request generation
 - `arabic-synth evaluate-persona --help` - Persona-augmented quality validation
 - `arabic-synth select-personas --help` - Persona curation

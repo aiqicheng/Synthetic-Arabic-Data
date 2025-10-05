@@ -39,7 +39,7 @@ class SeedManager:
         validated_seeds = []
         for seed in selected_seeds:
             try:
-                if task == "exams":
+                if task == "exams" or task == "mmlu":
                     # Check for required fields without strict schema validation
                     # since seeds might have different format than generated items
                     if ("question" in seed and seed["question"] and 
@@ -129,6 +129,55 @@ class SeedManager:
 """
             return guidance
         
+        elif task == "mmlu":
+            # Analyze MMLU seed data for style guidance
+            subjects = set()
+            question_lengths = []
+            option_patterns = set()
+            technical_terms = set()
+            
+            for seed in self.seeds:
+                # Extract subject from seed data
+                if "subject" in seed:
+                    subjects.add(seed["subject"])
+                
+                # Extract level information
+                level = seed.get("level", "")
+                
+                # Analyze question content
+                question = seed.get("question", "")
+                question_lengths.append(len(question.split()))
+                
+                # Look for technical terms (simple heuristic)
+                tech_words = ["خوارزمية", "برمجة", "بيانات", "شبكة", "ذكاء", "نظام", "حاسوب", "برنامج"]
+                for word in tech_words:
+                    if word in question:
+                        technical_terms.add(word)
+                
+                # Analyze option patterns
+                options = seed.get("options", [])
+                for opt in options:
+                    if opt.startswith("A."):
+                        option_patterns.add("letter_dot")
+                    elif opt.startswith("A-"):
+                        option_patterns.add("letter_dash")
+            
+            # Generate MMLU-specific style guidance
+            avg_length = sum(question_lengths) / len(question_lengths) if question_lengths else 15
+            subject_list = list(subjects)[:3] if subjects else ["Computer Science"]
+            
+            guidance = f"""
+[MMLU Style Guide based on {len(self.seeds)} seed examples]
+- Subject focus: {', '.join(subject_list)}
+- Question length: {int(avg_length)} ± 5 words
+- Technical depth: Maintain academic rigor for {level} level
+- Option format: Use {list(option_patterns)[0] if option_patterns else 'A. B. C. D.'} format
+- Include technical terminology: {', '.join(list(technical_terms)[:3]) if technical_terms else 'Use domain-specific terms'}
+- Maintain MMLU assessment standards
+- DO NOT copy any specific content from seeds
+"""
+            return guidance
+        
         return ""
     
     def validate_generation(self, generated_item: Dict[str, Any], task: str) -> bool:
@@ -151,6 +200,23 @@ class SeedManager:
             q2 = item2.get("question", "")
             
             # 简单的词汇重叠检查
+            words1 = set(q1.split())
+            words2 = set(q2.split())
+            
+            if len(words1) == 0 or len(words2) == 0:
+                return 0.0
+                
+            overlap = len(words1.intersection(words2))
+            total = len(words1.union(words2))
+            
+            return overlap / total if total > 0 else 0.0
+        
+        elif task == "mmlu":
+            # Check question similarity for MMLU
+            q1 = item1.get("question", "")
+            q2 = item2.get("question", "")
+            
+            # Simple word overlap check
             words1 = set(q1.split())
             words2 = set(q2.split())
             

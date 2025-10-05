@@ -199,6 +199,7 @@ src/arabic_synth/
 ```bash
 # Generate with seed constraints and distribution control
 arabic-synth generate exams \
+  --output-dir outputs/pipeline_test \
   --num-samples 200 \
   --model openai:gpt-4o \
   --seed-file data/seeds/exams_seeds_from_testset.jsonl \
@@ -207,7 +208,7 @@ arabic-synth generate exams \
 
 # Clean and validate
 arabic-synth clean exams \
-  --in-path outputs/exams_raw.jsonl \
+  --in-path outputs/pipeline_test/generate_style_200.jsonl \
   --out-path outputs/exams_clean.jsonl
 
 # Evaluate quality

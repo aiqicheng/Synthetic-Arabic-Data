@@ -9,6 +9,10 @@ from arabic_synth.utils.io import read_jsonl
 from arabic_synth.schemas.exams import ExamItem
 from arabic_synth.schemas.sentiment import SentimentItem
 from arabic_synth.schemas.grammar import GrammarItem
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from schemas.mmlu import MMLUItem
 
 
 def _canonicalize(item: Dict[str, Any]) -> str:
@@ -26,6 +30,8 @@ def _is_valid(task: str, item: Dict[str, Any]) -> bool:
             SentimentItem(**item)
         elif task == "grammar":
             GrammarItem(**item)
+        elif task == "mmlu":
+            MMLUItem(**item)
         else:
             return False
         return True
@@ -37,7 +43,7 @@ def _length_ok(task: str, item: Dict[str, Any]) -> bool:
     if task == "sentiment":
         words = item.get("text", "").split()
         return 20 <= len(words) <= 70
-    if task == "exams":
+    if task == "exams" or task == "mmlu":
         q_words = item.get("question", "").split()
         return 5 <= len(q_words) <= 60
     if task == "grammar":
@@ -46,7 +52,7 @@ def _length_ok(task: str, item: Dict[str, Any]) -> bool:
 
 
 def _ttr_ok(task: str, item: Dict[str, Any], threshold: float = 0.18) -> bool:
-    if task not in {"exams", "sentiment"}:
+    if task not in {"exams", "sentiment", "mmlu"}:
         return True
     text = item.get("text") or item.get("question") or ""
     tokens = [t for t in str(text).split() if t]

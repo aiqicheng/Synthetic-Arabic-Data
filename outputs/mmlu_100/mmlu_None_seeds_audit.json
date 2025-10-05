@@ -1,0 +1,60 @@
+{
+  "seed_count": 10,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7
+  },
+  "seeds_used": [
+    {
+      "question_preview": "أين يوجد أكبر حوض للأسماك؟...",
+      "subject_hint": "general",
+      "hash": 460186143544718270
+    },
+    {
+      "question_preview": "من الضروري عند تنصيب سكراتش على الحاسوب تنصيب برنا...",
+      "subject_hint": "general",
+      "hash": 6547822910915249256
+    },
+    {
+      "question_preview": "من الامثلة على الرياح اليومية:...",
+      "subject_hint": "general",
+      "hash": 8391085089711428196
+    },
+    {
+      "question_preview": "السؤال الأول: اختار رقم (أ) إذا كانت العبارة صحيحة...",
+      "subject_hint": "general",
+      "hash": 803890108335210297
+    },
+    {
+      "question_preview": "إختار الإجابة الصحيحة بنعم أو لا مما يأتي:\n\nهناك م...",
+      "subject_hint": "general",
+      "hash": -1446851481727141092
+    },
+    {
+      "question_preview": "خصائص الأمثال القرآنية:...",
+      "subject_hint": "islamic",
+      "hash": -7458905426837192703
+    },
+    {
+      "question_preview": "السوائل السريعة الحركة تنتج ضغطًاً ......... السوا...",
+      "subject_hint": "general",
+      "hash": -5315491107932725836
+    },
+    {
+      "question_preview": "اي مما يأتي يمثل مضاعفات الثلاثة الاولى للعدد 5 .....",
+      "subject_hint": "general",
+      "hash": 2951032672013547831
+    },
+    {
+      "question_preview": "اقرأ النص القصير التالي ثم اختر البديل المناسب لـ ...",
+      "subject_hint": "general",
+      "hash": 5216563906161762985
+    },
+    {
+      "question_preview": "من تطورات القوات المسلحة الأردنية الجيش العربي تشك...",
+      "subject_hint": "general",
+      "hash": 3085686810754381721
+    }
+  ]
+}
