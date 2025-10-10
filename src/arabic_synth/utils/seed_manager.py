@@ -164,7 +164,7 @@ class SeedManager:
             
             # Generate MMLU-specific style guidance
             avg_length = sum(question_lengths) / len(question_lengths) if question_lengths else 15
-            subject_list = list(subjects)[:3] if subjects else ["Computer Science"]
+            subject_list = list(subjects) if subjects else ["Mathematics"]
             
             guidance = f"""
 [MMLU Style Guide based on {len(self.seeds)} seed examples]
@@ -230,8 +230,14 @@ class SeedManager:
         
         return 0.0
 
-    def _extract_subject_hint(self, question: str) -> str:
-        """基于问题文本的简单启发式主题识别，仅用于审计展示。"""
+    def _extract_subject_hint(self, seed: Dict[str, Any]) -> str:
+        """Extract subject hint from seed data, using actual subject field if available."""
+        # First try to use the actual subject field from the seed
+        if "subject" in seed and seed["subject"]:
+            return seed["subject"]
+        
+        # Fallback to keyword-based heuristic if subject field is not available
+        question = seed.get("question", "")
         q = (question or "").lower()
         # 关键词映射（可按需扩展）
         keyword_to_subject = [
@@ -268,7 +274,7 @@ class SeedManager:
             "seeds_used": [
                 {
                     "question_preview": seed.get("question", "")[:50] + "...",
-                    "subject_hint": self._extract_subject_hint(seed.get("question", "")),
+                    "subject_hint": self._extract_subject_hint(seed),
                     "hash": hash(json.dumps(seed, sort_keys=True))
                 }
                 for seed in self.seeds

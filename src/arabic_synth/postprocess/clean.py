@@ -89,7 +89,7 @@ def _near_dedup(items: List[Dict[str, Any]], task: str, thr: float = 0.92) -> Li
     buckets: Dict[str, List[int]] = {}
 
     def key_for(it: Dict[str, Any]) -> str:
-        if task == "exams":
+        if task == "exams" or task == "mmlu":
             q = it.get("question", "")
         elif task == "sentiment":
             q = it.get("text", "")

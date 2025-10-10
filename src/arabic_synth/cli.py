@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from arabic_synth.generators.run import run_generation
+from arabic_synth.generators.batch_generation import run_batch_generation, BatchGenerationConfig
 from arabic_synth.postprocess.clean import run_cleaning
 from arabic_synth.evaluate.evaluate_style import run_evaluation, run_evaluate_style
 from arabic_synth.utils.io import export_dataset
@@ -21,7 +22,7 @@ app = typer.Typer(add_completion=False)
 def generate(
     task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu"),
     num_samples: int = typer.Option(100, help="Number of samples to generate"),
-    model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' to call OpenAI"),
+    model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' for OpenAI or 'openrouter:MODEL' for OpenRouter"),
     batch_size: int = typer.Option(50, help="Batch size for generation"),
     persona: Optional[str] = typer.Option(None, help="Override persona role if needed"),
     seed_file: Optional[Path] = typer.Option(None, help="Optional seed examples JSONL"),
@@ -30,25 +31,55 @@ def generate(
     output_dir: Path = typer.Option(..., help="Output directory for generated data and intermediate files"),
     subject: Optional[str] = typer.Option(None, help="Optional subject for exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
     balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution for multiple choice tasks"),
+    use_batch: bool = typer.Option(False, help="Use batch processing (supports OpenAI and OpenRouter via llm_batch_helper)"),
 ):
     # Set up balanced answer distribution for multiple choice tasks
     target_answer_distribution = None
     if balanced_answers and task in ["exams", "mmlu"]:
         target_answer_distribution = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
     
-    dataset = run_generation(
-        task=task, 
-        num_samples=num_samples, 
-        model=model, 
-        batch_size=batch_size, 
-        persona_override=persona, 
-        seed_path=seed_file, 
-        output_dir=output_dir, 
-        temperature=temperature, 
-        top_p=top_p, 
-        target_answer_distribution=target_answer_distribution,
-        subject=subject
-    )
+    # Check if batch mode is requested but model is not supported
+    if use_batch and not (model.startswith("openai:") or model.startswith("openrouter:")):
+        typer.echo("Warning: Batch mode only supports OpenAI and OpenRouter models. Falling back to regular generation.")
+        use_batch = False
+    
+    # Use batch generation if requested
+    if use_batch:
+        typer.echo(f"Using batch generation mode with llm_batch_helper...")
+        batch_config = BatchGenerationConfig(
+            batch_size=batch_size,
+            temperature=temperature,
+            top_p=top_p,
+            max_retries=3,
+            delay_between_batches=1.0,
+            timeout=30.0
+        )
+        dataset = run_batch_generation(
+            task=task,
+            num_samples=num_samples,
+            model=model,
+            batch_config=batch_config,
+            persona_override=persona,
+            seed_path=seed_file,
+            output_dir=output_dir,
+            target_answer_distribution=target_answer_distribution,
+            subject=subject
+        )
+    else:
+        # Use regular generation
+        dataset = run_generation(
+            task=task, 
+            num_samples=num_samples, 
+            model=model, 
+            batch_size=batch_size, 
+            persona_override=persona, 
+            seed_path=seed_file, 
+            output_dir=output_dir, 
+            temperature=temperature, 
+            top_p=top_p, 
+            target_answer_distribution=target_answer_distribution,
+            subject=subject
+        )
     
     # Create output file with naming convention: generate_style_{num_samples}.jsonl
     output_file = output_dir / f"generate_style_{subject}_{num_samples}.jsonl"

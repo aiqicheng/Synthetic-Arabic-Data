@@ -26,28 +26,46 @@ except ImportError:
     process_prompts_batch = None
     LLMConfig = None
 
-from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT
+from arabic_synth.prompts.templates import EXAMS_TEACHER_PROMPT, SENTIMENT_PROMPT, GRAMMAR_QA_PROMPT, MMLU_TEACHER_PROMPT
 from arabic_synth.schemas.exams import ExamItem
 from arabic_synth.schemas.sentiment import SentimentItem
 from arabic_synth.schemas.grammar import GrammarItem
 from arabic_synth.utils.seed_manager import SeedManager, SeedConstraint
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from schemas.mmlu import MMLUItem
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
-def verify_api_key():
-    """Verify that the OpenAI API key is accessible."""
-    api_key = os.getenv('OPENAI_API_KEY') or os.getenv('openai_api_key')
-    if not api_key:
-        logger.warning("OpenAI API key not found in environment variables")
-        logger.warning("Please ensure OPENAI_API_KEY is set in your .env file")
-        return False
+def verify_api_key(provider: str = "openai"):
+    """Verify that the appropriate API key is accessible."""
+    if provider == "openai":
+        api_key = os.getenv('OPENAI_API_KEY') or os.getenv('openai_api_key')
+        if not api_key:
+            logger.warning("OpenAI API key not found in environment variables")
+            logger.warning("Please ensure OPENAI_API_KEY is set in your .env file")
+            return False
+        else:
+            # Ensure the API key is set in the environment for llm_batch_helper
+            os.environ['OPENAI_API_KEY'] = api_key
+            logger.info("OpenAI API key found and accessible")
+            return True
+    elif provider == "openrouter":
+        api_key = os.getenv('OPENROUTER_API_KEY')
+        if not api_key:
+            logger.warning("OpenRouter API key not found in environment variables")
+            logger.warning("Please ensure OPENROUTER_API_KEY is set in your .env file")
+            return False
+        else:
+            # Ensure the API key is set in the environment for llm_batch_helper
+            os.environ['OPENROUTER_API_KEY'] = api_key
+            logger.info("OpenRouter API key found and accessible")
+            return True
     else:
-        # Ensure the API key is set in the environment for llm_batch_helper
-        os.environ['OPENAI_API_KEY'] = api_key
-        logger.info("OpenAI API key found and accessible")
-        return True
+        logger.error(f"Unknown provider: {provider}")
+        return False
 
 
 class BatchGenerationConfig:
@@ -76,8 +94,13 @@ class BatchGenerationConfig:
         if LLMConfig is None:
             raise ImportError("llm_batch_helper not available")
         
-        # Remove 'openai:' prefix if present
-        clean_model_name = model_name.replace('openai:', '') if model_name.startswith('openai:') else model_name
+        # Remove provider prefix to get clean model name
+        if model_name.startswith('openai:'):
+            clean_model_name = model_name.replace('openai:', '')
+        elif model_name.startswith('openrouter:'):
+            clean_model_name = model_name.replace('openrouter:', '')
+        else:
+            clean_model_name = model_name
         
         return LLMConfig(
             model_name=clean_model_name,
@@ -89,7 +112,8 @@ class BatchGenerationConfig:
 
 
 def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, 
-                 target_answer_letter: Optional[str] = None, subject: Optional[str] = None) -> str:
+                 target_answer_letter: Optional[str] = None, subject: Optional[str] = None, 
+                 seed_subject: Optional[str] = None) -> str:
     """Build prompt for the given task with optional seed guidance."""
     base_prompt = ""
     if task == "exams":
@@ -111,16 +135,45 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         base_prompt = SENTIMENT_PROMPT if not persona_override else persona_override
     elif task == "grammar":
         base_prompt = GRAMMAR_QA_PROMPT if not persona_override else persona_override
+    elif task == "mmlu":
+        tmpl = persona_override or MMLU_TEACHER_PROMPT
+        # Safely substitute placeholders to avoid JSON brace formatting issues
+        base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
+        
+        # Handle subject placeholder - replace all {subject} occurrences
+        effective_subject = subject or seed_subject or "Computer Science"
+        base_prompt = base_prompt.replace("{subject}", effective_subject)
     else:
-        raise ValueError("Unknown task")
+        raise ValueError(f"Unknown task: {task}")
     
     if seed_manager:
         style_guidance = seed_manager.get_style_guidance(task)
         if style_guidance:
-            base_prompt += f"\n\n{style_guidance}"
+            if task == "mmlu":
+                base_prompt = style_guidance + "\n\n" + base_prompt
+            else:
+                base_prompt += f"\n\n{style_guidance}"
         
-        # Add actual seed examples for the LLM to analyze
-        if seed_manager.seeds:
+        # Add seed examples for MMLU
+        if task == "mmlu" and seed_manager.seeds:
+            # Filter seeds by subject if specified
+            effective_subject = subject or seed_subject
+            relevant_seeds = seed_manager.seeds
+            if effective_subject:
+                relevant_seeds = [s for s in seed_manager.seeds if s.get("subject") == effective_subject]
+                # If no seeds match the subject, use all seeds but warn
+                if not relevant_seeds:
+                    relevant_seeds = seed_manager.seeds
+            
+            seed_examples = []
+            for seed in relevant_seeds[:2]:  # Use first 2 relevant seeds as examples
+                seed_examples.append(f'Example: {json.dumps({"question": seed.get("question", ""), "options": seed.get("options", []), "answer": seed.get("answer", "")}, ensure_ascii=False)}')
+            
+            if seed_examples:
+                base_prompt += "\n\n**Seed Examples for Reference:**\n" + "\n".join(seed_examples)
+                base_prompt += f"\n\n**Important**: Generate a NEW question in the same style and subject domain ({effective_subject or 'as shown in examples'}) as the examples above, but with completely different content."
+        # Add actual seed examples for other tasks
+        elif seed_manager.seeds and task != "mmlu":
             base_prompt += "\n\n**Original Questions for Reference:**\n"
             for i, seed in enumerate(seed_manager.seeds[:3], 1):  # Include up to 3 seed examples
                 question = seed.get("question", "")
@@ -190,8 +243,22 @@ def _parse_generation_response(raw_response: str, task: str) -> Dict[str, Any]:
             return SentimentItem(**obj).model_dump()
         elif task == "grammar":
             return GrammarItem(**obj).model_dump()
+        elif task == "mmlu":
+            try:
+                # Validate with MMLUItem schema but only return required fields
+                mmlu_item = MMLUItem(**obj)
+                # Return only the three required fields
+                return {
+                    "question": mmlu_item.question,
+                    "options": mmlu_item.options,
+                    "answer": mmlu_item.answer
+                }
+            except Exception as e:
+                logger.error(f"MMLU validation error: {e}")
+                logger.error(f"Generated object: {obj}")
+                raise ValueError(f"MMLU validation failed: {e}")
         else:
-            raise ValueError("Unknown task")
+            raise ValueError(f"Unknown task: {task}")
     except Exception as e:
         logger.error(f"Failed to parse response: {e}")
         logger.error(f"Raw response: {raw_response}")
@@ -231,18 +298,27 @@ def run_batch_generation(
     if process_prompts_batch is None:
         raise ImportError("llm_batch_helper not installed. Install with: pip install git+https://github.com/TianyiPeng/LLM_batch_helper.git")
     
-    # Verify API key is accessible
-    if not verify_api_key():
-        raise ValueError("OpenAI API key not found. Please set OPENAI_API_KEY in your .env file")
+    # Determine provider from model name
+    if model.startswith("openrouter:"):
+        provider = "openrouter"
+    elif model.startswith("openai:"):
+        provider = "openai"
+    else:
+        # Default to openai for backward compatibility
+        provider = "openai"
     
-    logger.info(f"Starting batch generation: {num_samples} samples for {task}")
+    # Verify API key is accessible
+    if not verify_api_key(provider):
+        raise ValueError(f"{provider.upper()} API key not found. Please set {provider.upper()}_API_KEY in your .env file")
+    
+    logger.info(f"Starting batch generation: {num_samples} samples for {task} using {provider}")
     
     # Initialize seed manager
     seed_manager = None
     if seed_path and seed_path.exists():
         seed_constraint = seed_constraint or SeedConstraint(max_seeds=10)
         seed_manager = SeedManager(seed_constraint)
-        seeds_loaded = seed_manager.load_seeds_from_jsonl(seed_path, task)
+        seeds_loaded = seed_manager.load_seeds_from_testset(seed_path, task)
         logger.info(f"Loaded {len(seeds_loaded)} seed examples from {seed_path}")
         if seeds_loaded and output_dir:
             audit_path = output_dir / f"{task}_{subject}_seeds_audit.json"
@@ -266,6 +342,13 @@ def run_batch_generation(
         quotas[l] += 1
         delta -= 1
     
+    # Extract seed subject for MMLU if available
+    seed_subject = None
+    if task == "mmlu" and seed_manager and seed_manager.seeds:
+        import random
+        random_seed = random.choice(seed_manager.seeds)
+        seed_subject = random_seed.get("subject")
+    
     # Prepare prompts for batch processing
     prompts = []
     target_letters = []
@@ -273,7 +356,7 @@ def run_batch_generation(
     for letter in letters:
         for _ in range(quotas[letter]):
             prompt = _build_prompt(task, persona_override, seed_manager, 
-                                 target_answer_letter=letter, subject=subject)
+                                 target_answer_letter=letter, subject=subject, seed_subject=seed_subject)
             prompts.append(prompt)
             target_letters.append(letter)
     
@@ -284,11 +367,11 @@ def run_batch_generation(
     
     # Run batch generation
     try:
-        logger.info(f"Starting batch generation with {batch_config.batch_size} batch size")
+        logger.info(f"Starting batch generation with {batch_config.batch_size} batch size using {provider}")
         responses_dict = process_prompts_batch(
             prompts=prompts,
             config=llm_config,
-            provider="openai"  # Default to OpenAI
+            provider=provider
         )
         logger.info(f"Batch generation completed: {len(responses_dict)} responses")
         
@@ -332,8 +415,8 @@ def run_batch_generation(
                 failed_count += 1
                 continue
             
-            # Handle answer remapping for exams
-            if task == "exams" and item.get("answer") != target_letter:
+            # Handle answer remapping for exams and mmlu
+            if task in ["exams", "mmlu"] and item.get("answer") != target_letter:
                 item = _remap_answer_to_target(item, target_letter)
             
             results.append(item)

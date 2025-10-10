@@ -19,9 +19,9 @@ def _extract_json_from_markdown(text: str) -> str:
     return text
 
 
-def call_llm(model: str, prompt: str, temperature: float = 0.7, top_p: float = 0.95) -> str:
-    if model.startswith("openai:"):
-        openai_model = model.split(":", 1)[1]
+def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0.95) -> str:
+    if model.startswith("openai:") or model.startswith("gpt"):
+        openai_model = model.split(":", 1)[1] if ":" in model else model
         api_key = os.environ.get("OPENAI_API_KEY")
         if not api_key:
             raise RuntimeError("OPENAI_API_KEY is not set in environment")
@@ -48,6 +48,46 @@ def call_llm(model: str, prompt: str, temperature: float = 0.7, top_p: float = 0
                 return json_content
         except Exception as e:
             raise RuntimeError(f"OpenAI API call failed: {e}")
+    
+    if model.startswith("openrouter:"):
+        openrouter_model = model.split(":", 1)[1]
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY is not set in environment")
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        # Optional: Add app attribution headers if environment variables are set
+        site_url = os.environ.get("OPENROUTER_SITE_URL")
+        site_name = os.environ.get("OPENROUTER_SITE_NAME")
+        if site_url:
+            headers["HTTP-Referer"] = site_url
+        if site_name:
+            headers["X-Title"] = site_name
+        
+        payload = {
+            "model": openrouter_model,
+            "messages": [
+                {"role": "system", "content": "You are a helpful Arabic data generator. Return ONLY valid JSON without any markdown formatting or explanations."},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": temperature,
+            "top_p": top_p,
+        }
+        try:
+            with httpx.Client(timeout=60) as client:
+                resp = client.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+                resp.raise_for_status()
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+                json_content = _extract_json_from_markdown(content)
+                return json_content
+        except httpx.HTTPStatusError as e:
+            error_detail = e.response.text if hasattr(e.response, 'text') else str(e)
+            raise RuntimeError(f"OpenRouter API call failed: {e.response.status_code} - {error_detail}")
+        except Exception as e:
+            raise RuntimeError(f"OpenRouter API call failed: {e}")
     
     # Fallback mock with some variety
     if "options" in prompt and "answer" in prompt:

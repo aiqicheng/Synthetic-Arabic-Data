@@ -56,7 +56,7 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
         
         # Handle subject placeholder - replace all {subject} occurrences
-        effective_subject = subject or seed_subject or "Computer Science"
+        effective_subject = subject or seed_subject or "General"
         base_prompt = base_prompt.replace("{subject}", effective_subject)
     else:
         raise ValueError(f"Unknown task: {task}")
