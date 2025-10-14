@@ -13,15 +13,6 @@ from arabic_synth.schemas.grammar import GrammarItem
 from arabic_synth.utils.llm import call_llm
 from arabic_synth.utils.seed_manager import SeedManager, SeedConstraint
 
-import logging
-from datetime import datetime
-
-# Configure logging
-logging.basicConfig(
-    filename='generation.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 
 
 def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Optional[SeedManager] = None, target_answer_letter: Optional[str] = None) -> str:
@@ -164,26 +155,3 @@ def run_generation(
     
     print(f"Successfully generated {len(results)}/{num_samples} samples")
     return results 
-
-
-def log_generation_session(
-    task: str,
-    model: str,
-    num_samples: int,
-    seed_constraints: Dict,
-    generation_time: float,
-    success_rate: float
-):
-    """Log the complete parameters of a generation session"""
-    session_log = {
-        "timestamp": datetime.now().isoformat(),
-        "task": task,
-        "model": model,
-        "num_samples": num_samples,
-        "seed_constraints": seed_constraints,
-        "generation_time": generation_time,
-        "success_rate": success_rate,
-        "version": "1.0.0"
-    }
-    # Save to log file
-    logging.info(f"Session log: {session_log}") 
