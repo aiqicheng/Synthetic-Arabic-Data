@@ -13,6 +13,7 @@ from arabic_synth.postprocess.clean import run_cleaning
 from arabic_synth.evaluate.evaluate import run_evaluation
 from arabic_synth.utils.io import export_dataset
 from arabic_synth.augment.augment import run_augmentation
+from arabic_synth.utils.llm import clear_chat_history, get_chat_history_stats
 
 app = typer.Typer(add_completion=False)
 
@@ -87,6 +88,34 @@ def export(
     out_dir: Path = typer.Option(Path("outputs")),
 ):
     export_dataset(task=task, in_path=in_path, out_format=out_format, out_dir=out_dir, meta_task_name=meta_task_name or task, meta_persona=meta_persona, meta_batch_id=meta_batch_id)
+
+
+@app.command()
+def clear_chat_histories(
+    session_id: Optional[str] = typer.Option(None, help="Clear specific session ID (if not provided, clears all)"),
+    older_than_hours: Optional[int] = typer.Option(None, help="Only clear histories older than N hours"),
+):
+    """Clear chat histories to improve performance."""
+    cleared_count = clear_chat_history(session_id=session_id, older_than_hours=older_than_hours)
+    
+    if session_id:
+        typer.echo(f"Cleared {cleared_count} messages from session '{session_id}'")
+    else:
+        typer.echo(f"Cleared {cleared_count} messages from all sessions")
+
+
+@app.command()
+def chat_stats():
+    """Show chat history statistics."""
+    stats = get_chat_history_stats()
+    typer.echo(f"Chat History Statistics:")
+    typer.echo(f"  Total sessions: {stats['total_sessions']}")
+    typer.echo(f"  Total messages: {stats['total_messages']}")
+    
+    if stats['sessions']:
+        typer.echo(f"  Messages per session:")
+        for sid, count in stats['sessions'].items():
+            typer.echo(f"    {sid}: {count} messages")
 
 
 if __name__ == "__main__":

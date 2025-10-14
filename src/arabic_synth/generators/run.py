@@ -81,8 +81,8 @@ def _remap_answer_to_target(exam_item: Dict[str, Any], target_letter: str) -> Di
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8))
-def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[SeedManager] = None, temperature: float = 0.7, top_p: float = 0.95) -> Dict[str, Any]:
-    raw = call_llm(model, prompt, temperature=temperature, top_p=top_p)
+def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[SeedManager] = None, temperature: float = 0.7, top_p: float = 0.95, use_chat_history: bool = False, session_id: Optional[str] = None) -> Dict[str, Any]:
+    raw = call_llm(model, prompt, temperature=temperature, top_p=top_p, session_id=session_id, use_chat_history=use_chat_history)
     obj = json.loads(raw)
     
     if seed_manager and not seed_manager.validate_generation(obj, task):
@@ -109,6 +109,8 @@ def run_generation(
     temperature: float = 0.7,
     top_p: float = 0.95,
     target_answer_distribution: Optional[Dict[str, float]] = None,
+    use_chat_history: bool = False,
+    session_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     # 初始化种子管理器
     seed_manager = None
@@ -151,7 +153,7 @@ def run_generation(
             continue
         prompt = _build_prompt(task, persona_override, seed_manager, target_answer_letter=target_letter)
         try:
-            item = _generate_one(task, prompt, model, seed_manager, temperature=temperature, top_p=top_p)
+            item = _generate_one(task, prompt, model, seed_manager, temperature=temperature, top_p=top_p, use_chat_history=use_chat_history, session_id=session_id)
             if task == "exams" and item.get("answer") != target_letter:
                 item = _remap_answer_to_target(item, target_letter)
             results.append(item)
