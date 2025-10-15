@@ -37,10 +37,10 @@
 ```bash
 # 使用种子约束生成
 arabic-synth generate exams \
+  --output-dir outputs/seed_constraint_test \
   --num-samples 100 \
   --model openai:gpt-4o \
-  --seed-file data/seeds/exams_seeds.jsonl \
-  --out-dir outputs
+  --seed-file data/seeds/exams_seeds.jsonl
 ```
 
 ### 3. 使用 Python 脚本
@@ -112,13 +112,13 @@ class SeedConstraint:
 ### 分阶段生成
 ```bash
 # 阶段 1: 测试 (100 样本)
-arabic-synth generate exams --num-samples 100 --seed-file seeds.jsonl
+arabic-synth generate exams --output-dir outputs/test_100 --num-samples 100 --seed-file seeds.jsonl
 
 # 阶段 2: 小规模 (1,000 样本)
-arabic-synth generate exams --num-samples 1000 --seed-file seeds.jsonl
+arabic-synth generate exams --output-dir outputs/test_1000 --num-samples 1000 --seed-file seeds.jsonl
 
 # 阶段 3: 大规模 (10,000 样本)
-arabic-synth generate exams --num-samples 10000 --seed-file seeds.jsonl
+arabic-synth generate exams --output-dir outputs/test_10000 --num-samples 10000 --seed-file seeds.jsonl
 ```
 
 ### 质量控制

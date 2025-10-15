@@ -1,9 +1,11 @@
 # Style MMLU Pipeline Documentation
 
-*Updated: October 5, 2025*
+*Updated: October 8, 2025*
 
 ## Overview
 This document describes the complete workflow for generating high-quality synthetic Arabic MMLU (Massive Multitask Language Understanding) questions using seed-constrained generation. The pipeline transforms raw MMLU CSV data into diverse, subject-specific synthetic questions while maintaining academic rigor and preventing data leakage.
+
+**Model Support**: The pipeline supports both OpenAI and OpenRouter APIs, including OpenRouter's Auto Router for automatic model selection powered by NotDiamond.
 
 ---
 
@@ -80,18 +82,77 @@ arabic-synth sample-and-convert mmlu \
 
 ## 🚀 Phase 2: Generation
 
-### 2.1 MMLU Generation Command
+### 2.1 Model Configuration
 
-**Command:**
+**Supported Model Providers:**
+
+The pipeline supports both OpenAI and OpenRouter APIs for generation.
+
+#### OpenAI Models
+```bash
+--model openai:gpt-4o                    # GPT-4 Optimized (recommended)
+--model openai:gpt-4o-mini               # GPT-4 Mini (cost-effective)
+--model openai:gpt-3.5-turbo             # GPT-3.5 Turbo (budget option)
+```
+
+#### OpenRouter Models
+OpenRouter provides access to multiple model providers through a unified API:
+
+**Auto Router (Recommended):**
+```bash
+--model "openrouter:openrouter/auto"     # Automatically selects best model for your prompt
+```
+
+**Specific Models:**
+```bash
+# OpenAI via OpenRouter
+--model "openrouter:openai/gpt-4o"
+--model "openrouter:openai/gpt-4o-mini"
+--model "openrouter:openai/gpt-3.5-turbo"
+
+# Anthropic Claude
+--model "openrouter:anthropic/claude-3.5-sonnet"   # Excellent for complex tasks
+--model "openrouter:anthropic/claude-3-haiku"      # Fast and cost-effective
+
+# Google Gemini
+--model "openrouter:google/gemini-pro-1.5"         # Strong multilingual support
+--model "openrouter:google/gemini-flash-1.5"       # Fast and affordable
+
+# Open Source Alternatives
+--model "openrouter:meta-llama/llama-3.1-70b-instruct"
+--model "openrouter:qwen/qwen-2.5-72b-instruct"
+```
+
+**Environment Setup:**
+- **OpenAI**: Set `OPENAI_API_KEY` in your `.env` file
+- **OpenRouter**: Set `OPENROUTER_API_KEY` in your `.env` file
+  - Optional: `OPENROUTER_SITE_URL` and `OPENROUTER_SITE_NAME` for attribution
+
+**References:**
+- [OpenRouter Quickstart](https://openrouter.ai/docs/quickstart)
+- [OpenRouter Model Routing](https://openrouter.ai/docs/features/model-routing)
+
+### 2.2 MMLU Generation Command
+
+**Command (OpenAI):**
 ```bash
 arabic-synth generate mmlu \
   --num-samples 100 \
   --model openai:gpt-4o \
   --seed-file outputs/mmlu_100/mmlu_seeds.jsonl \
-  --output-dir outputs/mmlu_100 \
+  --output-dir outputs/mmlu_100
 ```
 
-### 2.2 Generation Process
+**Command (OpenRouter with Auto Router):**
+```bash
+arabic-synth generate mmlu \
+  --num-samples 100 \
+  --model "openrouter:openrouter/auto" \
+  --seed-file outputs/mmlu_100/mmlu_seeds.jsonl \
+  --output-dir outputs/mmlu_100
+```
+
+### 2.3 Generation Process
 
 **1. Seed Loading & Analysis:**
 - `SeedManager` loads and validates seed examples
@@ -114,7 +175,7 @@ arabic-synth generate mmlu \
 - Returns only essential fields: `{"question", "options", "answer"}`
 - Ensures quality and format consistency
 
-### 2.3 Subject Generalization
+### 2.4 Subject Generalization
 
 **Supported Subjects:**
 - Computer Science
@@ -127,7 +188,7 @@ arabic-synth generate mmlu \
 - **Technical Terminology**: Domain-appropriate Arabic vocabulary
 - **Academic Style**: Maintains MMLU assessment standards
 
-### 2.4 Prompt Template Structure
+### 2.5 Prompt Template Structure
 
 ```
 [Role: Experienced Arabic instructor]
@@ -218,6 +279,7 @@ arabic-synth evaluate-style mmlu \
 
 ### End-to-End Pipeline
 
+**Option 1: Using OpenAI Models**
 ```bash
 # Step 1: Prepare seeds from MMLU dataset
 arabic-synth sample-and-convert mmlu \
@@ -230,7 +292,7 @@ arabic-synth generate mmlu \
   --num-samples 100 \
   --model openai:gpt-4o \
   --seed-file outputs/mmlu_100/mmlu_seeds.jsonl \
-  --output-dir outputs/mmlu_100 \
+  --output-dir outputs/mmlu_100
 
 # Step 3: Clean generated data
 arabic-synth clean mmlu \
@@ -240,6 +302,41 @@ arabic-synth clean mmlu \
 # Step 4: Evaluate quality
 arabic-synth evaluate-style mmlu \
   --in-path outputs/mmlu_100/mmlu_final_clean.jsonl
+```
+
+**Option 2: Using OpenRouter Auto Router (Recommended)**
+```bash
+# Step 1: Prepare seeds from MMLU dataset
+arabic-synth sample-and-convert mmlu \
+  --input-file data/arabicmmlu_all.csv \
+  --output-file outputs/mmlu_100/mmlu_seeds.jsonl \
+  --n 10 --mode uniform
+
+# Step 2: Generate synthetic data with Auto Router
+arabic-synth generate mmlu \
+  --num-samples 100 \
+  --model "openrouter:openrouter/auto" \
+  --seed-file outputs/mmlu_100/mmlu_seeds.jsonl \
+  --output-dir outputs/mmlu_100
+
+# Step 3: Clean generated data
+arabic-synth clean mmlu \
+  --in-path outputs/mmlu_100/generate_style_None_100.jsonl \
+  --out-path outputs/mmlu_100/mmlu_final_clean.jsonl
+
+# Step 4: Evaluate quality
+arabic-synth evaluate-style mmlu \
+  --in-path outputs/mmlu_100/mmlu_final_clean.jsonl
+```
+
+**Option 3: Using Specific OpenRouter Model**
+```bash
+# Example with Claude 3.5 Sonnet for high-quality generation
+arabic-synth generate mmlu \
+  --num-samples 100 \
+  --model "openrouter:anthropic/claude-3.5-sonnet" \
+  --seed-file outputs/mmlu_100/mmlu_seeds.jsonl \
+  --output-dir outputs/mmlu_100
 ```
 
 ## 📁 Source and Input Files Structure
@@ -399,17 +496,24 @@ outputs/
 - Limit to ≤10 seeds to prevent overfitting
 - Include diverse examples within each subject
 
-### 2. Generation Parameters
+### 2. Model Selection
+- **For production use**: OpenRouter Auto Router (`openrouter:openrouter/auto`) for optimal quality/cost balance
+- **For high-quality generation**: Claude 3.5 Sonnet or GPT-4o for complex academic content
+- **For cost-effective generation**: GPT-3.5 Turbo or Gemini Flash for large-scale generation
+- **For experimentation**: Try different models to find the best fit for your use case
+
+### 3. Generation Parameters
 - Use appropriate temperature (0.7-0.8) for balanced creativity/consistency
 - Specify subjects explicitly for better control
 - Monitor generation quality during large batches
+- Set `OPENROUTER_API_KEY` or `OPENAI_API_KEY` in `.env` file before running
 
-### 3. Quality Control
+### 4. Quality Control
 - Always run cleaning step to remove duplicates
 - Evaluate a sample of generated data before large-scale use
 - Validate technical accuracy for domain-specific questions
 
-### 4. Data Management
+### 5. Data Management
 - Maintain audit trails of seed usage
 - Version control generated datasets
 - Document generation parameters for reproducibility
