@@ -10,6 +10,7 @@ load_dotenv()
 
 from arabic_synth.generators.run import run_generation
 from arabic_synth.generators.batch_generation import run_batch_generation, BatchGenerationConfig
+from arabic_synth.batch.enhanced_generator import EnhancedBatchGenerationProgram
 from arabic_synth.postprocess.clean import run_cleaning
 from arabic_synth.evaluate.evaluate_style import run_evaluation, run_evaluate_style
 from arabic_synth.utils.io import export_dataset
@@ -32,6 +33,8 @@ def generate(
     subject: Optional[str] = typer.Option(None, help="Optional subject for exams tasks (e.g., 'Islamic Studies', 'Mathematics', 'Physics')"),
     balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution for multiple choice tasks"),
     use_batch: bool = typer.Option(False, help="Use batch processing (supports OpenAI and OpenRouter via llm_batch_helper)"),
+    use_diversity: bool = typer.Option(True, help="Enable diversity features: sampling jitter, prompt variation, fast duplicate screening"),
+    one_prompt_per_seed: bool = typer.Option(True, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
 ):
     # Set up balanced answer distribution for multiple choice tasks
     target_answer_distribution = None
@@ -78,7 +81,9 @@ def generate(
             temperature=temperature, 
             top_p=top_p, 
             target_answer_distribution=target_answer_distribution,
-            subject=subject
+            subject=subject,
+            use_diversity=use_diversity,
+            one_prompt_per_seed=one_prompt_per_seed
         )
     
     # Create output file with naming convention: generate_style_{num_samples}.jsonl
@@ -91,6 +96,109 @@ def generate(
     typer.echo(f"Wrote raw data to {output_file}")
 
 
+@app.command()
+def generate_mmlu(
+    num_samples: int = typer.Option(100, help="Number of samples to generate"),
+    model: str = typer.Option("openai:gpt-4o", help="Model name; use 'openai:MODEL' for OpenAI or 'openrouter:MODEL' for OpenRouter"),
+    seed_file: Path = typer.Option(..., help="Seed examples JSONL file"),
+    output_dir: Path = typer.Option(..., help="Output directory for generated data and intermediate files"),
+    subject: Optional[str] = typer.Option(None, help="Subject filter (e.g., 'Computer Science', 'Physics')"),
+    temperature: float = typer.Option(0.7, help="Sampling temperature"),
+    top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
+    balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution (A=25%, B=25%, C=25%, D=25%)"),
+    use_diversity: bool = typer.Option(True, help="Enable diversity features: sampling jitter, prompt variation, fast duplicate screening"),
+    one_prompt_per_seed: bool = typer.Option(True, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
+):
+    """Generate MMLU questions using one-prompt-per-seed strategy."""
+    
+    # Set up balanced answer distribution
+    target_answer_distribution = None
+    if balanced_answers:
+        target_answer_distribution = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
+    
+    # Generate dataset
+    dataset = run_generation(
+        task="mmlu", 
+        num_samples=num_samples, 
+        model=model, 
+        batch_size=50, 
+        persona_override=None, 
+        seed_path=seed_file, 
+        output_dir=output_dir, 
+        temperature=temperature, 
+        top_p=top_p, 
+        target_answer_distribution=target_answer_distribution,
+        subject=subject,
+        use_diversity=use_diversity,
+        one_prompt_per_seed=one_prompt_per_seed
+    )
+    
+    # Create output file with naming convention: generate_style_{subject}_{num_samples}.jsonl
+    output_file = output_dir / f"generate_style_{subject or 'None'}_{num_samples}.jsonl"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    with output_file.open("w", encoding="utf-8") as f:
+        for item in dataset:
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+    
+    typer.echo(f"Generated {len(dataset)} MMLU questions using one-prompt-per-seed strategy")
+    typer.echo(f"Wrote data to {output_file}")
+    
+    # Print seed usage summary if available
+    if dataset and "_seed_index" in dataset[0]:
+        used_seeds = set(item["_seed_index"] for item in dataset)
+        typer.echo(f"Used {len(used_seeds)} unique seeds out of {num_samples} requested samples")
+
+
+@app.command()
+def generate_enhanced_batch(
+    input_file: Path = typer.Option(..., help="Path to Arabic MMLU CSV file"),
+    output_dir: Path = typer.Option(..., help="Output directory for results"),
+    model: str = typer.Option("openai:gpt-4o", help="LLM model to use"),
+    sampling_mode: str = typer.Option("stratified", help="Seed sampling mode: stratified or uniform"),
+    seeds_per_batch: int = typer.Option(20, help="Number of seeds per batch"),
+    total_batches: int = typer.Option(5, help="Number of batches to run"),
+    use_batch_helper: bool = typer.Option(True, help="Use llm-batch-helper for parallel processing"),
+    max_concurrent_requests: int = typer.Option(10, help="Maximum concurrent requests for batch processing"),
+    prioritize_diversity: bool = typer.Option(False, help="Prioritize full diversity per request over speed (uses sequential processing)"),
+):
+    """Generate MMLU questions using enhanced batch processing with llm-batch-helper.
+    
+    This command implements the one-prompt-per-seed strategy with parallel processing:
+    - Samples seeds with varied random seeds (no fixed seed=42)
+    - Uses llm-batch-helper for concurrent API calls (5-10x faster)
+    - Produces clean output with strict A. B. C. D. formatting
+    - Separates metadata from main output files
+    - Supports multiple providers: OpenAI, OpenRouter, Together.ai, Google Gemini
+    """
+    
+    # Validate input file exists
+    if not input_file.exists():
+        typer.echo(f"❌ Input file not found: {input_file}")
+        raise typer.Exit(1)
+    
+    # Create and run the enhanced batch generation program
+    program = EnhancedBatchGenerationProgram(
+        input_file=input_file,
+        output_dir=output_dir,
+        model=model,
+        sampling_mode=sampling_mode,
+        seeds_per_batch=seeds_per_batch,
+        total_batches=total_batches,
+        use_batch_helper=use_batch_helper,
+        max_concurrent_requests=max_concurrent_requests,
+        prioritize_diversity=prioritize_diversity
+    )
+    
+    try:
+        program.run()
+        typer.echo(f"\n✅ Enhanced batch generation completed successfully!")
+        typer.echo(f"📁 Results saved to: {output_dir}")
+        typer.echo(f"📊 Total items generated: {program.generation_stats['total_items_generated']}")
+        typer.echo(f"⚡ Processing method: {'Parallel (llm-batch-helper)' if program.use_batch_helper else 'Sequential'}")
+    except Exception as e:
+        typer.echo(f"❌ Enhanced batch generation failed: {e}")
+        raise typer.Exit(1)
 
 
 @app.command()

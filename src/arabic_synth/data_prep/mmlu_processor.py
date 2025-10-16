@@ -66,15 +66,15 @@ class MMLUProcessor:
 
     def sample_uniform(self, n: int, seed: Optional[int] = None, data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Uniform random sampling"""
-        if seed is not None:
-            random.seed(seed)
+        if seed is None:
+            seed = random.randint(0, 10000)
         data_to_use = data if data is not None else self.data
-        return data_to_use.sample(n=n, random_state=random.randint(0, 10000))
+        return data_to_use.sample(n=n, random_state=seed)
 
     def sample_stratified(self, n: int, stratify_col: str = "Subject", seed: Optional[int] = None, data: Optional[pd.DataFrame] = None) -> pd.DataFrame:
         """Stratified sampling (default by Subject)"""
-        if seed is not None:
-            random.seed(seed)
+        if seed is None:
+            seed = random.randint(0, 10000)
         
         data_to_use = data if data is not None else self.data
         
@@ -88,7 +88,7 @@ class MMLUProcessor:
             # Ensure we don't try to sample more than available
             sample_size = min(k, len(g))
             if sample_size > 0:
-                result.append(g.sample(n=sample_size, random_state=random.randint(0, 10000)))
+                result.append(g.sample(n=sample_size, random_state=seed))
         
         if not result:
             return pd.DataFrame()
@@ -98,7 +98,7 @@ class MMLUProcessor:
         if len(combined) <= n:
             return combined
         else:
-            return combined.sample(n=n)
+            return combined.sample(n=n, random_state=seed)
 
     def save_csv(self, df: pd.DataFrame, out_file: str):
         """Save sampled subset in the same CSV format as original dataset"""

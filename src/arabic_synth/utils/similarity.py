@@ -1,4 +1,6 @@
 # --- utils/similarity.py ---
+# This module provides Arabic text normalization and similarity functions.
+# Used by diversity.py for better Arabic text processing in duplicate detection.
 import re, json, hashlib
 from typing import List, Dict, Any, Tuple
 from collections import Counter

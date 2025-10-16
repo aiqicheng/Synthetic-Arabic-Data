@@ -24,6 +24,8 @@ A comprehensive pipeline for generating high-quality Arabic synthetic datasets u
 ```
 src/arabic_synth/
 ├── cli.py                     # 🎯 Main CLI interface (Typer-based) with MMLU support
+├── batch/                     # 🚀 ENHANCED BATCH PROCESSING
+│   └── enhanced_generator.py  # EnhancedBatchGenerationProgram with llm-batch-helper
 ├── data_prep/                 # 📊 DATA PREPARATION PHASE
 │   ├── exam_processor.py      # Exam CSV processing and conversion
 │   ├── mmlu_processor.py      # MMLU CSV processing with subject generalization
@@ -52,7 +54,9 @@ src/arabic_synth/
     ├── seed_manager.py        # Seed constraint system with MMLU support
     ├── quality_validator.py   # Quality metrics and validation
     ├── io.py                  # File I/O operations
-    └── anonymizer.py          # Data anonymization utilities
+    ├── anonymizer.py          # Data anonymization utilities
+    ├── similarity.py          # Similarity checking and deduplication
+    └── diversity.py           # Diversity features for enhanced generation
 
 src/schemas/                   # 🔍 VALIDATION SCHEMAS
 ├── exams.py                   # Exam data structure validation
@@ -79,13 +83,27 @@ export OPENAI_API_KEY="your-api-key-here"
 
 The pipeline supports three main workflows for Arabic synthetic data generation:
 
+### 🚀 Enhanced Batch Generation Workflow (Updated Oct. 16)
+**Purpose**: Large-scale Arabic MMLU question generation with parallel processing
+1. **Input Processing**: Uses multiple CSV files (`arabicmmlu_1.csv` through `arabicmmlu_5.csv`)
+2. **Parallel Generation**: 5-10x faster via `llm-batch-helper` concurrent API calls
+3. **Production Scale**: 100 batches × 20 seeds × 5 runs = 10,000 MCQs total
+4. **Automated Pipeline**: Combines, cleans, and evaluates all results
+
+```bash
+# Run complete production workflow
+./run_production_batch.sh
+
+# Manual single run
+arabic-synth generate-enhanced-batch --input-file data/arabicmmlu/arabicmmlu_1.csv --output-dir outputs/run1 --total-batches 100 --seeds-per-batch 20
+```
+
 ### 🎨 Style Guide Workflow
 **Purpose**: Generate data following consistent style patterns from seed examples
 
 #### Manual Style Guide Pipeline
 1. **Seed Selection**: Extract/sample representative examples
-2. **🎯 Style-Based Generation** ⚠️ **CURRENT FOCUS**: Use `generators/run.py` with style templates (`prompts/templates.py`)
-   - **Iterative Prompt Tuning**: Manual output checks and template refinement required
+2. **Style-Based Generation**: Use `generators/run.py` with style templates (`prompts/templates.py`)
    - **Template Location**: `./src/arabic_synth/prompts/templates.py`
    - **Process**: Generate → Review → Tune → Repeat until quality targets met
 3. **Post-Processing**: Clean, validate, and evaluate quality
@@ -94,7 +112,7 @@ The pipeline supports three main workflows for Arabic synthetic data generation:
 # Quick start - Manual Style Guide Pipeline
 arabic-synth sample-and-convert exams --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 10 --mode stratified
 
-# ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine prompts/templates.py
+# Check outputs and refine prompts/templates.py as needed
 arabic-synth generate exams --output-dir outputs/style_guide_test --seed-file outputs/seeds.jsonl --model openai:gpt-4o --num-samples 200
 
 arabic-synth clean exams --in-path outputs/style_guide_test/generate_style_200.jsonl --out-path outputs/exams_clean.jsonl
@@ -124,8 +142,7 @@ result = workflow.run_complete_workflow()
 ### 👤 Persona Enhanced Workflow  
 **Purpose**: Generate diverse data using persona-based perspectives
 1. **Seed Selection**: Prepare base examples for persona augmentation
-2. **🎯 Persona Requests** ⚠️ **CURRENT FOCUS**: Build requests with persona templates (`persona/templates_persona.py`)
-   - **Iterative Prompt Tuning**: Manual output checks and template refinement required
+2. **Persona Requests**: Build requests with persona templates (`persona/templates_persona.py`)
    - **Template Location**: `./src/arabic_synth/persona/templates_persona.py`
    - **Process**: Generate → Review → Tune → Repeat until persona consistency achieved
 3. **Post-Processing**: Quality assessment and evaluation
@@ -135,7 +152,7 @@ result = workflow.run_complete_workflow()
 arabic-synth sample-and-convert exams --input-file data/test-*.csv --output-file outputs/seeds.jsonl --n 20
 arabic-synth select-personas --input-file data/personas/personas_all.jsonl --output-file outputs/personas.jsonl --n 200
 
-# ⚠️ ITERATIVE TUNING REQUIRED: Check outputs and refine persona/templates_persona.py
+# Check outputs and refine persona/templates_persona.py as needed
 arabic-synth build-persona-requests --exams-path outputs/seeds.jsonl --personas-path outputs/personas.jsonl
 arabic-synth send-persona-requests --model openai:gpt-4o
 
@@ -161,42 +178,12 @@ arabic-synth style-persona-workflow \
 ```
 
 **📋 Detailed Guides**: 
-- Style Guide: `StyleGuide_PIPELINE_DETAILED.md`
-- Persona Pipeline: `Persona_PIPELINE_DETAILED.md`  
-- Combined Workflow: `STYLE_PERSONA_WORKFLOW_GUIDE.md`
-- Style-Subject Workflow: `src/arabic_synth/STYLE_SUBJECT_WORKFLOW.md`
+- Style Guide: `docs/StyleGuide_PIPELINE_DETAILED.md`
+- Persona Pipeline: `docs/Persona_PIPELINE_DETAILED.md`  
+- Combined Workflow: `docs/STYLE_PERSONA_WORKFLOW_GUIDE.md`
+- Style-Subject Workflow: `docs/STYLE_SUBJECT_WORKFLOW.md`
 - MMLU Workflow: `Style_ArbMMLU_Workflow.md`
-
----
-
-## ⚠️ **CURRENT DEVELOPMENT FOCUS**
-
-The following components require **active iterative prompt tuning** through manual output review:
-
-### 🎯 **Priority Tasks:**
-1. **Style Guide Templates** (`src/arabic_synth/prompts/templates.py`)
-   - Fine-tune `EXAMS_TEACHER_PROMPT` for better Arabic naturalness
-   - Optimize style consistency and content diversity balance
-   - Target: 95%+ quality scores in style evaluation
-
-2. **Persona Templates** (`src/arabic_synth/persona/templates_persona.py`) 
-   - Refine `ARABIC_EXAM_REWRITE_V1` for authentic persona perspectives
-   - Ensure persona consistency while maintaining content accuracy
-   - Target: Diverse yet coherent persona-based variations
-
-### 🔄 **Iterative Process:**
-```
-Generate Sample → Manual Review → Identify Issues → Tune Prompts → Repeat
-```
-
-**Evaluation Commands for Tuning:**
-```bash
-# Test style guide outputs
-arabic-synth evaluate-style exams --in-path outputs/exams_clean.jsonl
-
-# Test persona outputs  
-arabic-synth evaluate-persona --input-file outputs/exams_pers_raw.jsonl
-```
+- Enhanced Batch Generation: `ENHANCED_BATCH_GENERATION_GUIDE.md`
 
 ## 🔒 Seed Constraint System
 
@@ -231,18 +218,26 @@ The pipeline uses a sophisticated seed constraint system to prevent data leakage
 - **Answer Distribution**: Target specific answer letter ratios
 - **TTR Filtering**: Remove low-diversity samples (default threshold: 0.18)
 - **Batch Processing**: Configurable batch sizes for large-scale generation
+- **Diversity Features**: Low-overhead diversity enhancement with sampling jitter, prompt micro-variation, and fast duplicate detection (SimHash-based)
 
 ## 📁 Project Structure
 
 ```
-Synthetic Data/
+Synthetic-Arabic-Data-persona/
 ├── src/arabic_synth/          # Core package
-├── data/seeds/                # Seed data (≤10 samples)
+├── data/                      # Input data and seeds
+│   ├── arabicmmlu/           # Arabic MMLU CSV files for production
+│   ├── personas/             # Persona data
+│   └── seeds/                # Seed data (≤10 samples)
 ├── outputs/                   # Generated datasets
-├── test-00000-of-00001.arabic.csv  # Original test set
+│   ├── production/           # Production batch results
+│   ├── mmlu_10k/            # Large-scale MMLU generation
+│   └── style_workflow/       # Style-based generation results
+├── docs/                      # Documentation
+├── run_production_batch.sh    # Production batch script
+├── ENHANCED_BATCH_GENERATION_GUIDE.md  # Enhanced batch guide
 ├── pyproject.toml            # Package configuration
-├── README.md                 # This file
-└── SEED_CONSTRAINTS.md       # Detailed constraint documentation
+└── README.md                 # This file
 ```
 
 ## 🔄 Pipeline Flow

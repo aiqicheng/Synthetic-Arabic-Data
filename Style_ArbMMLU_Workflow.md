@@ -345,7 +345,7 @@ arabic-synth generate mmlu \
 
 ```
 data/
-├── arabic_mmlu_2subjects.csv              # Main MMLU dataset (306 rows, 2 subjects)
+├── arabicmmlu_all.csv              # Main MMLU dataset (306 rows, 2 subjects)
 ├── arabic_mmlu_compsci.csv                # Computer Science subset
 ├── DownloadMMLU.ipynb                     # Data download and processing notebook
 └── distribution.txt                       # Dataset distribution information

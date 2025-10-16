@@ -19,7 +19,8 @@ def _extract_json_from_markdown(text: str) -> str:
     return text
 
 
-def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0.95) -> str:
+def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0.95, 
+             presence_penalty: float = 0.0, frequency_penalty: float = 0.0) -> str:
     if model.startswith("openai:") or model.startswith("gpt"):
         openai_model = model.split(":", 1)[1] if ":" in model else model
         api_key = os.environ.get("OPENAI_API_KEY")
@@ -38,6 +39,11 @@ def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0
             "temperature": temperature,
             "top_p": top_p,
         }
+        
+        # Add penalties if supported (OpenAI GPT models support these)
+        if presence_penalty > 0 or frequency_penalty > 0:
+            payload["presence_penalty"] = presence_penalty
+            payload["frequency_penalty"] = frequency_penalty
         try:
             with httpx.Client(timeout=60) as client:
                 resp = client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
@@ -46,6 +52,17 @@ def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0
                 content = data["choices"][0]["message"]["content"]
                 json_content = _extract_json_from_markdown(content)
                 return json_content
+        except httpx.HTTPStatusError as e:
+            error_detail = e.response.text if hasattr(e.response, 'text') else str(e)
+            # Provide more specific error messages for common issues
+            if e.response.status_code == 400:
+                raise RuntimeError(f"OpenAI API Bad Request (400): {error_detail}. Check model ID and parameters.")
+            elif e.response.status_code == 401:
+                raise RuntimeError(f"OpenAI API Unauthorized (401): {error_detail}. Check API key.")
+            elif e.response.status_code == 429:
+                raise RuntimeError(f"OpenAI API Rate Limited (429): {error_detail}. Try again later.")
+            else:
+                raise RuntimeError(f"OpenAI API call failed: {e.response.status_code} - {error_detail}")
         except Exception as e:
             raise RuntimeError(f"OpenAI API call failed: {e}")
     
@@ -75,6 +92,11 @@ def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0
             "temperature": temperature,
             "top_p": top_p,
         }
+        
+        # Add penalties if supported (some OpenRouter models support these)
+        if presence_penalty > 0 or frequency_penalty > 0:
+            payload["presence_penalty"] = presence_penalty
+            payload["frequency_penalty"] = frequency_penalty
         try:
             with httpx.Client(timeout=60) as client:
                 resp = client.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
@@ -85,7 +107,15 @@ def call_llm(model: str, prompt: str, temperature: float = 0.8, top_p: float = 0
                 return json_content
         except httpx.HTTPStatusError as e:
             error_detail = e.response.text if hasattr(e.response, 'text') else str(e)
-            raise RuntimeError(f"OpenRouter API call failed: {e.response.status_code} - {error_detail}")
+            # Provide more specific error messages for common issues
+            if e.response.status_code == 400:
+                raise RuntimeError(f"OpenRouter API Bad Request (400): {error_detail}. Check model ID and parameters.")
+            elif e.response.status_code == 401:
+                raise RuntimeError(f"OpenRouter API Unauthorized (401): {error_detail}. Check API key.")
+            elif e.response.status_code == 429:
+                raise RuntimeError(f"OpenRouter API Rate Limited (429): {error_detail}. Try again later.")
+            else:
+                raise RuntimeError(f"OpenRouter API call failed: {e.response.status_code} - {error_detail}")
         except Exception as e:
             raise RuntimeError(f"OpenRouter API call failed: {e}")
     

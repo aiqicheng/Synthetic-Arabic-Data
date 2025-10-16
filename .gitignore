@@ -67,7 +67,7 @@ Thumbs.db
 # Data files (optional - uncomment if you don't want to track data)
 # *.csv
 # *.jsonl
-# outputs/
+**/cache/
 # data/
 
 # Model files and large binaries
