@@ -1,0 +1,173 @@
+{
+  "generation_stats": {
+    "total_batches": 100,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1937,
+    "total_items_generated": 1937,
+    "start_time": "2025-10-16T18:10:46.885760",
+    "end_time": "2025-10-16T18:19:14.613424",
+    "batches_completed": 20,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 100,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 100,
+      "unique_seeds_used": 100
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 100,
+      "unique_seeds_used": 100
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 100,
+      "unique_seeds_used": 100
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 97,
+      "unique_seeds_used": 97
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 97,
+      "unique_seeds_used": 97
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 17,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 18,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 19,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 20,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 2000,
+    "subject_distribution": {
+      "Geography": {
+        "count": 633,
+        "percentage": 31.65
+      },
+      "Arabic Language": {
+        "count": 456,
+        "percentage": 22.8
+      },
+      "Computer Science": {
+        "count": 362,
+        "percentage": 18.1
+      },
+      "Social Science": {
+        "count": 179,
+        "percentage": 8.95
+      },
+      "Management": {
+        "count": 95,
+        "percentage": 4.75
+      },
+      "Political Science": {
+        "count": 94,
+        "percentage": 4.7
+      },
+      "Accounting": {
+        "count": 93,
+        "percentage": 4.65
+      },
+      "Philosophy": {
+        "count": 88,
+        "percentage": 4.4
+      }
+    },
+    "summary": [
+      "633 Geography (31.6%)",
+      "456 Arabic Language (22.8%)",
+      "362 Computer Science (18.1%)",
+      "179 Social Science (8.9%)",
+      "95 Management (4.8%)",
+      "94 Political Science (4.7%)",
+      "93 Accounting (4.7%)",
+      "88 Philosophy (4.4%)"
+    ]
+  },
+  "configuration": {
+    "input_file": "data/arabicmmlu/arabicmmlu_3.csv",
+    "output_dir": "outputs/production/run3",
+    "model": "openai:gpt-4o-mini",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 100,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  }
+}
