@@ -1,0 +1,73 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Economics.csv",
+    "output_dir": "outputs/production/by_subject/runEconomics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 31,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 31,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 564,
+    "total_items_generated": 564,
+    "start_time": "2025-10-30T20:20:00.446931",
+    "end_time": "2025-10-30T20:20:48.507181",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 523,
+    "success_rate": 0.22580645161290322
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 18,
+      "unique_seeds_used": 18
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 620,
+    "subject_distribution": {
+      "Economics": {
+        "count": 620,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "620 Economics (100.0%)"
+    ]
+  }
+}

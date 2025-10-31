@@ -1,0 +1,58 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Law.csv",
+    "output_dir": "outputs/production/by_subject/runLaw",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 17,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 17,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 289,
+    "total_items_generated": 289,
+    "start_time": "2025-10-30T20:28:29.980793",
+    "end_time": "2025-10-30T20:28:53.871741",
+    "batches_completed": 4,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 261,
+    "success_rate": 0.23529411764705882
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 33,
+      "unique_seeds_used": 33
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 340,
+    "subject_distribution": {
+      "Law": {
+        "count": 340,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "340 Law (100.0%)"
+    ]
+  }
+}

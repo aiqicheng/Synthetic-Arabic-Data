@@ -1,0 +1,1573 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Accounting.csv",
+    "output_dir": "outputs/production/by_subject/runAccounting",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 5,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 5,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 70,
+    "total_items_generated": 70,
+    "start_time": "2025-10-30T20:13:29.010277",
+    "end_time": "2025-10-30T20:13:34.372961",
+    "batches_completed": 1,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 70,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 70,
+      "unique_seeds_used": 70
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 100,
+    "subject_distribution": {
+      "Accounting": {
+        "count": 100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "100 Accounting (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Arabic_Language.csv",
+    "output_dir": "outputs/production/by_subject/runArabic_Language",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 35,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 35,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 544,
+    "total_items_generated": 544,
+    "start_time": "2025-10-30T20:13:35.168861",
+    "end_time": "2025-10-30T20:14:28.488779",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 470,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 74,
+      "unique_seeds_used": 74
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 68,
+      "unique_seeds_used": 68
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 67,
+      "unique_seeds_used": 67
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 700,
+    "subject_distribution": {
+      "Arabic Language": {
+        "count": 700,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "700 Arabic Language (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Arabic_Language_(General).csv",
+    "output_dir": "outputs/production/by_subject/runArabic_Language_(General)",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 32,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 32,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 514,
+    "total_items_generated": 514,
+    "start_time": "2025-10-30T20:14:29.341686",
+    "end_time": "2025-10-30T20:15:18.633979",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 447,
+    "success_rate": 0.21875
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 97,
+      "unique_seeds_used": 97
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 31,
+      "unique_seeds_used": 31
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 640,
+    "subject_distribution": {
+      "Arabic Language (General)": {
+        "count": 640,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "640 Arabic Language (General) (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Arabic_Language_(Grammar).csv",
+    "output_dir": "outputs/production/by_subject/runArabic_Language_(Grammar)",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 20,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 20,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 333,
+    "total_items_generated": 333,
+    "start_time": "2025-10-30T20:15:19.419039",
+    "end_time": "2025-10-30T20:15:46.640251",
+    "batches_completed": 4,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 306,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 400,
+    "subject_distribution": {
+      "Arabic Language (Grammar)": {
+        "count": 400,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "400 Arabic Language (Grammar) (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Biology.csv",
+    "output_dir": "outputs/production/by_subject/runBiology",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 72,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 72,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1091,
+    "total_items_generated": 1091,
+    "start_time": "2025-10-30T20:15:47.464919",
+    "end_time": "2025-10-30T20:17:26.170833",
+    "batches_completed": 15,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 914,
+    "success_rate": 0.20833333333333334
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 84,
+      "unique_seeds_used": 84
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 78,
+      "unique_seeds_used": 78
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 74,
+      "unique_seeds_used": 74
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 75,
+      "unique_seeds_used": 75
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 73,
+      "unique_seeds_used": 73
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 69,
+      "unique_seeds_used": 69
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 63,
+      "unique_seeds_used": 63
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 67,
+      "unique_seeds_used": 67
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 71,
+      "unique_seeds_used": 71
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 24,
+      "unique_seeds_used": 24
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1440,
+    "subject_distribution": {
+      "Biology": {
+        "count": 1440,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1440 Biology (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Civics.csv",
+    "output_dir": "outputs/production/by_subject/runCivics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 18,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 18,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 295,
+    "total_items_generated": 295,
+    "start_time": "2025-10-30T20:17:27.015123",
+    "end_time": "2025-10-30T20:17:53.239467",
+    "batches_completed": 4,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 266,
+    "success_rate": 0.2222222222222222
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 45,
+      "unique_seeds_used": 45
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 360,
+    "subject_distribution": {
+      "Civics": {
+        "count": 360,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "360 Civics (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Computer_Science.csv",
+    "output_dir": "outputs/production/by_subject/runComputer_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 29,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 29,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 527,
+    "total_items_generated": 527,
+    "start_time": "2025-10-30T20:17:54.141151",
+    "end_time": "2025-10-30T20:18:33.789062",
+    "batches_completed": 6,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 494,
+    "success_rate": 0.20689655172413793
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 580,
+    "subject_distribution": {
+      "Computer Science": {
+        "count": 580,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "580 Computer Science (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Driving_Test.csv",
+    "output_dir": "outputs/production/by_subject/runDriving_Test",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 62,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 62,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 989,
+    "total_items_generated": 989,
+    "start_time": "2025-10-30T20:18:34.628625",
+    "end_time": "2025-10-30T20:19:59.648853",
+    "batches_completed": 13,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 857,
+    "success_rate": 0.20967741935483872
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 27,
+      "unique_seeds_used": 27
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1240,
+    "subject_distribution": {
+      "Driving Test": {
+        "count": 1240,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1240 Driving Test (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Economics.csv",
+    "output_dir": "outputs/production/by_subject/runEconomics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 31,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 31,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 564,
+    "total_items_generated": 564,
+    "start_time": "2025-10-30T20:20:00.446931",
+    "end_time": "2025-10-30T20:20:48.507181",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 523,
+    "success_rate": 0.22580645161290322
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 18,
+      "unique_seeds_used": 18
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 620,
+    "subject_distribution": {
+      "Economics": {
+        "count": 620,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "620 Economics (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_General_Knowledge.csv",
+    "output_dir": "outputs/production/by_subject/runGeneral_Knowledge",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 62,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 62,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 922,
+    "total_items_generated": 922,
+    "start_time": "2025-10-30T20:20:49.321067",
+    "end_time": "2025-10-30T20:22:17.828434",
+    "batches_completed": 13,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 769,
+    "success_rate": 0.20967741935483872
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 69,
+      "unique_seeds_used": 69
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 71,
+      "unique_seeds_used": 71
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 66,
+      "unique_seeds_used": 66
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 67,
+      "unique_seeds_used": 67
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 67,
+      "unique_seeds_used": 67
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 23,
+      "unique_seeds_used": 23
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1240,
+    "subject_distribution": {
+      "General Knowledge": {
+        "count": 1240,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1240 General Knowledge (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Geography.csv",
+    "output_dir": "outputs/production/by_subject/runGeography",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 70,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 70,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1146,
+    "total_items_generated": 1146,
+    "start_time": "2025-10-30T20:22:18.645113",
+    "end_time": "2025-10-30T20:23:59.666119",
+    "batches_completed": 14,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 995,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 73,
+      "unique_seeds_used": 73
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1400,
+    "subject_distribution": {
+      "Geography": {
+        "count": 1400,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1400 Geography (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_History.csv",
+    "output_dir": "outputs/production/by_subject/runHistory",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 55,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 55,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 970,
+    "total_items_generated": 970,
+    "start_time": "2025-10-30T20:24:00.645407",
+    "end_time": "2025-10-30T20:25:27.940011",
+    "batches_completed": 11,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 884,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1100,
+    "subject_distribution": {
+      "History": {
+        "count": 1100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1100 History (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Islamic_Studies.csv",
+    "output_dir": "outputs/production/by_subject/runIslamic_Studies",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 113,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 113,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1958,
+    "total_items_generated": 1958,
+    "start_time": "2025-10-30T20:25:28.821632",
+    "end_time": "2025-10-30T20:28:29.091848",
+    "batches_completed": 23,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 1742,
+    "success_rate": 0.20353982300884957
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 97,
+      "unique_seeds_used": 97
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 17,
+      "items_generated": 75,
+      "unique_seeds_used": 75
+    },
+    {
+      "chunk_number": 18,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 19,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 20,
+      "items_generated": 84,
+      "unique_seeds_used": 84
+    },
+    {
+      "chunk_number": 21,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 22,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 23,
+      "items_generated": 49,
+      "unique_seeds_used": 49
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 2260,
+    "subject_distribution": {
+      "Islamic Studies": {
+        "count": 2260,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "2260 Islamic Studies (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Law.csv",
+    "output_dir": "outputs/production/by_subject/runLaw",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 17,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 17,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 289,
+    "total_items_generated": 289,
+    "start_time": "2025-10-30T20:28:29.980793",
+    "end_time": "2025-10-30T20:28:53.871741",
+    "batches_completed": 4,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 261,
+    "success_rate": 0.23529411764705882
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 33,
+      "unique_seeds_used": 33
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 340,
+    "subject_distribution": {
+      "Law": {
+        "count": 340,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "340 Law (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Management.csv",
+    "output_dir": "outputs/production/by_subject/runManagement",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 5,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 5,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 91,
+    "total_items_generated": 91,
+    "start_time": "2025-10-30T20:28:54.689116",
+    "end_time": "2025-10-30T20:29:01.407803",
+    "batches_completed": 1,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 91,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 100,
+    "subject_distribution": {
+      "Management": {
+        "count": 100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "100 Management (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Math.csv",
+    "output_dir": "outputs/production/by_subject/runMath",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 22,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 22,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 291,
+    "total_items_generated": 291,
+    "start_time": "2025-10-30T20:29:02.296855",
+    "end_time": "2025-10-30T20:29:33.625256",
+    "batches_completed": 5,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 250,
+    "success_rate": 0.22727272727272727
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 60,
+      "unique_seeds_used": 60
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 67,
+      "unique_seeds_used": 67
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 59,
+      "unique_seeds_used": 59
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 20,
+      "unique_seeds_used": 20
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 440,
+    "subject_distribution": {
+      "Math": {
+        "count": 440,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "440 Math (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Natural_Science.csv",
+    "output_dir": "outputs/production/by_subject/runNatural_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 31,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 31,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 546,
+    "total_items_generated": 546,
+    "start_time": "2025-10-30T20:29:34.458168",
+    "end_time": "2025-10-30T20:30:19.420118",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 496,
+    "success_rate": 0.22580645161290322
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 84,
+      "unique_seeds_used": 84
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 15,
+      "unique_seeds_used": 15
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 620,
+    "subject_distribution": {
+      "Natural Science": {
+        "count": 620,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "620 Natural Science (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Philosophy.csv",
+    "output_dir": "outputs/production/by_subject/runPhilosophy",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 4,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 4,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 65,
+    "total_items_generated": 65,
+    "start_time": "2025-10-30T20:30:20.256024",
+    "end_time": "2025-10-30T20:30:26.816175",
+    "batches_completed": 1,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 65,
+    "success_rate": 0.25
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 65,
+      "unique_seeds_used": 65
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 80,
+    "subject_distribution": {
+      "Philosophy": {
+        "count": 80,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "80 Philosophy (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Physics.csv",
+    "output_dir": "outputs/production/by_subject/runPhysics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 14,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 14,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 238,
+    "total_items_generated": 238,
+    "start_time": "2025-10-30T20:30:27.628453",
+    "end_time": "2025-10-30T20:30:44.649488",
+    "batches_completed": 3,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 225,
+    "success_rate": 0.21428571428571427
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 59,
+      "unique_seeds_used": 59
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 280,
+    "subject_distribution": {
+      "Physics": {
+        "count": 280,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "280 Physics (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Political_Science.csv",
+    "output_dir": "outputs/production/by_subject/runPolitical_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 12,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 12,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 211,
+    "total_items_generated": 211,
+    "start_time": "2025-10-30T20:30:45.492691",
+    "end_time": "2025-10-30T20:31:07.548249",
+    "batches_completed": 3,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 195,
+    "success_rate": 0.25
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 33,
+      "unique_seeds_used": 33
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 240,
+    "subject_distribution": {
+      "Political Science": {
+        "count": 240,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "240 Political Science (100.0%)"
+    ]
+  }
+}{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Social_Science.csv",
+    "output_dir": "outputs/production/by_subject/runSocial_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 49,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 49,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 824,
+    "total_items_generated": 824,
+    "start_time": "2025-10-30T20:31:08.388097",
+    "end_time": "2025-10-30T20:32:25.614384",
+    "batches_completed": 10,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 731,
+    "success_rate": 0.20408163265306123
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 75,
+      "unique_seeds_used": 75
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 74,
+      "unique_seeds_used": 74
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 66,
+      "unique_seeds_used": 66
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 980,
+    "subject_distribution": {
+      "Social Science": {
+        "count": 980,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "980 Social Science (100.0%)"
+    ]
+  }
+}

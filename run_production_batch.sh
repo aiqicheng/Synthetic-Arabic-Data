@@ -61,7 +61,7 @@ for csv_file in "$DATA_DIR"/arabicmmlu_*.csv; do
         continue
     fi
 
-    total_batches=$(( (target_count + 19) / 20 )) # Ceiling division
+    total_batches=$(( (target_count + 39) / 20 )) # Ceiling division
     echo "Input file: ${csv_file}"
     echo "Output directory: ${run_output_dir}"
     echo "Target items: ${target_count}, Total batches: ${total_batches}"
@@ -72,7 +72,7 @@ for csv_file in "$DATA_DIR"/arabicmmlu_*.csv; do
         --sampling-mode stratified \
         --total-batches "${total_batches}" \
         --seeds-per-batch 20 \
-        --max-concurrent-requests 10 \
+        --max-concurrent-requests 100 \
         --model "openrouter:google/gemini-2.5-flash"
 
     # Clean up intermediate batch seed files (keep only consolidated files)

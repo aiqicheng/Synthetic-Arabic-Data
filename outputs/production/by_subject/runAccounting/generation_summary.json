@@ -1,0 +1,43 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Accounting.csv",
+    "output_dir": "outputs/production/by_subject/runAccounting",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 5,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 5,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 70,
+    "total_items_generated": 70,
+    "start_time": "2025-10-30T20:13:29.010277",
+    "end_time": "2025-10-30T20:13:34.372961",
+    "batches_completed": 1,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 70,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 70,
+      "unique_seeds_used": 70
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 100,
+    "subject_distribution": {
+      "Accounting": {
+        "count": 100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "100 Accounting (100.0%)"
+    ]
+  }
+}

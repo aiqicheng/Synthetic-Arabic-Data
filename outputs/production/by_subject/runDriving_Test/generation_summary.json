@@ -1,0 +1,103 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Driving_Test.csv",
+    "output_dir": "outputs/production/by_subject/runDriving_Test",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 62,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 62,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 989,
+    "total_items_generated": 989,
+    "start_time": "2025-10-30T20:18:34.628625",
+    "end_time": "2025-10-30T20:19:59.648853",
+    "batches_completed": 13,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 857,
+    "success_rate": 0.20967741935483872
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 27,
+      "unique_seeds_used": 27
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1240,
+    "subject_distribution": {
+      "Driving Test": {
+        "count": 1240,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1240 Driving Test (100.0%)"
+    ]
+  }
+}

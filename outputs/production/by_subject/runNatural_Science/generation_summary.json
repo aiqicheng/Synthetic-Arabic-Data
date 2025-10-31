@@ -1,0 +1,73 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Natural_Science.csv",
+    "output_dir": "outputs/production/by_subject/runNatural_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 31,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 31,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 546,
+    "total_items_generated": 546,
+    "start_time": "2025-10-30T20:29:34.458168",
+    "end_time": "2025-10-30T20:30:19.420118",
+    "batches_completed": 7,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 496,
+    "success_rate": 0.22580645161290322
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 84,
+      "unique_seeds_used": 84
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 15,
+      "unique_seeds_used": 15
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 620,
+    "subject_distribution": {
+      "Natural Science": {
+        "count": 620,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "620 Natural Science (100.0%)"
+    ]
+  }
+}

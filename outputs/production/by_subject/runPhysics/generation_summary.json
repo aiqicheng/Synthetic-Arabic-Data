@@ -1,0 +1,53 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Physics.csv",
+    "output_dir": "outputs/production/by_subject/runPhysics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 14,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 14,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 238,
+    "total_items_generated": 238,
+    "start_time": "2025-10-30T20:30:27.628453",
+    "end_time": "2025-10-30T20:30:44.649488",
+    "batches_completed": 3,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 225,
+    "success_rate": 0.21428571428571427
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 59,
+      "unique_seeds_used": 59
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 280,
+    "subject_distribution": {
+      "Physics": {
+        "count": 280,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "280 Physics (100.0%)"
+    ]
+  }
+}

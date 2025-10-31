@@ -1,0 +1,43 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Philosophy.csv",
+    "output_dir": "outputs/production/by_subject/runPhilosophy",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 4,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 4,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 65,
+    "total_items_generated": 65,
+    "start_time": "2025-10-30T20:30:20.256024",
+    "end_time": "2025-10-30T20:30:26.816175",
+    "batches_completed": 1,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 65,
+    "success_rate": 0.25
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 65,
+      "unique_seeds_used": 65
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 80,
+    "subject_distribution": {
+      "Philosophy": {
+        "count": 80,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "80 Philosophy (100.0%)"
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_History.csv",
+    "output_dir": "outputs/production/by_subject/runHistory",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 55,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 55,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 970,
+    "total_items_generated": 970,
+    "start_time": "2025-10-30T20:24:00.645407",
+    "end_time": "2025-10-30T20:25:27.940011",
+    "batches_completed": 11,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 884,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1100,
+    "subject_distribution": {
+      "History": {
+        "count": 1100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1100 History (100.0%)"
+    ]
+  }
+}

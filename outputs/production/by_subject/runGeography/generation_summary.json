@@ -1,0 +1,108 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Geography.csv",
+    "output_dir": "outputs/production/by_subject/runGeography",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 70,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 70,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1146,
+    "total_items_generated": 1146,
+    "start_time": "2025-10-30T20:22:18.645113",
+    "end_time": "2025-10-30T20:23:59.666119",
+    "batches_completed": 14,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 995,
+    "success_rate": 0.2
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 96,
+      "unique_seeds_used": 96
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 73,
+      "unique_seeds_used": 73
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 80,
+      "unique_seeds_used": 80
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1400,
+    "subject_distribution": {
+      "Geography": {
+        "count": 1400,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1400 Geography (100.0%)"
+    ]
+  }
+}

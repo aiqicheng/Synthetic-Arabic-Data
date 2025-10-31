@@ -19,6 +19,7 @@ Features:
 import json
 import random
 import time
+import re
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -34,6 +35,30 @@ from ..utils.seed_manager import SeedManager, SeedConstraint
 from ..prompts.templates import MMLU_TEACHER_PROMPT
 from ..utils.diversity import create_diversity_manager
 from ..utils.llm import call_llm
+
+
+def _extract_json_from_markdown(text: str) -> str:
+    """Extract JSON from markdown code blocks like ```json\n{...}\n```"""
+    if not text or not text.strip():
+        raise ValueError("Empty response text")
+    
+    # First try: Extract from markdown code blocks
+    json_match = re.search(r'```(?:json)?\s*\n?(.*?)\n?```', text, re.DOTALL)
+    if json_match:
+        return json_match.group(1).strip()
+    
+    # Second try: Find JSON object (use non-greedy to stop at first complete object)
+    json_match = re.search(r'\{.*?\}', text, re.DOTALL)
+    if json_match:
+        return json_match.group(0)
+    
+    # Last resort: If text is already valid JSON-looking, return it
+    text_stripped = text.strip()
+    if text_stripped.startswith('{') and text_stripped.endswith('}'):
+        return text_stripped
+    
+    # If nothing found, return original (might cause error but that's expected)
+    return text
 
 
 class EnhancedBatchGenerationProgram:
@@ -374,8 +399,11 @@ class EnhancedBatchGenerationProgram:
             
             for i, (prompt_id, response) in enumerate(results.items()):
                 try:
+                    # Extract JSON from markdown code blocks if present
+                    response_text = response['response_text']
+                    json_text = _extract_json_from_markdown(response_text)
                     # Parse the JSON response
-                    obj = json.loads(response['response_text'])
+                    obj = json.loads(json_text)
                     
                     # Clean and format options to ensure A. B. C. D. format
                     raw_options = obj.get("options", [])

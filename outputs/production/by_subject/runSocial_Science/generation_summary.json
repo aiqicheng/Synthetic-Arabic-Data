@@ -1,0 +1,88 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Social_Science.csv",
+    "output_dir": "outputs/production/by_subject/runSocial_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 49,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 49,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 824,
+    "total_items_generated": 824,
+    "start_time": "2025-10-30T20:31:08.388097",
+    "end_time": "2025-10-30T20:32:25.614384",
+    "batches_completed": 10,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 731,
+    "success_rate": 0.20408163265306123
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 89,
+      "unique_seeds_used": 89
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 83,
+      "unique_seeds_used": 83
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 75,
+      "unique_seeds_used": 75
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 74,
+      "unique_seeds_used": 74
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 81,
+      "unique_seeds_used": 81
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 66,
+      "unique_seeds_used": 66
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 980,
+    "subject_distribution": {
+      "Social Science": {
+        "count": 980,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "980 Social Science (100.0%)"
+    ]
+  }
+}

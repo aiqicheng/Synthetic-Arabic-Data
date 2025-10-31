@@ -1,0 +1,68 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Computer_Science.csv",
+    "output_dir": "outputs/production/by_subject/runComputer_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 29,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 100
+  },
+  "generation_stats": {
+    "total_batches": 29,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 527,
+    "total_items_generated": 527,
+    "start_time": "2025-10-30T20:17:54.141151",
+    "end_time": "2025-10-30T20:18:33.789062",
+    "batches_completed": 6,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 494,
+    "success_rate": 0.20689655172413793
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 92,
+      "unique_seeds_used": 92
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 72,
+      "unique_seeds_used": 72
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 580,
+    "subject_distribution": {
+      "Computer Science": {
+        "count": 580,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "580 Computer Science (100.0%)"
+    ]
+  }
+}
