@@ -1,0 +1,93 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Math.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Math",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 104,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 104,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 920,
+    "total_items_generated": 920,
+    "start_time": "2025-11-15T17:54:48.993873",
+    "end_time": "2025-11-15T17:56:35.741039",
+    "batches_completed": 11,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 699,
+    "success_rate": 0.10576923076923077
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 144,
+      "unique_seeds_used": 144
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 123,
+      "unique_seeds_used": 123
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 82,
+      "unique_seeds_used": 82
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 75,
+      "unique_seeds_used": 75
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 68,
+      "unique_seeds_used": 68
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 74,
+      "unique_seeds_used": 74
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 21,
+      "unique_seeds_used": 21
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 2080,
+    "subject_distribution": {
+      "Math": {
+        "count": 2080,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "2080 Math (100.0%)"
+    ]
+  }
+}

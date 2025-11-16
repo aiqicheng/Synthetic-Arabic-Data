@@ -1,0 +1,193 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_General_Knowledge.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_General_Knowledge",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 303,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 303,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 3252,
+    "total_items_generated": 3252,
+    "start_time": "2025-11-15T17:26:16.155407",
+    "end_time": "2025-11-15T17:31:30.468147",
+    "batches_completed": 31,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 2540,
+    "success_rate": 0.10231023102310231
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 185,
+      "unique_seeds_used": 185
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 173,
+      "unique_seeds_used": 173
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 149,
+      "unique_seeds_used": 149
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 154,
+      "unique_seeds_used": 154
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 135,
+      "unique_seeds_used": 135
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 130,
+      "unique_seeds_used": 130
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 118,
+      "unique_seeds_used": 118
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 124,
+      "unique_seeds_used": 124
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 114,
+      "unique_seeds_used": 114
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 111,
+      "unique_seeds_used": 111
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 118,
+      "unique_seeds_used": 118
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 102,
+      "unique_seeds_used": 102
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 106,
+      "unique_seeds_used": 106
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 17,
+      "items_generated": 102,
+      "unique_seeds_used": 102
+    },
+    {
+      "chunk_number": 18,
+      "items_generated": 90,
+      "unique_seeds_used": 90
+    },
+    {
+      "chunk_number": 19,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 20,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 21,
+      "items_generated": 104,
+      "unique_seeds_used": 104
+    },
+    {
+      "chunk_number": 22,
+      "items_generated": 94,
+      "unique_seeds_used": 94
+    },
+    {
+      "chunk_number": 23,
+      "items_generated": 87,
+      "unique_seeds_used": 87
+    },
+    {
+      "chunk_number": 24,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 25,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 26,
+      "items_generated": 88,
+      "unique_seeds_used": 88
+    },
+    {
+      "chunk_number": 27,
+      "items_generated": 77,
+      "unique_seeds_used": 77
+    },
+    {
+      "chunk_number": 28,
+      "items_generated": 86,
+      "unique_seeds_used": 86
+    },
+    {
+      "chunk_number": 29,
+      "items_generated": 79,
+      "unique_seeds_used": 79
+    },
+    {
+      "chunk_number": 30,
+      "items_generated": 71,
+      "unique_seeds_used": 71
+    },
+    {
+      "chunk_number": 31,
+      "items_generated": 20,
+      "unique_seeds_used": 20
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 6060,
+    "subject_distribution": {
+      "General Knowledge": {
+        "count": 6060,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "6060 General Knowledge (100.0%)"
+    ]
+  }
+}

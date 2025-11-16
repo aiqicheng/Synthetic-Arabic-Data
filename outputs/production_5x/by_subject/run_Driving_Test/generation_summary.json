@@ -1,0 +1,193 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Driving_Test.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Driving_Test",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 305,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 305,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 3856,
+    "total_items_generated": 3856,
+    "start_time": "2025-11-15T17:18:11.642400",
+    "end_time": "2025-11-15T17:23:48.181011",
+    "batches_completed": 31,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 3080,
+    "success_rate": 0.10163934426229508
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 176,
+      "unique_seeds_used": 176
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 171,
+      "unique_seeds_used": 171
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 160,
+      "unique_seeds_used": 160
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 158,
+      "unique_seeds_used": 158
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 158,
+      "unique_seeds_used": 158
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 141,
+      "unique_seeds_used": 141
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 148,
+      "unique_seeds_used": 148
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 137,
+      "unique_seeds_used": 137
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 135,
+      "unique_seeds_used": 135
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 135,
+      "unique_seeds_used": 135
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 144,
+      "unique_seeds_used": 144
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 133,
+      "unique_seeds_used": 133
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 118,
+      "unique_seeds_used": 118
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 123,
+      "unique_seeds_used": 123
+    },
+    {
+      "chunk_number": 17,
+      "items_generated": 116,
+      "unique_seeds_used": 116
+    },
+    {
+      "chunk_number": 18,
+      "items_generated": 125,
+      "unique_seeds_used": 125
+    },
+    {
+      "chunk_number": 19,
+      "items_generated": 122,
+      "unique_seeds_used": 122
+    },
+    {
+      "chunk_number": 20,
+      "items_generated": 104,
+      "unique_seeds_used": 104
+    },
+    {
+      "chunk_number": 21,
+      "items_generated": 108,
+      "unique_seeds_used": 108
+    },
+    {
+      "chunk_number": 22,
+      "items_generated": 113,
+      "unique_seeds_used": 113
+    },
+    {
+      "chunk_number": 23,
+      "items_generated": 116,
+      "unique_seeds_used": 116
+    },
+    {
+      "chunk_number": 24,
+      "items_generated": 102,
+      "unique_seeds_used": 102
+    },
+    {
+      "chunk_number": 25,
+      "items_generated": 95,
+      "unique_seeds_used": 95
+    },
+    {
+      "chunk_number": 26,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 27,
+      "items_generated": 105,
+      "unique_seeds_used": 105
+    },
+    {
+      "chunk_number": 28,
+      "items_generated": 101,
+      "unique_seeds_used": 101
+    },
+    {
+      "chunk_number": 29,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 30,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 31,
+      "items_generated": 45,
+      "unique_seeds_used": 45
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 6100,
+    "subject_distribution": {
+      "Driving Test": {
+        "count": 6100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "6100 Driving Test (100.0%)"
+    ]
+  }
+}

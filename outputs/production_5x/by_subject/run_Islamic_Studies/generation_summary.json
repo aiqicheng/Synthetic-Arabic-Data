@@ -1,0 +1,318 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Islamic_Studies.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Islamic_Studies",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 557,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 557,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 7674,
+    "total_items_generated": 7674,
+    "start_time": "2025-11-15T17:42:10.578011",
+    "end_time": "2025-11-15T17:52:33.885033",
+    "batches_completed": 56,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 6237,
+    "success_rate": 0.10053859964093358
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 193,
+      "unique_seeds_used": 193
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 189,
+      "unique_seeds_used": 189
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 180,
+      "unique_seeds_used": 180
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 175,
+      "unique_seeds_used": 175
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 181,
+      "unique_seeds_used": 181
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 174,
+      "unique_seeds_used": 174
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 169,
+      "unique_seeds_used": 169
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 168,
+      "unique_seeds_used": 168
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 163,
+      "unique_seeds_used": 163
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 158,
+      "unique_seeds_used": 158
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 148,
+      "unique_seeds_used": 148
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 157,
+      "unique_seeds_used": 157
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 157,
+      "unique_seeds_used": 157
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 160,
+      "unique_seeds_used": 160
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 157,
+      "unique_seeds_used": 157
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 156,
+      "unique_seeds_used": 156
+    },
+    {
+      "chunk_number": 17,
+      "items_generated": 150,
+      "unique_seeds_used": 150
+    },
+    {
+      "chunk_number": 18,
+      "items_generated": 146,
+      "unique_seeds_used": 146
+    },
+    {
+      "chunk_number": 19,
+      "items_generated": 154,
+      "unique_seeds_used": 154
+    },
+    {
+      "chunk_number": 20,
+      "items_generated": 150,
+      "unique_seeds_used": 150
+    },
+    {
+      "chunk_number": 21,
+      "items_generated": 152,
+      "unique_seeds_used": 152
+    },
+    {
+      "chunk_number": 22,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 23,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 24,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 25,
+      "items_generated": 137,
+      "unique_seeds_used": 137
+    },
+    {
+      "chunk_number": 26,
+      "items_generated": 135,
+      "unique_seeds_used": 135
+    },
+    {
+      "chunk_number": 27,
+      "items_generated": 139,
+      "unique_seeds_used": 139
+    },
+    {
+      "chunk_number": 28,
+      "items_generated": 132,
+      "unique_seeds_used": 132
+    },
+    {
+      "chunk_number": 29,
+      "items_generated": 142,
+      "unique_seeds_used": 142
+    },
+    {
+      "chunk_number": 30,
+      "items_generated": 131,
+      "unique_seeds_used": 131
+    },
+    {
+      "chunk_number": 31,
+      "items_generated": 138,
+      "unique_seeds_used": 138
+    },
+    {
+      "chunk_number": 32,
+      "items_generated": 125,
+      "unique_seeds_used": 125
+    },
+    {
+      "chunk_number": 33,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 34,
+      "items_generated": 131,
+      "unique_seeds_used": 131
+    },
+    {
+      "chunk_number": 35,
+      "items_generated": 123,
+      "unique_seeds_used": 123
+    },
+    {
+      "chunk_number": 36,
+      "items_generated": 132,
+      "unique_seeds_used": 132
+    },
+    {
+      "chunk_number": 37,
+      "items_generated": 121,
+      "unique_seeds_used": 121
+    },
+    {
+      "chunk_number": 38,
+      "items_generated": 110,
+      "unique_seeds_used": 110
+    },
+    {
+      "chunk_number": 39,
+      "items_generated": 107,
+      "unique_seeds_used": 107
+    },
+    {
+      "chunk_number": 40,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 41,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 42,
+      "items_generated": 120,
+      "unique_seeds_used": 120
+    },
+    {
+      "chunk_number": 43,
+      "items_generated": 105,
+      "unique_seeds_used": 105
+    },
+    {
+      "chunk_number": 44,
+      "items_generated": 116,
+      "unique_seeds_used": 116
+    },
+    {
+      "chunk_number": 45,
+      "items_generated": 120,
+      "unique_seeds_used": 120
+    },
+    {
+      "chunk_number": 46,
+      "items_generated": 112,
+      "unique_seeds_used": 112
+    },
+    {
+      "chunk_number": 47,
+      "items_generated": 117,
+      "unique_seeds_used": 117
+    },
+    {
+      "chunk_number": 48,
+      "items_generated": 111,
+      "unique_seeds_used": 111
+    },
+    {
+      "chunk_number": 49,
+      "items_generated": 112,
+      "unique_seeds_used": 112
+    },
+    {
+      "chunk_number": 50,
+      "items_generated": 112,
+      "unique_seeds_used": 112
+    },
+    {
+      "chunk_number": 51,
+      "items_generated": 84,
+      "unique_seeds_used": 84
+    },
+    {
+      "chunk_number": 52,
+      "items_generated": 119,
+      "unique_seeds_used": 119
+    },
+    {
+      "chunk_number": 53,
+      "items_generated": 105,
+      "unique_seeds_used": 105
+    },
+    {
+      "chunk_number": 54,
+      "items_generated": 101,
+      "unique_seeds_used": 101
+    },
+    {
+      "chunk_number": 55,
+      "items_generated": 111,
+      "unique_seeds_used": 111
+    },
+    {
+      "chunk_number": 56,
+      "items_generated": 76,
+      "unique_seeds_used": 76
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 11140,
+    "subject_distribution": {
+      "Islamic Studies": {
+        "count": 11140,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "11140 Islamic Studies (100.0%)"
+    ]
+  }
+}

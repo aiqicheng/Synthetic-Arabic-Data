@@ -14,7 +14,7 @@ echo "🚀 Starting Production Batch Generation"
 echo "========================================"
 
 DATA_DIR="data/arabicmmlu/by_subject"
-OUTPUT_DIR="outputs/production/by_subject"
+OUTPUT_DIR="outputs/production_5x/by_subject"
 
 # Define target generation counts per subject using an associative array
 declare -A TARGET_COUNTS=(
@@ -49,7 +49,7 @@ echo "📊 Running generation for each subject in $DATA_DIR..."
 for csv_file in "$DATA_DIR"/arabicmmlu_*.csv; do
     subject=$(basename "$csv_file" .csv | sed 's/arabicmmlu_//')
     subject_key="${subject//_/ }" # Replace underscores with spaces for array lookup
-    run_output_dir="${OUTPUT_DIR}/run${subject}"
+    run_output_dir="${OUTPUT_DIR}/run_${subject}"
 
     echo ""
     echo "🔄 Starting generation for subject: ${subject}"
@@ -61,7 +61,7 @@ for csv_file in "$DATA_DIR"/arabicmmlu_*.csv; do
         continue
     fi
 
-    total_batches=$(( (target_count + 39) / 20 )) # Ceiling division
+    total_batches=$(( (target_count * 5 + 39) / 20 )) # Ceiling division, multiplied by 5
     echo "Input file: ${csv_file}"
     echo "Output directory: ${run_output_dir}"
     echo "Target items: ${target_count}, Total batches: ${total_batches}"
@@ -72,7 +72,7 @@ for csv_file in "$DATA_DIR"/arabicmmlu_*.csv; do
         --sampling-mode stratified \
         --total-batches "${total_batches}" \
         --seeds-per-batch 20 \
-        --max-concurrent-requests 100 \
+        --max-concurrent-requests 200 \
         --model "openrouter:google/gemini-2.5-flash"
 
     # Clean up intermediate batch seed files (keep only consolidated files)
@@ -121,8 +121,8 @@ echo ""
 echo "🎉 Production batch generation completed!"
 echo "========================================"
 echo "📁 Final outputs:"
-echo "  - outputs/production/combine_mcq.jsonl: $total_items raw items"
-echo "  - outputs/production/combine_mcq_cleaned.jsonl: $cleaned_items cleaned items"
+echo "  - ${OUTPUT_DIR}/combine_mcq.jsonl: $total_items raw items"
+echo "  - ${OUTPUT_DIR}/combine_mcq_cleaned.jsonl: $cleaned_items cleaned items"
 echo "  - ${OUTPUT_DIR}/combine_summaries.json: Combined statistics"
 echo ""
 echo "📊 Individual run results in ${OUTPUT_DIR}/"

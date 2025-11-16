@@ -1,0 +1,83 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Law.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Law",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 81,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 81,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1162,
+    "total_items_generated": 1162,
+    "start_time": "2025-11-15T17:52:34.960786",
+    "end_time": "2025-11-15T17:54:23.871515",
+    "batches_completed": 9,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 1005,
+    "success_rate": 0.1111111111111111
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 186,
+      "unique_seeds_used": 186
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 177,
+      "unique_seeds_used": 177
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 145,
+      "unique_seeds_used": 145
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 135,
+      "unique_seeds_used": 135
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 139,
+      "unique_seeds_used": 139
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 125,
+      "unique_seeds_used": 125
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 122,
+      "unique_seeds_used": 122
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 120,
+      "unique_seeds_used": 120
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 13,
+      "unique_seeds_used": 13
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1620,
+    "subject_distribution": {
+      "Law": {
+        "count": 1620,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1620 Law (100.0%)"
+    ]
+  }
+}

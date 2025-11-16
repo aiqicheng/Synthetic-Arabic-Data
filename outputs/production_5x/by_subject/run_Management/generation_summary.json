@@ -1,0 +1,53 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Management.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Management",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 21,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 21,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 316,
+    "total_items_generated": 316,
+    "start_time": "2025-11-15T17:54:24.545648",
+    "end_time": "2025-11-15T17:54:48.282176",
+    "batches_completed": 3,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 297,
+    "success_rate": 0.14285714285714285
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 171,
+      "unique_seeds_used": 171
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 136,
+      "unique_seeds_used": 136
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 9,
+      "unique_seeds_used": 9
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 420,
+    "subject_distribution": {
+      "Management": {
+        "count": 420,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "420 Management (100.0%)"
+    ]
+  }
+}

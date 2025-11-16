@@ -1,0 +1,108 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Computer_Science.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Computer_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 140,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 140,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 2103,
+    "total_items_generated": 2103,
+    "start_time": "2025-11-15T17:15:43.348683",
+    "end_time": "2025-11-15T17:18:10.867383",
+    "batches_completed": 14,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 1796,
+    "success_rate": 0.1
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 188,
+      "unique_seeds_used": 188
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 176,
+      "unique_seeds_used": 176
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 177,
+      "unique_seeds_used": 177
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 169,
+      "unique_seeds_used": 169
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 156,
+      "unique_seeds_used": 156
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 161,
+      "unique_seeds_used": 161
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 155,
+      "unique_seeds_used": 155
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 134,
+      "unique_seeds_used": 134
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 127,
+      "unique_seeds_used": 127
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 127,
+      "unique_seeds_used": 127
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 130,
+      "unique_seeds_used": 130
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 132,
+      "unique_seeds_used": 132
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 2800,
+    "subject_distribution": {
+      "Computer Science": {
+        "count": 2800,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "2800 Computer Science (100.0%)"
+    ]
+  }
+}

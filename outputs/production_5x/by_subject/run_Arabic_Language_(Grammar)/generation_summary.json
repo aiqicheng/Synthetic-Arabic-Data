@@ -1,0 +1,88 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Arabic_Language_(Grammar).csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Arabic_Language_(Grammar)",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 93,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 93,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1206,
+    "total_items_generated": 1206,
+    "start_time": "2025-11-15T17:06:23.044375",
+    "end_time": "2025-11-15T17:08:00.269954",
+    "batches_completed": 10,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 994,
+    "success_rate": 0.10752688172043011
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 183,
+      "unique_seeds_used": 183
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 160,
+      "unique_seeds_used": 160
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 132,
+      "unique_seeds_used": 132
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 126,
+      "unique_seeds_used": 126
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 119,
+      "unique_seeds_used": 119
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 110,
+      "unique_seeds_used": 110
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 105,
+      "unique_seeds_used": 105
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 99,
+      "unique_seeds_used": 99
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 29,
+      "unique_seeds_used": 29
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1860,
+    "subject_distribution": {
+      "Arabic Language (Grammar)": {
+        "count": 1860,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1860 Arabic Language (Grammar) (100.0%)"
+    ]
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Arabic_Language_(General).csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Arabic_Language_(General)",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 155,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 155,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 1872,
+    "total_items_generated": 1872,
+    "start_time": "2025-11-15T17:03:44.866378",
+    "end_time": "2025-11-15T17:06:22.287610",
+    "batches_completed": 16,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 1504,
+    "success_rate": 0.1032258064516129
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 183,
+      "unique_seeds_used": 183
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 159,
+      "unique_seeds_used": 159
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 165,
+      "unique_seeds_used": 165
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 133,
+      "unique_seeds_used": 133
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 129,
+      "unique_seeds_used": 129
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 117,
+      "unique_seeds_used": 117
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 112,
+      "unique_seeds_used": 112
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 116,
+      "unique_seeds_used": 116
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 98,
+      "unique_seeds_used": 98
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 104,
+      "unique_seeds_used": 104
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 105,
+      "unique_seeds_used": 105
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 91,
+      "unique_seeds_used": 91
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 93,
+      "unique_seeds_used": 93
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 85,
+      "unique_seeds_used": 85
+    },
+    {
+      "chunk_number": 16,
+      "items_generated": 39,
+      "unique_seeds_used": 39
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 3100,
+    "subject_distribution": {
+      "Arabic Language (General)": {
+        "count": 3100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "3100 Arabic Language (General) (100.0%)"
+    ]
+  }
+}

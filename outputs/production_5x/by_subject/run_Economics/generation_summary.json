@@ -1,0 +1,113 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Economics.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Economics",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 150,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 150,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 2178,
+    "total_items_generated": 2178,
+    "start_time": "2025-11-15T17:23:49.051402",
+    "end_time": "2025-11-15T17:26:15.407214",
+    "batches_completed": 15,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 1819,
+    "success_rate": 0.1
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 180,
+      "unique_seeds_used": 180
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 174,
+      "unique_seeds_used": 174
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 169,
+      "unique_seeds_used": 169
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 169,
+      "unique_seeds_used": 169
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 163,
+      "unique_seeds_used": 163
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 162,
+      "unique_seeds_used": 162
+    },
+    {
+      "chunk_number": 7,
+      "items_generated": 143,
+      "unique_seeds_used": 143
+    },
+    {
+      "chunk_number": 8,
+      "items_generated": 137,
+      "unique_seeds_used": 137
+    },
+    {
+      "chunk_number": 9,
+      "items_generated": 126,
+      "unique_seeds_used": 126
+    },
+    {
+      "chunk_number": 10,
+      "items_generated": 120,
+      "unique_seeds_used": 120
+    },
+    {
+      "chunk_number": 11,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 12,
+      "items_generated": 133,
+      "unique_seeds_used": 133
+    },
+    {
+      "chunk_number": 13,
+      "items_generated": 128,
+      "unique_seeds_used": 128
+    },
+    {
+      "chunk_number": 14,
+      "items_generated": 133,
+      "unique_seeds_used": 133
+    },
+    {
+      "chunk_number": 15,
+      "items_generated": 113,
+      "unique_seeds_used": 113
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 3000,
+    "subject_distribution": {
+      "Economics": {
+        "count": 3000,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "3000 Economics (100.0%)"
+    ]
+  }
+}

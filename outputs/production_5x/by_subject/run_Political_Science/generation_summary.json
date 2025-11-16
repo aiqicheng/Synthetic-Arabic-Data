@@ -1,0 +1,68 @@
+{
+  "configuration": {
+    "input_file": "data/arabicmmlu/by_subject/arabicmmlu_Political_Science.csv",
+    "output_dir": "outputs/production_5x/by_subject/run_Political_Science",
+    "model": "openrouter:google/gemini-2.5-flash",
+    "sampling_mode": "stratified",
+    "seeds_per_batch": 20,
+    "total_batches": 55,
+    "use_batch_helper": true,
+    "max_concurrent_requests": 200
+  },
+  "generation_stats": {
+    "total_batches": 55,
+    "seeds_per_batch": 20,
+    "total_seeds_used": 843,
+    "total_items_generated": 843,
+    "start_time": "2025-11-15T18:01:16.875783",
+    "end_time": "2025-11-15T18:02:15.772503",
+    "batches_completed": 6,
+    "use_batch_helper": true,
+    "total_unique_seeds_used": 749,
+    "success_rate": 0.10909090909090909
+  },
+  "batch_statistics": [
+    {
+      "chunk_number": 1,
+      "items_generated": 187,
+      "unique_seeds_used": 187
+    },
+    {
+      "chunk_number": 2,
+      "items_generated": 167,
+      "unique_seeds_used": 167
+    },
+    {
+      "chunk_number": 3,
+      "items_generated": 155,
+      "unique_seeds_used": 155
+    },
+    {
+      "chunk_number": 4,
+      "items_generated": 139,
+      "unique_seeds_used": 139
+    },
+    {
+      "chunk_number": 5,
+      "items_generated": 130,
+      "unique_seeds_used": 130
+    },
+    {
+      "chunk_number": 6,
+      "items_generated": 65,
+      "unique_seeds_used": 65
+    }
+  ],
+  "subject_composition": {
+    "total_seeds_analyzed": 1100,
+    "subject_distribution": {
+      "Political Science": {
+        "count": 1100,
+        "percentage": 100.0
+      }
+    },
+    "summary": [
+      "1100 Political Science (100.0%)"
+    ]
+  }
+}
