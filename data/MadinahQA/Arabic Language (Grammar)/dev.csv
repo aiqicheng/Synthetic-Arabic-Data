@@ -1,0 +1,7 @@
+ID,Source,Country,Group,Subject,Level,Question,Context,Answer Key,Option 1,Option 2,Option 3,Option 4,Option 5,is_few_shot
+12334,https://www.madinaharabic.com/quiz/,,Language,Arabic Language (Grammar),,"اختر اسم الاشارة المناسب لوضعه بدلاً من [فراغ] في الجملة التالية:
+ما [فراغ]. ؟ (قطار)",,A,هذا,هذه,,,,1
+12390,https://www.madinaharabic.com/quiz/,,Language,Arabic Language (Grammar),,"اختر الفعل ذو الضمير المناسب الذي يمكن وضعه بدلاً من [فراغ] في الجملة التالية
+رأيت الطلاب [فراغ] إلى النادي.",,A,ذهبوا,قابلت,رأيتم,تحبن,يدرسان,1
+12419,https://www.madinaharabic.com/quiz/,,Language,Arabic Language (Grammar),,"أي من الأسماء التاليه تكن صفة القربى للنبي محمد صلى الله عليه وسلم باعتباره
+عَمُّهُ",,C,عبد الله,رقية,حمزة,إبراهيم,علي,1

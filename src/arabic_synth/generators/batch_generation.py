@@ -135,7 +135,7 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         base_prompt = SENTIMENT_PROMPT if not persona_override else persona_override
     elif task == "grammar":
         base_prompt = GRAMMAR_QA_PROMPT if not persona_override else persona_override
-    elif task == "mmlu":
+    elif task in ["mmlu", "madinahqa"]:
         tmpl = persona_override or MMLU_TEACHER_PROMPT
         # Safely substitute placeholders to avoid JSON brace formatting issues
         base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
@@ -149,7 +149,7 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
     if seed_manager:
         style_guidance = seed_manager.get_style_guidance(task)
         if style_guidance:
-            if task == "mmlu":
+            if task in ["mmlu", "madinahqa"]:
                 base_prompt = style_guidance + "\n\n" + base_prompt
             else:
                 base_prompt += f"\n\n{style_guidance}"
@@ -243,7 +243,7 @@ def _parse_generation_response(raw_response: str, task: str) -> Dict[str, Any]:
             return SentimentItem(**obj).model_dump()
         elif task == "grammar":
             return GrammarItem(**obj).model_dump()
-        elif task == "mmlu":
+        elif task in ["mmlu", "madinahqa"]:
             try:
                 # Validate with MMLUItem schema but only return required fields
                 mmlu_item = MMLUItem(**obj)
@@ -416,7 +416,7 @@ def run_batch_generation(
                 continue
             
             # Handle answer remapping for exams and mmlu
-            if task in ["exams", "mmlu"] and item.get("answer") != target_letter:
+            if task in ["exams", "mmlu", "madinahqa"] and item.get("answer") != target_letter:
                 item = _remap_answer_to_target(item, target_letter)
             
             results.append(item)

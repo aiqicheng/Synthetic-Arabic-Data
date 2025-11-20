@@ -21,7 +21,7 @@ app = typer.Typer(add_completion=False)
 
 @app.command()
 def generate(
-    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu"),
+    task: str = typer.Argument(..., help="Task: exams|sentiment|grammar|mmlu|madinahqa"),
     num_samples: int = typer.Option(100, help="Number of samples to generate"),
     model: str = typer.Option("mock", help="Model name; use 'openai:MODEL' for OpenAI or 'openrouter:MODEL' for OpenRouter"),
     batch_size: int = typer.Option(50, help="Batch size for generation"),
@@ -38,7 +38,7 @@ def generate(
 ):
     # Set up balanced answer distribution for multiple choice tasks
     target_answer_distribution = None
-    if balanced_answers and task in ["exams", "mmlu"]:
+    if balanced_answers and task in ["exams", "mmlu", "madinahqa"]:
         target_answer_distribution = {"A": 0.25, "B": 0.25, "C": 0.25, "D": 0.25}
     
     # Check if batch mode is requested but model is not supported
@@ -406,7 +406,7 @@ def sample_stratified(
 
 @app.command()
 def sample_and_convert(
-    task: str = typer.Argument(..., help="Task: exams|mmlu"),
+    task: str = typer.Argument(..., help="Task: exams|mmlu|madinahqa"),
     input_file: Path = typer.Option(Path("data/test-00000-of-00001.arabic.csv"), help="Input CSV file"),
     output_file: Path = typer.Option(Path("outputs/data_sampled.jsonl"), help="Output JSONL file"),
     n: int = typer.Option(10, help="Number of samples to extract"),
@@ -415,20 +415,21 @@ def sample_and_convert(
     filter_grade: Optional[str] = typer.Option(None, help="Filter by specific grade(s) - single grade (e.g., '4') or comma-separated list (e.g., '9,10,11,12') - exams only"),
     filter_subject: Optional[str] = typer.Option(None, help="Filter by specific subject(s) - single subject or comma-separated list (e.g., 'Islamic Studies,Mathematics')"),
     filter_language: Optional[str] = typer.Option(None, help="Filter by specific language(s) - single language or comma-separated list (e.g., 'Arabic,English') - exams only"),
-    filter_level: Optional[str] = typer.Option(None, help="Filter by specific level(s) - single level or comma-separated list (e.g., 'High School,University') - mmlu only"),
-    filter_country: Optional[str] = typer.Option(None, help="Filter by specific country(s) - single country or comma-separated list - mmlu only"),
+    filter_level: Optional[str] = typer.Option(None, help="Filter by specific level(s) - single level or comma-separated list (e.g., 'High School,University') - mmlu/madinahqa only"),
+    filter_country: Optional[str] = typer.Option(None, help="Filter by specific country(s) - single country or comma-separated list - mmlu/madinahqa only"),
     seed: Optional[int] = typer.Option(None, help="Random seed for reproducibility"),
 ):
-    """Sample data and convert to JSONL format in one step. Supports both exams and MMLU datasets."""
+    """Sample data and convert to JSONL format in one step. Supports exams, MMLU, and MadinahQA datasets."""
     from arabic_synth.data_prep.exam_processor import ExamProcessor
     from arabic_synth.data_prep.mmlu_processor import MMLUProcessor
+    from arabic_synth.data_prep.madinah_processor import MadinahQAProcessor
 
     if mode not in ["uniform", "stratified"]:
         typer.echo("Error: mode must be 'uniform' or 'stratified'", err=True)
         raise typer.Exit(1)
     
-    if task not in ["exams", "mmlu"]:
-        typer.echo("Error: task must be 'exams' or 'mmlu'", err=True)
+    if task not in ["exams", "mmlu", "madinahqa"]:
+        typer.echo("Error: task must be 'exams', 'mmlu', or 'madinahqa'", err=True)
         raise typer.Exit(1)
     
     try:
@@ -454,6 +455,24 @@ def sample_and_convert(
         elif task == "mmlu":
             # Use MMLUProcessor for MMLU dataset
             processor = MMLUProcessor(str(input_file))
+            
+            # Set default stratify column for MMLU
+            if stratify_col is None:
+                stratify_col = "Subject"
+            
+            stats = processor.sample_and_convert(
+                n=n,
+                mode=mode,
+                stratify_col=stratify_col,
+                output_jsonl=str(output_file),
+                seed=seed,
+                filter_subject=filter_subject,
+                filter_level=filter_level,
+                filter_country=filter_country
+            )
+        elif task == "madinahqa":
+            # Use MadinahQAProcessor for MadinahQA dataset
+            processor = MadinahQAProcessor(str(input_file))
             
             # Set default stratify column for MMLU
             if stratify_col is None:

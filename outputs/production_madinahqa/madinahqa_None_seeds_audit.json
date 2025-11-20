@@ -1,0 +1,59 @@
+{
+  "seed_count": 9,
+  "constraints": {
+    "max_seeds": 10,
+    "min_seed_diversity": 0.8,
+    "max_generation_similarity": 0.7,
+    "max_token_jaccard": 0.35,
+    "max_char5_jaccard": 0.3,
+    "max_numeric_overlap": 0.6,
+    "rng_seed": null
+  },
+  "seeds_used": [
+    {
+      "question_preview": "التَّرْوِيحُ عَنِ النَّفْسِ يُمارِسُ النَّاسُ بَعْضَ الأَنْشِطَةِ؛ لِلتَّرْوِيحِ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "b7a582919725d6c3"
+    },
+    {
+      "question_preview": "التَّعْلِيمُ بَيْنَ المَاضِي وَالحَاضِرِ هُنَاكَ اِخْتِلافَاتٌ كَثِيرَةٌ بَيْنَ ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "6e9aefacdbdbffff"
+    },
+    {
+      "question_preview": "أي من التكملات التالية هي الصحيحة بدلاً من [فراغ]\nتركتْ فاطمةُ [فراغ].ها....",
+      "subject_hint": "Arabic Language (Grammar)",
+      "hash": "a72cabb62c1c5bb5"
+    },
+    {
+      "question_preview": "زينب ومريم صديقتان زَيْنَبُ وَمَرْيَمُ صَدِيقَتَانِ، تَتَشَابَهَانِ فِي أَشْيَاء...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "ea3b8189fd274082"
+    },
+    {
+      "question_preview": "أي من الخيارات التالية تكمل الجملة التالية باختيار الكلمة ذي البنية الصحيحة بدلا...",
+      "subject_hint": "Arabic Language (Grammar)",
+      "hash": "2661f3ce17c6d902"
+    },
+    {
+      "question_preview": "اختر الضمير المناسب لوضعه بدلاً من [فراغ] في الجملة التالية:\nهذا خالِدٌ [فراغ] أ...",
+      "subject_hint": "Arabic Language (Grammar)",
+      "hash": "791ea1a370b59627"
+    },
+    {
+      "question_preview": "صباح الخير يا زوجتي العزيزة. صباح الخير يا زوجي العزيز. غدًا سنحتفل بنجاح ابننا ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "fd45cffc6854e778"
+    },
+    {
+      "question_preview": "وَسَائِلُ النَّقْلِ وَالاتِّصَالِ قَدِيمًا وَحَدِيثًا يَتَكَوَّنُ العَالَمُ مِنْ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "1ac2d691abfadc77"
+    },
+    {
+      "question_preview": "الأَقَلِّيَاتُ الإِسْلَامِيَّةُ أوَّلاً: الأَقَلِّيَاتُ الإسْلامية فِي أُورُبا ف...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "0b9e43fb206c51dc"
+    }
+  ]
+}
