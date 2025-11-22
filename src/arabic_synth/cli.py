@@ -34,7 +34,7 @@ def generate(
     balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution for multiple choice tasks"),
     use_batch: bool = typer.Option(False, help="Use batch processing (supports OpenAI and OpenRouter via llm_batch_helper)"),
     use_diversity: bool = typer.Option(True, help="Enable diversity features: sampling jitter, prompt variation, fast duplicate screening"),
-    one_prompt_per_seed: bool = typer.Option(True, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
+    one_prompt_per_seed: bool = typer.Option(False, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
 ):
     # Set up balanced answer distribution for multiple choice tasks
     target_answer_distribution = None
@@ -107,7 +107,7 @@ def generate_mmlu(
     top_p: float = typer.Option(0.95, help="Top-p nucleus sampling"),
     balanced_answers: bool = typer.Option(True, help="Use balanced answer distribution (A=25%, B=25%, C=25%, D=25%)"),
     use_diversity: bool = typer.Option(True, help="Enable diversity features: sampling jitter, prompt variation, fast duplicate screening"),
-    one_prompt_per_seed: bool = typer.Option(True, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
+    one_prompt_per_seed: bool = typer.Option(False, help="Use one-prompt-per-seed strategy: each seed generates exactly one prompt, avoiding seed rephrasing"),
 ):
     """Generate MMLU questions using one-prompt-per-seed strategy."""
     

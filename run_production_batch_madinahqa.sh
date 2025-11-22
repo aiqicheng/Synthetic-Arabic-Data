@@ -24,7 +24,7 @@ echo "Target items: ${TARGET_COUNT}"
 # We will generate seeds first, then use them for generation.
 
 SEED_FILE="${OUTPUT_DIR}/madinahqa_seeds.jsonl"
-NUM_SEEDS=10
+NUM_SEEDS=100
 
 echo ""
 echo "1. Sampling ${NUM_SEEDS} seeds for generation..."
@@ -47,7 +47,6 @@ arabic-synth generate madinahqa \
     --model "openrouter:google/gemini-2.5-flash" \
     --seed-file "$SEED_FILE" \
     --output-dir "$OUTPUT_DIR" \
-    --use-batch \
     --batch-size 20
 
 # Rename the output to a consistent name

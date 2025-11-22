@@ -51,7 +51,7 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         base_prompt = SENTIMENT_PROMPT if not persona_override else persona_override
     elif task == "grammar":
         base_prompt = GRAMMAR_QA_PROMPT if not persona_override else persona_override
-    elif task == "mmlu":
+    elif task in ["mmlu", "madinahqa"]:
         tmpl = persona_override or MMLU_TEACHER_PROMPT
         # Safely substitute placeholders to avoid JSON brace formatting issues
         base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
@@ -67,8 +67,8 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         if style_guidance:
             base_prompt = style_guidance + "\n\n" + base_prompt
         
-        # Add seed examples for MMLU
-        if task == "mmlu" and seed_manager.seeds:
+        # Add seed examples for MMLU and MadinahQA
+        if task in ["mmlu", "madinahqa"] and seed_manager.seeds:
             # Filter seeds by subject if specified
             effective_subject = subject or seed_subject
             relevant_seeds = seed_manager.seeds
@@ -159,7 +159,7 @@ def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[See
         return SentimentItem(**obj).model_dump()
     elif task == "grammar":
         return GrammarItem(**obj).model_dump()
-    elif task == "mmlu":
+    elif task in ["mmlu", "madinahqa"]:
         try:
             # Validate with MMLUItem schema but only return required fields
             mmlu_item = MMLUItem(**obj)
@@ -169,10 +169,10 @@ def _generate_one(task: str, prompt: str, model: str, seed_manager: Optional[See
                 "options": mmlu_item.options,
                 "answer": mmlu_item.answer
             }
-        except Exception as e:
-            print(f"MMLU validation error: {e}")
+        except Exception as e: # noqa
+            print(f"{task.upper()} validation error: {e}")
             print(f"Generated object: {obj}")
-            raise ValueError(f"MMLU validation failed: {e}")
+            raise ValueError(f"{task.upper()} validation failed: {e}")
     else:
         raise ValueError(f"Unknown task: {task}")
 
@@ -272,7 +272,7 @@ def run_generation(
                 target_letter = "A"
             
             # Extract subject from current seed
-            seed_subject = current_seed.get("subject") if task == "mmlu" else None
+            seed_subject = current_seed.get("subject") if task in ["mmlu", "madinahqa"] else None
             
             # Build prompt with current seed context
             prompt = _build_prompt(task, persona_override, seed_manager, 
@@ -314,7 +314,7 @@ def run_generation(
                                        presence_penalty=gen_presence_penalty,
                                        frequency_penalty=gen_frequency_penalty)
                 
-                if task in ["exams", "mmlu"] and item.get("answer") != target_letter:
+                if task in ["exams", "mmlu", "madinahqa"] and item.get("answer") != target_letter:
                     item = _remap_answer_to_target(item, target_letter)
                 
                 # Add metadata about which seed was used
@@ -361,7 +361,7 @@ def run_generation(
             
             # For MMLU, extract subject from seed if available
             seed_subject = None
-            if task == "mmlu" and seed_manager and seed_manager.seeds:
+            if task in ["mmlu", "madinahqa"] and seed_manager and seed_manager.seeds:
                 # Use a random seed to get its subject
                 import random
                 random_seed = random.choice(seed_manager.seeds)
@@ -403,7 +403,7 @@ def run_generation(
                                        presence_penalty=gen_presence_penalty,
                                        frequency_penalty=gen_frequency_penalty)
                 
-                if task in ["exams", "mmlu"] and item.get("answer") != target_letter:
+                if task in ["exams", "mmlu", "madinahqa"] and item.get("answer") != target_letter:
                     item = _remap_answer_to_target(item, target_letter)
                 results.append(item)
                 produced[target_letter] += 1

@@ -1,5 +1,5 @@
 {
-  "seed_count": 9,
+  "seed_count": 10,
   "constraints": {
     "max_seeds": 10,
     "min_seed_diversity": 0.8,
@@ -11,49 +11,54 @@
   },
   "seeds_used": [
     {
-      "question_preview": "التَّرْوِيحُ عَنِ النَّفْسِ يُمارِسُ النَّاسُ بَعْضَ الأَنْشِطَةِ؛ لِلتَّرْوِيحِ...",
+      "question_preview": "اِحْترامُ الوَقْتِ تَمُرُّ بِنِا الأَوْقَاتُ سَرِيعًا، فَنَذَهْلُ عَنْ تَعَاقُبِ...",
       "subject_hint": "Arabic Language (General)",
-      "hash": "b7a582919725d6c3"
+      "hash": "a42779c3ac8ee82e"
     },
     {
-      "question_preview": "التَّعْلِيمُ بَيْنَ المَاضِي وَالحَاضِرِ هُنَاكَ اِخْتِلافَاتٌ كَثِيرَةٌ بَيْنَ ...",
-      "subject_hint": "Arabic Language (General)",
-      "hash": "6e9aefacdbdbffff"
-    },
-    {
-      "question_preview": "أي من التكملات التالية هي الصحيحة بدلاً من [فراغ]\nتركتْ فاطمةُ [فراغ].ها....",
+      "question_preview": "اختر اسم الاشارة المناسب لوضعه بدلاً من [فراغ] في الجملة التالية:\nما [فراغ] ؟ (ق...",
       "subject_hint": "Arabic Language (Grammar)",
-      "hash": "a72cabb62c1c5bb5"
+      "hash": "4db3f6e995a4443a"
+    },
+    {
+      "question_preview": "قبل عشر سنواتٍ شعرت فاطمة بآلام شديدةٍ فكانت تنام كثيرًا وكانت لا تستطيع العمل. ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "06d43a722f07b282"
+    },
+    {
+      "question_preview": "النَّبِيّ وَالنَّجَاشيُّ فِي أَوَاخِرِ السَّنَةِ السَّادِسَةِ حِينَ رَجَعَ الرَّ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "d1739bd9305f4e00"
+    },
+    {
+      "question_preview": "فى عصر لم يعرف وسائل النقل الحديثة، قطع ابن بطوطة مسافة بلغت أكثر من خمسة وسبعين...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "cbe965ebf6460c80"
     },
     {
       "question_preview": "زينب ومريم صديقتان زَيْنَبُ وَمَرْيَمُ صَدِيقَتَانِ، تَتَشَابَهَانِ فِي أَشْيَاء...",
       "subject_hint": "Arabic Language (General)",
-      "hash": "ea3b8189fd274082"
+      "hash": "94ad6ddcbb8d367d"
+    },
+    {
+      "question_preview": "الْقِرَاءَةُ السَّرِيعَة تُعَدُّ القِرَاءَةُ مِنْ أَهَمِّ المَهَارَاتِ الَّتِي ت...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "f9f0e7cc7e9c86ba"
+    },
+    {
+      "question_preview": "العميل رقم 15 يتوجه إلى شباك رقم 6. مرحبًا بك، كيف أساعدك؟ لدي تحويلٌ من الخارج....",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "624d3ed6b3c616df"
+    },
+    {
+      "question_preview": "كان الماء في الوعاء قرب الموقد في حديقة المنزل، شعر الماء بالحرارة، وشاهد توهجا ...",
+      "subject_hint": "Arabic Language (General)",
+      "hash": "52a4620f6bc0a508"
     },
     {
       "question_preview": "أي من الخيارات التالية تكمل الجملة التالية باختيار الكلمة ذي البنية الصحيحة بدلا...",
       "subject_hint": "Arabic Language (Grammar)",
-      "hash": "2661f3ce17c6d902"
-    },
-    {
-      "question_preview": "اختر الضمير المناسب لوضعه بدلاً من [فراغ] في الجملة التالية:\nهذا خالِدٌ [فراغ] أ...",
-      "subject_hint": "Arabic Language (Grammar)",
-      "hash": "791ea1a370b59627"
-    },
-    {
-      "question_preview": "صباح الخير يا زوجتي العزيزة. صباح الخير يا زوجي العزيز. غدًا سنحتفل بنجاح ابننا ...",
-      "subject_hint": "Arabic Language (General)",
-      "hash": "fd45cffc6854e778"
-    },
-    {
-      "question_preview": "وَسَائِلُ النَّقْلِ وَالاتِّصَالِ قَدِيمًا وَحَدِيثًا يَتَكَوَّنُ العَالَمُ مِنْ...",
-      "subject_hint": "Arabic Language (General)",
-      "hash": "1ac2d691abfadc77"
-    },
-    {
-      "question_preview": "الأَقَلِّيَاتُ الإِسْلَامِيَّةُ أوَّلاً: الأَقَلِّيَاتُ الإسْلامية فِي أُورُبا ف...",
-      "subject_hint": "Arabic Language (General)",
-      "hash": "0b9e43fb206c51dc"
+      "hash": "125333783eadf8a4"
     }
   ]
 }

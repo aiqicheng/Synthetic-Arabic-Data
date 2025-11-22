@@ -141,7 +141,7 @@ def _build_prompt(task: str, persona_override: Optional[str], seed_manager: Opti
         base_prompt = tmpl.replace("{target_answer_letter}", (target_answer_letter or "A"))
         
         # Handle subject placeholder - replace all {subject} occurrences
-        effective_subject = subject or seed_subject or "Computer Science"
+        effective_subject = subject or seed_subject or "General Knowledge"
         base_prompt = base_prompt.replace("{subject}", effective_subject)
     else:
         raise ValueError(f"Unknown task: {task}")
@@ -342,19 +342,20 @@ def run_batch_generation(
         quotas[l] += 1
         delta -= 1
     
-    # Extract seed subject for MMLU if available
-    seed_subject = None
-    if task == "mmlu" and seed_manager and seed_manager.seeds:
-        import random
-        random_seed = random.choice(seed_manager.seeds)
-        seed_subject = random_seed.get("subject")
-    
     # Prepare prompts for batch processing
     prompts = []
     target_letters = []
     
     for letter in letters:
         for _ in range(quotas[letter]):
+            # Get a random seed for each prompt to ensure subject diversity
+            seed_subject = None
+            if seed_manager and seed_manager.seeds:
+                import random
+                seed = random.choice(seed_manager.seeds)
+            else:
+                seed = None
+            seed_subject = seed.get("subject") if seed else None
             prompt = _build_prompt(task, persona_override, seed_manager, 
                                  target_answer_letter=letter, subject=subject, seed_subject=seed_subject)
             prompts.append(prompt)
